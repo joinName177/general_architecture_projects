@@ -1,7 +1,11 @@
+import { Card } from "@heroui/react/card";
+import { Spinner } from "@heroui/react/spinner";
 import { RouterProvider, createBrowserRouter } from "react-router";
 import { useTranslation } from "react-i18next";
 
 import { moduleCatalog } from "@/app/module-catalog";
+
+import * as styles from "./app-router.module.css";
 
 const router = createBrowserRouter(
   moduleCatalog.map(({ path, routeId, lazy }) => ({
@@ -19,12 +23,15 @@ export function AppRouter() {
 function RouteLoading() {
   const { t } = useTranslation();
   return (
-    <main className="auth-shell auth-shell--center">
-      <section className="auth-card">
-        <div>
-          <p role="status">{t("auth.loading")}</p>
-        </div>
-      </section>
+    <main className={styles.shell}>
+      <Card className={styles.card}>
+        <Card.Content className={styles.cardContent}>
+          <div className={styles.statusContent} role="status">
+            <Spinner aria-hidden="true" size="sm" />
+            <span>{t("auth.loading")}</span>
+          </div>
+        </Card.Content>
+      </Card>
     </main>
   );
 }

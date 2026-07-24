@@ -1,0 +1,106 @@
+.shell {
+  position: relative;
+  display: grid;
+  min-height: 100dvh;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 28rem);
+  align-items: center;
+  gap: clamp(var(--space-2xl), 8vw, 8rem);
+  padding: clamp(var(--space-lg), 6vw, 7rem);
+  background:
+    radial-gradient(
+      circle at 10% 15%,
+      var(--color-accent-subtle),
+      transparent 30rem
+    ),
+    linear-gradient(145deg, var(--color-canvas-start), var(--color-canvas-end));
+}
+
+.shellCentered {
+  grid-template-columns: minmax(20rem, 32rem);
+  justify-content: center;
+}
+
+.intro {
+  max-width: 42rem;
+}
+
+.kicker {
+  margin: 0;
+  color: var(--color-text-brand);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin-block: var(--space-sm) 1.25rem;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-display);
+  letter-spacing: -0.045em;
+  line-height: var(--line-height-tight);
+}
+
+.description {
+  line-height: var(--line-height-relaxed);
+}
+
+.card {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+.cardHeader,
+.cardContent,
+.cardFooter {
+  padding: var(--space-lg) 1.75rem;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+}
+
+.cardHeader p:last-child {
+  margin-bottom: 0;
+  color: var(--color-text-secondary);
+}
+
+.cardFooter {
+  padding-top: 0;
+}
+
+.form,
+.field {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.form {
+  gap: var(--space-md);
+}
+
+.modeSwitch {
+  justify-self: start;
+}
+
+.statusContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 760px) {
+  .shell {
+    grid-template-columns: 1fr;
+    padding-top: 5rem;
+  }
+
+  .heading {
+    font-size: 2.75rem;
+  }
+}

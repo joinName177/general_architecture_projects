@@ -1,5 +1,15 @@
+import { Alert } from "@heroui/react/alert";
+import { Card } from "@heroui/react/card";
+import { FieldError } from "@heroui/react/field-error";
+import { Form } from "@heroui/react/form";
+import { Input } from "@heroui/react/input";
+import { Label } from "@heroui/react/label";
+import { Spinner } from "@heroui/react/spinner";
+import { TextField } from "@heroui/react/textfield";
+import { buttonVariants } from "@heroui/styles";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Button } from "react-aria-components/Button";
 import { useForm } from "react-hook-form";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -13,12 +23,20 @@ import type {
 import { ApiError } from "@/shared/http/http-client";
 import { LanguageSelector } from "@/shared/i18n/language-selector";
 
+import * as styles from "./auth-route.module.css";
+
 const loginSchema = z.object({ email: z.email(), password: z.string().min(1) });
 const registerSchema = loginSchema.extend({
   displayName: z.string().trim().min(1).max(80),
   password: z.string().min(12).max(128),
 });
 type AuthFormValues = RegisterCommand;
+const primaryButtonClassName = buttonVariants({
+  fullWidth: true,
+  variant: "primary",
+});
+const secondaryButtonClassName = buttonVariants({ variant: "secondary" });
+const modeSwitchButtonClassName = `${buttonVariants({ variant: "tertiary" })} ${styles.modeSwitch}`;
 
 export function AuthRoute() {
   return <AuthScreen gateway={useAuthGateway()} />;
@@ -38,8 +56,12 @@ export function AuthScreen({ gateway }: { readonly gateway: AuthGateway }) {
     onSuccess: () => queryClient.setQueryData(["auth", "session"], null),
   });
 
-  if (session.isPending) return <StatusCard text={t("auth.restoring")} />;
-  if (session.isError) return <StatusCard text={t("auth.unavailable")} />;
+  if (session.isPending) {
+    return <StatusCard status="loading" text={t("auth.restoring")} />;
+  }
+  if (session.isError) {
+    return <StatusCard status="error" text={t("auth.unavailable")} />;
+  }
   if (session.data !== null) {
     return (
       <AuthenticatedCard
@@ -110,12 +132,14 @@ function AuthForm({
   });
 
   return (
-    <main className="auth-shell">
+    <main className={styles.shell}>
       <LanguageSelector />
-      <section className="auth-intro" aria-labelledby="auth-heading">
-        <p className="auth-kicker">Dify Agent</p>
-        <h1 id="auth-heading">{t("auth.heroTitle")}</h1>
-        <p>{t("auth.heroDescription")}</p>
+      <section className={styles.intro} aria-labelledby="auth-heading">
+        <p className={styles.kicker}>Dify Agent</p>
+        <h1 className={styles.heading} id="auth-heading">
+          {t("auth.heroTitle")}
+        </h1>
+        <p className={styles.description}>{t("auth.heroDescription")}</p>
       </section>
       <CredentialsCard
         error={mutation.isError ? mutation.error : undefined}
@@ -143,69 +167,93 @@ interface CredentialsCardProps {
 function CredentialsCard(props: CredentialsCardProps) {
   const { t } = useTranslation();
   return (
-    <section className="auth-card">
-      <header>
+    <Card className={styles.card}>
+      <Card.Header className={styles.cardHeader}>
         <h2>{t(`auth.${props.mode}.title`)}</h2>
         <p>{t(`auth.${props.mode}.description`)}</p>
-      </header>
-      <div>
-        <form className="auth-form" noValidate onSubmit={props.onSubmit}>
-          {props.mode === "register" && (
-            <FormField
-              label={t("auth.displayName")}
-              error={props.errors.displayName?.message}
-            >
-              <input autoComplete="name" {...props.register("displayName")} />
-            </FormField>
-          )}
-          <FormField
-            label={t("auth.email")}
-            error={props.errors.email?.message}
-          >
-            <input
-              autoComplete="email"
-              inputMode="email"
-              {...props.register("email")}
-            />
-          </FormField>
-          <FormField
-            label={t("auth.password")}
-            error={props.errors.password?.message}
-          >
-            <input
-              autoComplete={
-                props.mode === "login" ? "current-password" : "new-password"
-              }
-              type="password"
-              {...props.register("password")}
-            />
-          </FormField>
-          {props.error !== undefined && (
-            <p className="form-error" role="alert">
-              {errorMessage(props.error, t)}
-            </p>
-          )}
-          <button
-            className="primary-button"
-            disabled={props.pending}
-            type="submit"
-          >
-            {t(`auth.${props.mode}.submit`)}
-          </button>
-        </form>
-      </div>
-      <footer>
-        <button
-          className="mode-switch"
-          type="button"
+      </Card.Header>
+      <Card.Content className={styles.cardContent}>
+        <CredentialsForm
+          error={props.error}
+          errors={props.errors}
+          mode={props.mode}
+          onSubmit={props.onSubmit}
+          pending={props.pending}
+          register={props.register}
+        />
+      </Card.Content>
+      <Card.Footer className={styles.cardFooter}>
+        <Button
+          className={modeSwitchButtonClassName}
           onClick={() =>
             props.onModeChange(props.mode === "login" ? "register" : "login")
           }
+          type="button"
         >
           {t(`auth.${props.mode}.switch`)}
-        </button>
-      </footer>
-    </section>
+        </Button>
+      </Card.Footer>
+    </Card>
+  );
+}
+
+type CredentialsFormProps = Omit<CredentialsCardProps, "onModeChange">;
+
+function CredentialsForm(props: CredentialsFormProps) {
+  const { t } = useTranslation();
+  return (
+    <Form className={styles.form} onSubmit={props.onSubmit}>
+      {props.mode === "register" && (
+        <FormField
+          label={t("auth.displayName")}
+          error={props.errors.displayName?.message}
+        >
+          <Input
+            autoComplete="name"
+            fullWidth
+            {...props.register("displayName")}
+          />
+        </FormField>
+      )}
+      <FormField label={t("auth.email")} error={props.errors.email?.message}>
+        <Input
+          autoComplete="email"
+          fullWidth
+          inputMode="email"
+          {...props.register("email")}
+        />
+      </FormField>
+      <FormField
+        label={t("auth.password")}
+        error={props.errors.password?.message}
+      >
+        <Input
+          autoComplete={
+            props.mode === "login" ? "current-password" : "new-password"
+          }
+          fullWidth
+          type="password"
+          {...props.register("password")}
+        />
+      </FormField>
+      {props.error !== undefined && (
+        <Alert status="danger" role="alert">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Description>
+              {errorMessage(props.error, t)}
+            </Alert.Description>
+          </Alert.Content>
+        </Alert>
+      )}
+      <Button
+        className={primaryButtonClassName}
+        isDisabled={props.pending}
+        type="submit"
+      >
+        {t(`auth.${props.mode}.submit`)}
+      </Button>
+    </Form>
   );
 }
 
@@ -217,11 +265,15 @@ interface FormFieldProps {
 
 function FormField({ children, error, label }: FormFieldProps) {
   return (
-    <label className="form-field">
-      <span>{label}</span>
+    <TextField
+      className={styles.field}
+      fullWidth
+      isInvalid={error !== undefined}
+    >
+      <Label>{label}</Label>
       {children}
-      {error !== undefined && <small>{error}</small>}
-    </label>
+      {error !== undefined && <FieldError>{error}</FieldError>}
+    </TextField>
   );
 }
 
@@ -236,17 +288,17 @@ interface AuthenticatedCardProps {
 function AuthenticatedCard(props: AuthenticatedCardProps) {
   const { t } = useTranslation();
   return (
-    <main className="auth-shell auth-shell--center">
+    <main className={`${styles.shell} ${styles.shellCentered}`}>
       <LanguageSelector />
-      <section className="auth-card">
-        <header>
-          <p className="auth-kicker">
+      <Card className={styles.card}>
+        <Card.Header className={styles.cardHeader}>
+          <p className={styles.kicker}>
             {props.isAdmin ? t("auth.admin") : t("auth.member")}
           </p>
           <h2>{t("auth.welcome", { name: props.displayName })}</h2>
           <p>{props.email}</p>
-        </header>
-        <div>
+        </Card.Header>
+        <Card.Content className={styles.cardContent}>
           <p>
             {t(
               props.isAdmin
@@ -254,31 +306,49 @@ function AuthenticatedCard(props: AuthenticatedCardProps) {
                 : "auth.memberDescription",
             )}
           </p>
-        </div>
-        <footer>
-          <button
-            className="secondary-button"
-            disabled={props.isLoggingOut}
+        </Card.Content>
+        <Card.Footer className={styles.cardFooter}>
+          <Button
+            className={secondaryButtonClassName}
+            isDisabled={props.isLoggingOut}
             onClick={props.onLogout}
             type="button"
           >
             {t("auth.logout")}
-          </button>
-        </footer>
-      </section>
+          </Button>
+        </Card.Footer>
+      </Card>
     </main>
   );
 }
 
-function StatusCard({ text }: { readonly text: string }) {
+function StatusCard({
+  status,
+  text,
+}: {
+  readonly status: "error" | "loading";
+  readonly text: string;
+}) {
   return (
-    <main className="auth-shell auth-shell--center">
+    <main className={`${styles.shell} ${styles.shellCentered}`}>
       <LanguageSelector />
-      <section className="auth-card">
-        <div>
-          <p role="status">{text}</p>
-        </div>
-      </section>
+      <Card className={styles.card}>
+        <Card.Content className={styles.cardContent}>
+          {status === "loading" ? (
+            <div className={styles.statusContent} role="status">
+              <Spinner aria-hidden="true" size="sm" />
+              <span>{text}</span>
+            </div>
+          ) : (
+            <Alert status="danger" role="alert">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>{text}</Alert.Description>
+              </Alert.Content>
+            </Alert>
+          )}
+        </Card.Content>
+      </Card>
     </main>
   );
 }

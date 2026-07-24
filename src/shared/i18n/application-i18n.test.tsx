@@ -20,12 +20,10 @@ describe("ApplicationI18nProvider", () => {
       </ApplicationI18nProvider>,
     );
 
-    fireEvent.change(screen.getByLabelText("语言"), {
-      target: { value: "en-GB" },
-    });
+    fireEvent.click(screen.getByRole("radio", { name: "English" }));
 
     await waitFor(() => {
-      expect(screen.getByLabelText("Language")).toBeTruthy();
+      expect(screen.getByRole("radiogroup", { name: "Language" })).toBeTruthy();
       expect(document.documentElement.lang).toBe("en-GB");
     });
   });

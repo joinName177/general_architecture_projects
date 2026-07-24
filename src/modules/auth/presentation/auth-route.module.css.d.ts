@@ -1,0 +1,14 @@
+export declare const card: string;
+export declare const cardContent: string;
+export declare const cardFooter: string;
+export declare const cardHeader: string;
+export declare const description: string;
+export declare const field: string;
+export declare const form: string;
+export declare const heading: string;
+export declare const intro: string;
+export declare const kicker: string;
+export declare const modeSwitch: string;
+export declare const shell: string;
+export declare const shellCentered: string;
+export declare const statusContent: string;

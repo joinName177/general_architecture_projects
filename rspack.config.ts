@@ -48,8 +48,37 @@ export default defineConfig({
         ],
       },
       {
+        test: /\.module\.css$/u,
+        type: "css/module",
+        use: [
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: {
+                  "@tailwindcss/postcss": {},
+                },
+              },
+            },
+          },
+        ],
+      },
+      {
         test: /\.css$/u,
+        exclude: /\.module\.css$/u,
         type: "css",
+        use: [
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: {
+                  "@tailwindcss/postcss": {},
+                },
+              },
+            },
+          },
+        ],
       },
     ],
   },

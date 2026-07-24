@@ -151,7 +151,7 @@ const runtimeConfig = { releaseId: "release-2026-07-24" };
 | 间距 Token | `--space-content-inline`  | `--margin-16`                            |
 | 遥测事件   | `agent.created`           | `createAgentEvent`                       |
 
-Tailwind utility 仅使用语义 Token 对应的 class 或项目已定义的语义组合；不得为绕过 Token 添加以具体颜色、像素值或序号命名的业务 class。
+原始调色板 Token 使用 `--palette-<hue>-<shade>`，并按浅到深排序，例如 `--palette-blue-500`；它们只允许在 `tokens.css` 内为语义 Token 赋值。业务 CSS Module 只使用语义 Token，例如 `--color-surface-default` 或 `--space-content-inline`，不得为绕过 Token 添加以具体颜色、像素值或序号命名的业务 class。
 
 ## 9. 测试命名
 

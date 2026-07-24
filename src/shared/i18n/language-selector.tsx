@@ -1,32 +1,46 @@
-import { Languages } from "lucide-react";
+import { radioGroupVariants, radioVariants } from "@heroui/styles";
+import { Radio, RadioGroup } from "react-aria-components/RadioGroup";
 import { useTranslation } from "react-i18next";
 
 import { useApplicationI18n } from "@/shared/i18n/application-i18n";
 import { isSupportedLanguage, languageOptions } from "@/shared/i18n/language";
+
+import * as styles from "./language-selector.module.css";
+
+const languageRadioStyles = radioVariants();
 
 export function LanguageSelector() {
   const { t } = useTranslation();
   const { language, setLanguage } = useApplicationI18n();
 
   return (
-    <label className="language-selector">
-      <Languages aria-hidden="true" size={18} strokeWidth={2} />
-      <span>{t("language.label")}</span>
-      <select
-        aria-label={t("language.label")}
-        value={language}
-        onChange={(event) => {
-          if (isSupportedLanguage(event.target.value)) {
-            setLanguage(event.target.value);
-          }
-        }}
-      >
-        {languageOptions.map((option) => (
-          <option key={option.value} value={option.value}>
+    <RadioGroup
+      aria-label={t("language.label")}
+      className={`${radioGroupVariants()} ${styles.selector}`}
+      onChange={(nextLanguage) => {
+        if (isSupportedLanguage(nextLanguage)) {
+          setLanguage(nextLanguage);
+        }
+      }}
+      value={language}
+    >
+      {languageOptions.map((option) => (
+        <Radio
+          className={languageRadioStyles.base()}
+          key={option.value}
+          value={option.value}
+        >
+          <span className={languageRadioStyles.control()}>
+            <span
+              aria-hidden="true"
+              className={languageRadioStyles.indicator()}
+            />
+          </span>
+          <span className={languageRadioStyles.content()}>
             {t(option.labelKey)}
-          </option>
-        ))}
-      </select>
-    </label>
+          </span>
+        </Radio>
+      ))}
+    </RadioGroup>
   );
 }
