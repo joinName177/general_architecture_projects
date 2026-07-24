@@ -1,0 +1,140 @@
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  instructions-check:
+    name: instructions-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: instructions:check
+
+  profile-check:
+    name: profile-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: profile:check
+
+  toolchain-check:
+    name: toolchain-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: toolchain:check
+
+  generated-code-drift:
+    name: generated-code-drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: generated:check
+
+  format-check:
+    name: format-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: format:check
+
+  commit-policy-check:
+    name: commit-policy-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        with:
+          script: commit:ci-check
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: typecheck
+
+  lint-zero-warning:
+    name: lint-zero-warning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: lint
+
+  architecture-check:
+    name: architecture-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: architecture:check
+
+  cycle-check:
+    name: cycle-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: cycle:check
+
+  diagram-check:
+    name: diagram-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: diagram:check
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          install-browser: "true"
+          script: test:ci
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: build
+
+  security-check:
+    name: security-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: ./.github/actions/pnpm-check
+        with:
+          script: security:check

@@ -4,7 +4,7 @@ import {
   detectBrowserLanguage,
   getLocalizedName,
   matchSupportedLanguage,
-} from "@/shared/i18n/language";
+} from "~/shared/i18n/language";
 
 describe("language", () => {
   it("matches supported locales by exact code and language prefix", () => {

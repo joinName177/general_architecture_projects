@@ -14,7 +14,7 @@ export const moduleCatalog: readonly ModuleDefinition[] = [
     path: "*",
     lazy: async () => {
       const { AuthRoute } =
-        await import("@/modules/auth/presentation/auth-route");
+        await import("~/modules/auth/presentation/auth-route");
       return { Component: AuthRoute };
     },
   },

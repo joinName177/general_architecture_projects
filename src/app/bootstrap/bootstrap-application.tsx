@@ -1,6 +1,6 @@
-import { ApplicationProviders } from "@/app/providers/application-providers";
-import { AppRouter } from "@/app/router/app-router";
-import type { RuntimeConfig } from "@/app/bootstrap/runtime-config";
+import { ApplicationProviders } from "~/app/providers/application-providers";
+import { AppRouter } from "~/app/router/app-router";
+import type { RuntimeConfig } from "~/app/bootstrap/runtime-config";
 
 interface BootstrapApplicationProps {
   readonly runtimeConfig: RuntimeConfig;

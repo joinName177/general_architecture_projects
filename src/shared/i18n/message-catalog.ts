@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from "@/shared/i18n/language";
+import type { SupportedLanguage } from "~/shared/i18n/language";
 
 export interface LocalizedMessage {
   readonly "en-GB": string;

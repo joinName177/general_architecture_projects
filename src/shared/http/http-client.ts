@@ -1,14 +1,12 @@
 import type { z } from "zod";
 
-import { zErrorResponse } from "@/generated/dify-agent-api/zod.gen";
-
-export class ApiError extends Error {
+export class HttpResponseError extends Error {
   public constructor(
-    public readonly code: string,
     public readonly status: number,
+    public readonly body: unknown,
   ) {
-    super(code);
-    this.name = "ApiError";
+    super(`HTTP request failed with status ${status}.`);
+    this.name = "HttpResponseError";
   }
 }
 
@@ -46,14 +44,21 @@ export class HttpClient {
     });
 
     if (!response.ok) {
-      const parsed = zErrorResponse.safeParse(await response.json());
-      throw new ApiError(
-        parsed.success ? parsed.data.code : "UNEXPECTED_RESPONSE",
+      throw new HttpResponseError(
         response.status,
+        await readResponseBody(response),
       );
     }
 
     if (response.status === 204) return schema.parse(undefined);
     return schema.parse(await response.json());
+  }
+}
+
+async function readResponseBody(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch {
+    return undefined;
   }
 }

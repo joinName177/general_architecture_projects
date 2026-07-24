@@ -1,7 +1,9 @@
 import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
+import promise from "eslint-plugin-promise";
 import reactHooks from "eslint-plugin-react-hooks";
+import query from "@tanstack/eslint-plugin-query";
 import tseslint from "typescript-eslint";
 
 const typedTypeScriptConfigs = tseslint.configs.recommendedTypeChecked.map(
@@ -19,6 +21,8 @@ export default tseslint.config(
   ...typedTypeScriptConfigs,
   reactHooks.configs.flat.recommended,
   jsxA11y.flatConfigs.recommended,
+  ...query.configs["flat/recommended"],
+  promise.configs["flat/recommended"],
   {
     files: ["**/*.{cjs,mjs}"],
     languageOptions: {
@@ -73,6 +77,7 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      "@tanstack/query/no-rest-destructuring": "error",
     },
   },
 );

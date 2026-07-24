@@ -8,8 +8,8 @@ import {
 import type { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 
-import { defaultLanguage, isSupportedLanguage } from "@/shared/i18n/language";
-import type { SupportedLanguage } from "@/shared/i18n/language";
+import { defaultLanguage, isSupportedLanguage } from "~/shared/i18n/language";
+import type { SupportedLanguage } from "~/shared/i18n/language";
 
 interface ApplicationI18n {
   readonly formatDate: (

@@ -13,28 +13,27 @@ import { Button } from "react-aria-components/Button";
 import { useForm } from "react-hook-form";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
 
-import { useAuthGateway } from "@/app/providers/application-providers";
+import { AuthError } from "~/modules/auth/application/auth-gateway";
 import type {
   AuthGateway,
   RegisterCommand,
-} from "@/modules/auth/application/auth-gateway";
-import { ApiError } from "@/shared/http/http-client";
-import { LanguageSelector } from "@/shared/i18n/language-selector";
+} from "~/modules/auth/application/auth-gateway";
+import {
+  loginCommandSchema,
+  registerCommandSchema,
+} from "~/modules/auth/application/auth-validation";
+import { useAuthGateway } from "~/modules/auth/presentation/auth-gateway-context";
+import { LanguageSelector } from "~/shared/i18n/language-selector";
+import { useLifecycleScope } from "~/shared/lifecycle/use-lifecycle-scope";
 
 import * as styles from "./auth-route.module.css";
 
-const loginSchema = z.object({ email: z.email(), password: z.string().min(1) });
-const registerSchema = loginSchema.extend({
-  displayName: z.string().trim().min(1).max(80),
-  password: z.string().min(12).max(128),
-});
 type AuthFormValues = RegisterCommand;
-const primaryButtonClassName = buttonVariants({
+const primaryButtonClassName = `${buttonVariants({
   fullWidth: true,
   variant: "primary",
-});
+})} ${styles.primaryAction}`;
 const secondaryButtonClassName = buttonVariants({ variant: "secondary" });
 const modeSwitchButtonClassName = `${buttonVariants({ variant: "tertiary" })} ${styles.modeSwitch}`;
 
@@ -44,16 +43,18 @@ export function AuthRoute() {
 
 export function AuthScreen({ gateway }: { readonly gateway: AuthGateway }) {
   const queryClient = useQueryClient();
+  const lifecycleScope = useLifecycleScope();
   const { t } = useTranslation();
   const [mode, setMode] = useState<"login" | "register">("login");
   const session = useQuery({
-    queryFn: () => gateway.restoreSession(),
+    queryFn: ({ signal }) => gateway.restoreSession({ signal }),
     queryKey: ["auth", "session"],
     staleTime: Number.POSITIVE_INFINITY,
   });
   const logout = useMutation({
-    mutationFn: () => gateway.logout(),
-    onSuccess: () => queryClient.setQueryData(["auth", "session"], null),
+    mutationFn: () =>
+      lifecycleScope.run((signal) => gateway.logout({ signal })),
+    onSettled: () => queryClient.setQueryData(["auth", "session"], null),
   });
 
   if (session.isPending) {
@@ -103,18 +104,23 @@ function AuthForm({
   onModeChange,
 }: AuthFormProps) {
   const { t } = useTranslation();
+  const lifecycleScope = useLifecycleScope();
   const { register, handleSubmit, setError, formState } =
     useForm<AuthFormValues>({ shouldUnregister: true });
   const mutation = useMutation({
     mutationFn: (values: AuthFormValues) =>
-      mode === "login" ? gateway.login(values) : gateway.register(values),
+      lifecycleScope.run((signal) =>
+        mode === "login"
+          ? gateway.login(values, { signal })
+          : gateway.register(values, { signal }),
+      ),
     onSuccess: onAuthenticated,
   });
 
   const submit = handleSubmit(async (values) => {
-    const result = (mode === "login" ? loginSchema : registerSchema).safeParse(
-      values,
-    );
+    const result = (
+      mode === "login" ? loginCommandSchema : registerCommandSchema
+    ).safeParse(values);
     if (!result.success) {
       for (const issue of result.error.issues) {
         const field = issue.path[0];
@@ -354,12 +360,13 @@ function StatusCard({
 }
 
 function errorMessage(error: unknown, t: (key: string) => string): string {
-  if (!(error instanceof ApiError)) return t("auth.errors.unavailable");
-  const messages: Readonly<Record<string, string>> = {
+  if (!(error instanceof AuthError)) return t("auth.errors.unavailable");
+  const messages: Readonly<Record<AuthError["code"], string>> = {
     EMAIL_ALREADY_REGISTERED: t("auth.errors.emailExists"),
     INVALID_CREDENTIALS: t("auth.errors.invalidCredentials"),
     RATE_LIMITED: t("auth.errors.rateLimited"),
+    UNAVAILABLE: t("auth.errors.unavailable"),
     VALIDATION_ERROR: t("auth.errors.validation"),
   };
-  return messages[error.code] ?? t("auth.errors.unavailable");
+  return messages[error.code];
 }

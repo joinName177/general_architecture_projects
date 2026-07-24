@@ -1,12 +1,18 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { i18n } from "@/app/i18n/i18n";
 import {
   ApplicationI18nProvider,
   useApplicationI18n,
-} from "@/shared/i18n/application-i18n";
-import { LanguageSelector } from "@/shared/i18n/language-selector";
+} from "~/shared/i18n/application-i18n";
+import { initializeI18n } from "~/shared/i18n/i18n";
+import { languageMessages } from "~/shared/i18n/language-messages";
+import { LanguageSelector } from "~/shared/i18n/language-selector";
+import { buildTranslationResources } from "~/shared/i18n/message-catalog";
+
+const i18n = initializeI18n(
+  buildTranslationResources({ language: languageMessages }),
+);
 
 beforeEach(async () => {
   await i18n.changeLanguage("zh-CN");

@@ -3,7 +3,7 @@ import { Spinner } from "@heroui/react/spinner";
 import { RouterProvider, createBrowserRouter } from "react-router";
 import { useTranslation } from "react-i18next";
 
-import { moduleCatalog } from "@/app/module-catalog";
+import { moduleCatalog } from "~/app/module-catalog";
 
 import * as styles from "./app-router.module.css";
 

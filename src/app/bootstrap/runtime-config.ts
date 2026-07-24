@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   apiContractId,
   apiContractSha256,
-} from "@/generated/dify-agent-api/contract.gen";
+} from "~/generated/dify-agent-api/contract.gen";
 
 const runtimeConfigSchema = z
   .object({

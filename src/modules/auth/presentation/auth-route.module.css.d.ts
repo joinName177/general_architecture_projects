@@ -9,6 +9,7 @@ export declare const heading: string;
 export declare const intro: string;
 export declare const kicker: string;
 export declare const modeSwitch: string;
+export declare const primaryAction: string;
 export declare const shell: string;
 export declare const shellCentered: string;
 export declare const statusContent: string;

@@ -32,7 +32,7 @@ src/
 
 ## 3. 依赖、状态与契约
 
-依赖方向固定为 `presentation → application ← infrastructure`。Presentation 不得直接 `fetch`；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，Zod 校验输入和所有 API 成功/错误响应，React state 只保存登录/注册模式。i18next 是界面语言和文案资源的唯一 owner：启动时从浏览器偏好检测 `zh-CN` 或 `en-GB`，语言切换只在当前页面会话生效，不写入浏览器持久化；日期与数字统一通过语言上下文封装的 `Intl` 格式化。每个业务模块在自身 Presentation 边界维护按消息键组织的双语资源，中英文必须并排且完整；`app/i18n` 是唯一资源组合与 i18next 初始化点，组件只使用稳定消息 id。
+依赖方向固定为 `presentation → application ← infrastructure`。Application 拥有认证命令、用户视图和稳定错误，不暴露生成的 Transport DTO；Infrastructure 负责生成 DTO、HTTP 错误与 Application 契约之间的映射。Presentation 不得直接 `fetch` 或依赖 Infrastructure；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。这些方向由 ESLint、dependency-cruiser 和直接 fetch 检查共同阻断。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，Zod 校验输入和所有 API 成功/错误响应，React state 只保存登录/注册模式。i18next 是界面语言和文案资源的唯一 owner：启动时从浏览器偏好检测 `zh-CN` 或 `en-GB`，语言切换只在当前页面会话生效，不写入浏览器持久化；日期与数字统一通过语言上下文封装的 `Intl` 格式化。每个业务模块在自身 Presentation 边界维护按消息键组织的双语资源，中英文必须并排且完整；`app/i18n` 是唯一资源组合与 i18next 初始化点，组件只使用稳定消息 id。
 
 `contracts/dify-agent-api/v1/openapi.yaml` 与 `.sha256` 是唯一 transport 来源。`pnpm generate:api` 产生只读类型和 Schema，`generated:check` 在临时目录重新生成并进行逐文件零漂移比较。Runtime Config 必须同时匹配 contract id 与 SHA-256；远程 API 必须使用 HTTPS，配置不合法时应用 fail-closed。
 
@@ -40,7 +40,7 @@ src/
 
 ## 4. 认证与安全
 
-认证策略由 [ADR 0001](docs/adr/0001-local-auth-session.md) 固化。用户凭据只发送给 Go API；短期随机 access token 仅在 `HttpClient` 内存保存，长期 refresh token 仅由服务端 HttpOnly、SameSite Cookie 承载。前端启动调用 refresh 恢复会话，注销无论服务端响应如何都清除内存 token。错误界面只映射稳定错误码，不展示服务端原文或敏感数据。
+认证策略由 [ADR 0001](docs/adr/0001-local-auth-session.md) 固化。用户凭据只发送给 Go API；短期随机 access token 仅在 `HttpClient` 内存保存，长期 refresh token 仅由服务端 HttpOnly、SameSite Cookie 承载。前端启动调用 refresh 恢复会话；Query 的取消信号贯穿 Gateway 到 fetch，Mutation 由组件生命周期统一取消。注销无论服务端响应如何都清除内存 token 和 Query 会话。错误界面只映射 Application 的稳定错误码，不展示服务端原文或敏感数据。
 
 `auth` 模块不自行判断或提升角色；超级管理员身份完全来自后端验证后的 `UserResponse.role`。前端仅据此展示身份状态，所有权限控制仍必须由 API 执行。
 
@@ -52,4 +52,4 @@ HeroUI v3 是交互控件、反馈状态和容器组件的唯一基础体系，�
 
 生产构建路由级拆包并执行 gzip 预算：初始 JavaScript 不超过 150 KiB，CSS 不超过 75 KiB。静态制品与公开 Runtime Config 分离发布，部署时从 `public/runtime-config.example.json` 生成实际 `runtime-config.json`，不得把 token、密码或数据库信息写入其中。
 
-合并前执行 `pnpm verify`，覆盖 Profile、契约生成漂移、格式、类型、Lint、依赖环、架构图、单元/组件测试和生产构建。认证需求、残余风险、SLO、Runbook 与数据清单分别维护在 `docs/requirements-risk-matrix.md`、`docs/slo.md`、`docs/runbook-authentication.md` 与 `docs/data-classification.md`。
+合并前执行 `pnpm verify`，覆盖 Profile、契约生成漂移、格式、类型、Lint、依赖环、架构图、覆盖率阈值、Chromium E2E、axe 可访问性、生产构建、依赖漏洞、许可证与 Secret 检查。GitHub Actions 使用 `CONTRIBUTING.md` 规定的稳定 Required Check id 重跑相同权威脚本。认证需求、残余风险、SLO、Runbook 与数据清单分别维护在 `docs/requirements-risk-matrix.md`、`docs/slo.md`、`docs/runbook-authentication.md` 与 `docs/data-classification.md`。

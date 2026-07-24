@@ -6,3 +6,4 @@
 4. 401 激增时区分登录失败、refresh 过期和会话撤销；429 激增时检查恶意流量与限流配置。
 5. 若管理员无法登录，确认 Secret 已注入且数据库中该邮箱角色为 `super_admin`；不得直接改密码哈希或提升普通账号。
 6. 回滚时切换到上一完整静态制品，同时确保其 OpenAPI digest 与仍在运行的 API 兼容。
+7. 合并前执行 `pnpm verify`；首次配置环境时先运行 `pnpm exec playwright install chromium`。E2E 失败时保留的 trace 不得上传包含真实凭据或用户数据。

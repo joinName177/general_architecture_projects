@@ -1,12 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { relative, isAbsolute } from "node:path";
 
-const secretPatterns = [
-  /-----BEGIN (?:EC|OPENSSH|PGP|RSA) PRIVATE KEY-----/u,
-  /AKIA[0-9A-Z]{16}/u,
-  /gh[pousr]_[A-Za-z0-9_]{20,}/u,
-  /(?:api|auth|private|secret)[_-]?key\s*[:=]\s*["'][^"']{8,}/iu,
-];
+import { containsPotentialSecret } from "./secret-patterns.mjs";
 
 const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
   encoding: "utf8",
@@ -29,7 +24,7 @@ for (const filePath of stagedFiles) {
     encoding: "utf8",
   });
 
-  if (secretPatterns.some((pattern) => pattern.test(stagedContents))) {
+  if (containsPotentialSecret(stagedContents)) {
     throw new Error(`Potential secret detected in staged file: ${filePath}`);
   }
 }

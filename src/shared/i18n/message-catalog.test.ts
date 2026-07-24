@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildTranslationResources,
   defineMessages,
-} from "@/shared/i18n/message-catalog";
+} from "~/shared/i18n/message-catalog";
 
 describe("message catalog", () => {
   it("builds locale resources from colocated messages", () => {

@@ -50,14 +50,13 @@ if (moduleStylesheetPathsWithoutTypes.length > 0) {
 const sourceFilePaths = sourcePaths.filter(
   (path) => path.endsWith(".ts") || path.endsWith(".tsx"),
 );
-const nonEntryGlobalStyleImports = (
-  await Promise.all(
-    sourceFilePaths.map(async (path) => ({
-      path,
-      source: await readFile(`src/${path}`, "utf8"),
-    })),
-  )
-).filter(({ path, source }) => {
+const sourceFiles = await Promise.all(
+  sourceFilePaths.map(async (path) => ({
+    path,
+    source: await readFile(`src/${path}`, "utf8"),
+  })),
+);
+const nonEntryGlobalStyleImports = sourceFiles.filter(({ path, source }) => {
   const stylesheetImports = [
     ...source.matchAll(/(?:from\s+|import\s+)["']([^"']+\.css)["']/g),
   ].map((match) => match[1]);
@@ -74,6 +73,23 @@ const nonEntryGlobalStyleImports = (
 if (nonEntryGlobalStyleImports.length > 0) {
   throw new Error(
     `Global styles may only be imported by src/main.tsx: ${nonEntryGlobalStyleImports
+      .map(({ path }) => path)
+      .join(", ")}`,
+  );
+}
+
+const directFetchCallers = sourceFiles.filter(
+  ({ path, source }) =>
+    /\bfetch\s*\(/u.test(source) &&
+    path !== "app/bootstrap/runtime-config.ts" &&
+    path !== "shared/http/http-client.ts" &&
+    !path.endsWith(".test.ts") &&
+    !path.endsWith(".test.tsx"),
+);
+
+if (directFetchCallers.length > 0) {
+  throw new Error(
+    `Remote I/O must use the bootstrap loader or HttpClient: ${directFetchCallers
       .map(({ path }) => path)
       .join(", ")}`,
   );

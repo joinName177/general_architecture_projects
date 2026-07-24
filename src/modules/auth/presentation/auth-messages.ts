@@ -1,4 +1,4 @@
-import { defineMessages } from "@/shared/i18n/message-catalog";
+import { defineMessages } from "~/shared/i18n/message-catalog";
 
 export const authMessages = defineMessages({
   admin: {

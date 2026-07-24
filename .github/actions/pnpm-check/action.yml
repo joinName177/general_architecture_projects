@@ -1,0 +1,33 @@
+name: Run pnpm check
+description: Install the pinned toolchain and run one package script
+
+inputs:
+  install-browser:
+    description: Install Chromium before running the script
+    default: "false"
+  script:
+    description: Exact package script to run
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+      with:
+        node-version: 24.18.0
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+    - name: Install Chromium
+      if: inputs.install-browser == 'true'
+      shell: bash
+      run: pnpm exec playwright install --with-deps chromium
+    - name: Run check
+      env:
+        PACKAGE_SCRIPT: ${{ inputs.script }}
+      shell: bash
+      run: pnpm "$PACKAGE_SCRIPT"

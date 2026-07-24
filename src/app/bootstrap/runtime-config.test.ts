@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { loadRuntimeConfig } from "@/app/bootstrap/runtime-config";
+import { loadRuntimeConfig } from "~/app/bootstrap/runtime-config";
 import {
   apiContractId,
   apiContractSha256,
-} from "@/generated/dify-agent-api/contract.gen";
+} from "~/generated/dify-agent-api/contract.gen";
 
 afterEach(() => vi.unstubAllGlobals());
 

@@ -88,6 +88,15 @@
   justify-self: start;
 }
 
+.primaryAction {
+  background: var(--color-action-primary-background);
+  color: var(--color-action-primary-text);
+}
+
+.primaryAction[data-hovered] {
+  background: var(--color-action-primary-background-hover);
+}
+
 .statusContent {
   display: flex;
   align-items: center;

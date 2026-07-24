@@ -1,8 +1,8 @@
 import { createRoot } from "react-dom/client";
 
-import { BootstrapApplication } from "@/app/bootstrap/bootstrap-application";
-import { loadRuntimeConfig } from "@/app/bootstrap/runtime-config";
-import "@/styles/theme.css";
+import { BootstrapApplication } from "~/app/bootstrap/bootstrap-application";
+import { loadRuntimeConfig } from "~/app/bootstrap/runtime-config";
+import "~/styles/theme.css";
 
 import * as styles from "./app/bootstrap/bootstrap-error.module.css";
 
@@ -17,6 +17,7 @@ const root = createRoot(rootElement);
 void loadRuntimeConfig()
   .then((runtimeConfig) => {
     root.render(<BootstrapApplication runtimeConfig={runtimeConfig} />);
+    return undefined;
   })
   .catch(() => {
     root.render(

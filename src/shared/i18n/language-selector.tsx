@@ -2,8 +2,8 @@ import { radioGroupVariants, radioVariants } from "@heroui/styles";
 import { Radio, RadioGroup } from "react-aria-components/RadioGroup";
 import { useTranslation } from "react-i18next";
 
-import { useApplicationI18n } from "@/shared/i18n/application-i18n";
-import { isSupportedLanguage, languageOptions } from "@/shared/i18n/language";
+import { useApplicationI18n } from "~/shared/i18n/application-i18n";
+import { isSupportedLanguage, languageOptions } from "~/shared/i18n/language";
 
 import * as styles from "./language-selector.module.css";
 

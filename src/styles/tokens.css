@@ -99,6 +99,9 @@
   --color-border-default: var(--palette-slate-300);
   --color-focus-ring: rgb(70 110 231 / 18%);
   --color-accent-subtle: rgb(77 118 255 / 18%);
+  --color-action-primary-background: var(--palette-blue-700);
+  --color-action-primary-background-hover: var(--palette-blue-800);
+  --color-action-primary-text: var(--palette-slate-50);
   --color-canvas-start: #f8faff;
   --color-canvas-end: #e9eef7;
 }
@@ -116,6 +119,9 @@
   --color-border-default: var(--palette-slate-600);
   --color-focus-ring: rgb(147 197 253 / 35%);
   --color-accent-subtle: rgb(59 130 246 / 18%);
+  --color-action-primary-background: var(--palette-blue-300);
+  --color-action-primary-background-hover: var(--palette-blue-200);
+  --color-action-primary-text: var(--palette-slate-950);
   --color-canvas-start: var(--palette-slate-950);
   --color-canvas-end: var(--palette-slate-900);
 }

@@ -17,7 +17,7 @@ export default defineConfig({
   resolve: {
     extensions: ["...", ".ts", ".tsx"],
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "~": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   module: {

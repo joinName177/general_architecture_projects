@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { HttpAuthGateway } from "@/modules/auth/infrastructure/http-auth-gateway";
-import { ApiError, HttpClient } from "@/shared/http/http-client";
+import { AuthError } from "~/modules/auth/application/auth-gateway";
+import { HttpAuthGateway } from "~/modules/auth/infrastructure/http-auth-gateway";
+import { HttpClient } from "~/shared/http/http-client";
 
 const authResponse = {
   accessToken: "a".repeat(40),
@@ -65,7 +66,9 @@ describe("HttpAuthGateway", () => {
 
     await expect(gateway.restoreSession()).resolves.toBeNull();
   });
+});
 
+describe("HttpAuthGateway error mapping", () => {
   it("preserves stable server error codes", async () => {
     vi.stubGlobal(
       "fetch",
@@ -90,6 +93,84 @@ describe("HttpAuthGateway", () => {
         email: "new@example.test",
         password: "a-secure-password",
       }),
-    ).rejects.toEqual(new ApiError("EMAIL_ALREADY_REGISTERED", 409));
+    ).rejects.toEqual(new AuthError("EMAIL_ALREADY_REGISTERED"));
+  });
+
+  it("maps malformed remote errors to a safe application error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(
+          new Response("<html>upstream failure</html>", { status: 502 }),
+        ),
+    );
+    const gateway = new HttpAuthGateway(
+      new HttpClient("https://api.example.test/api/v1"),
+    );
+
+    await expect(
+      gateway.login({
+        email: "admin@example.test",
+        password: "local-admin-password",
+      }),
+    ).rejects.toEqual(new AuthError("UNAVAILABLE"));
+  });
+});
+
+describe("HttpAuthGateway lifecycle", () => {
+  it("clears the access token even when remote logout fails", async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json(authResponse))
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            code: "UNAVAILABLE",
+            message: "Unavailable.",
+            requestId: "request-3",
+          },
+          { status: 503 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            code: "INVALID_SESSION",
+            message: "Authentication required.",
+            requestId: "request-4",
+          },
+          { status: 401 },
+        ),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const gateway = new HttpAuthGateway(
+      new HttpClient("https://api.example.test/api/v1"),
+    );
+
+    await gateway.login({
+      email: "admin@example.test",
+      password: "local-admin-password",
+    });
+    await expect(gateway.logout()).rejects.toEqual(
+      new AuthError("UNAVAILABLE"),
+    );
+    await gateway.restoreSession();
+
+    const refreshHeaders = new Headers(fetchMock.mock.calls[2]?.[1]?.headers);
+    expect(refreshHeaders.has("Authorization")).toBe(false);
+  });
+
+  it("passes cancellation through without replacing the abort reason", async () => {
+    const abortError = new DOMException("Request aborted.", "AbortError");
+    vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockRejectedValue(abortError));
+    const gateway = new HttpAuthGateway(
+      new HttpClient("https://api.example.test/api/v1"),
+    );
+    const controller = new AbortController();
+
+    await expect(
+      gateway.restoreSession({ signal: controller.signal }),
+    ).rejects.toBe(abortError);
   });
 });

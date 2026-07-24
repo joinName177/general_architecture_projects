@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { applicationTranslationResources } from "@/app/i18n/application-messages";
+import { applicationTranslationResources } from "~/app/i18n/application-messages";
 
 describe("applicationTranslationResources", () => {
   it("composes module-owned messages under stable message ids", () => {
