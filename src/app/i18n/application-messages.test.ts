@@ -6,10 +6,12 @@ describe("applicationTranslationResources", () => {
   it("composes module-owned messages under stable message ids", () => {
     expect(applicationTranslationResources["zh-CN"].translation).toMatchObject({
       auth: { login: { title: "登录账号" } },
+      home: { modelLabel: "模型" },
       language: { label: "语言" },
     });
     expect(applicationTranslationResources["en-GB"].translation).toMatchObject({
       auth: { login: { title: "Sign in" } },
+      home: { modelLabel: "Model" },
       language: { label: "Language" },
     });
   });

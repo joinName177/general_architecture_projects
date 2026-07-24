@@ -1,15 +1,6 @@
 import { defineMessages } from "~/shared/i18n/message-catalog";
 
 export const authMessages = defineMessages({
-  admin: {
-    "en-GB": "Super administrator",
-    "zh-CN": "超级管理员",
-  },
-  adminDescription: {
-    "en-GB":
-      "You have system-level administrative access. Additional management capabilities will appear here as they become available.",
-    "zh-CN": "你拥有系统级管理权限。后续管理能力会在这里逐步开放。",
-  },
   displayName: {
     "en-GB": "Display name",
     "zh-CN": "显示名称",
@@ -75,14 +66,6 @@ export const authMessages = defineMessages({
     "en-GB": "Sign out",
     "zh-CN": "退出登录",
   },
-  member: {
-    "en-GB": "Team member",
-    "zh-CN": "团队成员",
-  },
-  memberDescription: {
-    "en-GB": "Your account is ready. You can start using the workspace.",
-    "zh-CN": "账号已就绪，你可以开始使用工作台。",
-  },
   password: {
     "en-GB": "Password",
     "zh-CN": "密码",
@@ -127,9 +110,5 @@ export const authMessages = defineMessages({
       "en-GB": "Registration passwords must contain at least 12 characters.",
       "zh-CN": "注册密码至少 12 位。",
     },
-  },
-  welcome: {
-    "en-GB": "Hello, {{name}}",
-    "zh-CN": "你好，{{name}}",
   },
 });

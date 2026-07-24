@@ -85,6 +85,8 @@
   --radius-md: 0.75rem;
   --radius-lg: 1.5rem;
   --shadow-raised: 0 1.5rem 5rem rgb(31 50 91 / 14%);
+  --shadow-home-composer: 0 1.75rem 5rem rgb(45 42 36 / 10%);
+  --radius-home-composer: 2rem;
   --layout-viewport-min-inline-size: 20rem;
 
   /* Components consume semantic aliases only; themes remap this layer. */
@@ -104,6 +106,16 @@
   --color-action-primary-text: var(--palette-slate-50);
   --color-canvas-start: #f8faff;
   --color-canvas-end: #e9eef7;
+  --color-home-accent: #b88b4a;
+  --color-home-accent-text: #81602f;
+  --color-home-action-hover: #31312e;
+  --color-home-ambient: rgb(231 218 193 / 55%);
+  --color-home-border: rgb(183 174 157 / 48%);
+  --color-home-border-focus: rgb(129 96 47 / 58%);
+  --color-home-canvas: #f6f3ed;
+  --color-home-ink: #1f201e;
+  --color-home-option-selected: rgb(184 139 74 / 12%);
+  --color-home-text-secondary: var(--palette-slate-600);
 }
 
 :root[data-theme="dark"] {
@@ -124,4 +136,14 @@
   --color-action-primary-text: var(--palette-slate-950);
   --color-canvas-start: var(--palette-slate-950);
   --color-canvas-end: var(--palette-slate-900);
+  --color-home-accent: #d3aa6d;
+  --color-home-accent-text: #e6c794;
+  --color-home-action-hover: #2e3230;
+  --color-home-ambient: rgb(112 88 50 / 24%);
+  --color-home-border: rgb(148 163 184 / 38%);
+  --color-home-border-focus: rgb(230 199 148 / 58%);
+  --color-home-canvas: #171917;
+  --color-home-ink: #f3f1eb;
+  --color-home-option-selected: rgb(211 170 109 / 14%);
+  --color-home-text-secondary: var(--palette-slate-300);
 }

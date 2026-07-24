@@ -8,6 +8,7 @@ import type {
   AuthGateway,
 } from "~/modules/auth/application/auth-gateway";
 import { authMessages } from "~/modules/auth/presentation/auth-messages";
+import { authenticatedHomeMessages } from "~/modules/auth/presentation/authenticated-home-messages";
 import { AuthScreen } from "~/modules/auth/presentation/auth-route";
 import { ApplicationI18nProvider } from "~/shared/i18n/application-i18n";
 import { initializeI18n } from "~/shared/i18n/i18n";
@@ -17,6 +18,7 @@ import { buildTranslationResources } from "~/shared/i18n/message-catalog";
 const i18n = initializeI18n(
   buildTranslationResources({
     auth: authMessages,
+    home: authenticatedHomeMessages,
     language: languageMessages,
   }),
 );
@@ -56,7 +58,9 @@ describe("AuthScreen", () => {
 
     await waitFor(() =>
       expect(
-        screen.getByRole("heading", { name: "你好，管理员" }),
+        screen.getByRole("heading", {
+          name: "管理员，今天想一起解决什么？",
+        }),
       ).toBeTruthy(),
     );
     expect(login).toHaveBeenCalledOnce();
@@ -65,7 +69,17 @@ describe("AuthScreen", () => {
       password: "local-admin-password",
     });
     expect(login.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
-    expect(screen.getByText("超级管理员")).toBeTruthy();
+    const sendButton = screen.getByRole("button", { name: "发送消息" });
+    expect(sendButton.getAttribute("disabled")).not.toBeNull();
+    fireEvent.change(screen.getByLabelText("向智能体发送消息"), {
+      target: { value: "帮我规划今天的工作" },
+    });
+    const fastModel = screen.getByRole("radio", { name: "快速模型" });
+    fireEvent.click(fastModel);
+    expect(fastModel.matches(":checked")).toBe(true);
+    expect(sendButton.getAttribute("disabled")).toBeNull();
+    fireEvent.click(sendButton);
+    expect(screen.getByText(/对话能力将在下一阶段接入/u)).toBeTruthy();
   });
 });
 
@@ -80,7 +94,9 @@ describe("AuthScreen logout", () => {
     };
     renderAuthScreen(gateway);
 
-    await screen.findByRole("heading", { name: "你好，管理员" });
+    await screen.findByRole("heading", {
+      name: "管理员，今天想一起解决什么？",
+    });
     fireEvent.click(screen.getByRole("button", { name: "退出登录" }));
 
     await screen.findByRole("heading", { name: "登录账号" });

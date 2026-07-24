@@ -53,9 +53,31 @@ test("should complete login and logout through the browser", async ({
   await page.getByRole("button", { name: "Sign in" }).click();
 
   await expect(
-    page.getByRole("heading", { name: "Hello, Admin User" }),
+    page.getByRole("heading", {
+      name: "What can we work through, Admin User?",
+    }),
   ).toBeVisible();
-  await expect(page.getByText("Super administrator")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Send message" }),
+  ).toBeDisabled();
+  await page.getByLabel("Message your agent").fill("Plan my next task");
+  await expect(
+    page.getByRole("button", { name: "Send message" }),
+  ).toBeEnabled();
+  await page
+    .getByRole("radiogroup", { name: "Model" })
+    .getByText("Fast", { exact: true })
+    .click();
+  await expect(page.getByRole("radio", { name: "Fast" })).toBeChecked();
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(
+    page.getByText(
+      "Conversation support is coming next. Your draft is still here.",
+    ),
+  ).toBeVisible();
+
+  const homeAccessibilityResults = await new AxeBuilder({ page }).analyze();
+  expect(homeAccessibilityResults.violations).toEqual([]);
 
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();

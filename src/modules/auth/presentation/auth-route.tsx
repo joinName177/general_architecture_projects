@@ -27,6 +27,7 @@ import { useAuthGateway } from "~/modules/auth/presentation/auth-gateway-context
 import { LanguageSelector } from "~/shared/i18n/language-selector";
 import { useLifecycleScope } from "~/shared/lifecycle/use-lifecycle-scope";
 
+import { AuthenticatedHome } from "./authenticated-home";
 import * as styles from "./auth-route.module.css";
 
 type AuthFormValues = RegisterCommand;
@@ -34,7 +35,6 @@ const primaryButtonClassName = `${buttonVariants({
   fullWidth: true,
   variant: "primary",
 })} ${styles.primaryAction}`;
-const secondaryButtonClassName = buttonVariants({ variant: "secondary" });
 const modeSwitchButtonClassName = `${buttonVariants({ variant: "tertiary" })} ${styles.modeSwitch}`;
 
 export function AuthRoute() {
@@ -65,10 +65,8 @@ export function AuthScreen({ gateway }: { readonly gateway: AuthGateway }) {
   }
   if (session.data !== null) {
     return (
-      <AuthenticatedCard
+      <AuthenticatedHome
         displayName={session.data.displayName}
-        email={session.data.email}
-        isAdmin={session.data.role === "super_admin"}
         isLoggingOut={logout.isPending}
         onLogout={() => logout.mutate()}
       />
@@ -280,51 +278,6 @@ function FormField({ children, error, label }: FormFieldProps) {
       {children}
       {error !== undefined && <FieldError>{error}</FieldError>}
     </TextField>
-  );
-}
-
-interface AuthenticatedCardProps {
-  readonly displayName: string;
-  readonly email: string;
-  readonly isAdmin: boolean;
-  readonly isLoggingOut: boolean;
-  readonly onLogout: () => void;
-}
-
-function AuthenticatedCard(props: AuthenticatedCardProps) {
-  const { t } = useTranslation();
-  return (
-    <main className={`${styles.shell} ${styles.shellCentered}`}>
-      <LanguageSelector />
-      <Card className={styles.card}>
-        <Card.Header className={styles.cardHeader}>
-          <p className={styles.kicker}>
-            {props.isAdmin ? t("auth.admin") : t("auth.member")}
-          </p>
-          <h2>{t("auth.welcome", { name: props.displayName })}</h2>
-          <p>{props.email}</p>
-        </Card.Header>
-        <Card.Content className={styles.cardContent}>
-          <p>
-            {t(
-              props.isAdmin
-                ? "auth.adminDescription"
-                : "auth.memberDescription",
-            )}
-          </p>
-        </Card.Content>
-        <Card.Footer className={styles.cardFooter}>
-          <Button
-            className={secondaryButtonClassName}
-            isDisabled={props.isLoggingOut}
-            onClick={props.onLogout}
-            type="button"
-          >
-            {t("auth.logout")}
-          </Button>
-        </Card.Footer>
-      </Card>
-    </main>
   );
 }
 
