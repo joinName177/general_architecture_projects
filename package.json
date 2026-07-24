@@ -1,0 +1,90 @@
+{
+  "name": "dify-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": "24.14.0",
+    "pnpm": "11.9.0"
+  },
+  "scripts": {
+    "dev": "rspack serve --config rspack.config.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit --pretty false && tsc -p tsconfig.test.json --noEmit --pretty false && tsc -p tsconfig.build.json --noEmit --pretty false",
+    "instructions:check": "node scripts/instructions-check.mjs",
+    "profile:check": "node scripts/profile-check.mjs",
+    "toolchain:check": "node scripts/toolchain-check.mjs",
+    "generated:check": "node scripts/generated-check.mjs",
+    "architecture:check": "node scripts/architecture-check.mjs",
+    "cycle:check": "depcruise --validate .dependency-cruiser.cjs src",
+    "diagram:check": "node scripts/diagram-check.mjs",
+    "commit:check": "git log -1 --format=%B | commitlint",
+    "staged:check": "lint-staged",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage.enabled=true",
+    "test:e2e": "node scripts/e2e-not-configured.mjs",
+    "build": "rspack build --config rspack.config.ts && node scripts/bundle-budget.mjs",
+    "verify": "pnpm instructions:check && pnpm profile:check && pnpm toolchain:check && pnpm install --frozen-lockfile && pnpm generated:check && pnpm format:check && pnpm commit:check && pnpm typecheck && pnpm lint && pnpm architecture:check && pnpm cycle:check && pnpm diagram:check && pnpm test && pnpm build",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@heroui/react": "3.2.2",
+    "@heroui/styles": "3.2.2",
+    "@tanstack/react-query": "5.101.4",
+    "i18next": "26.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-hook-form": "7.82.0",
+    "react-i18next": "17.0.11",
+    "react-router": "8.3.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.0",
+    "@commitlint/config-conventional": "21.2.0",
+    "@eslint/js": "9.39.5",
+    "@rspack/cli": "2.1.5",
+    "@rspack/core": "2.1.5",
+    "@rspack/dev-server": "2.1.0",
+    "@rspack/plugin-react-refresh": "2.0.2",
+    "@testing-library/react": "16.3.2",
+    "@vitest/coverage-v8": "4.1.10",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "dependency-cruiser": "18.1.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "husky": "9.1.7",
+    "jsdom": "29.1.1",
+    "lint-staged": "17.2.0",
+    "prettier": "3.9.6",
+    "react-refresh": "0.18.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.65.0",
+    "vitest": "4.1.10"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --check",
+      "eslint --max-warnings=0",
+      "node scripts/staged-typecheck.mjs"
+    ],
+    "*.{cjs,js,jsx,mjs}": [
+      "prettier --check",
+      "eslint --max-warnings=0"
+    ],
+    "*.{css,cts,json,mts,yaml,yml}": [
+      "prettier --check"
+    ],
+    "*.md": "prettier --check",
+    "*": "node scripts/staged-secret-check.mjs"
+  }
+}

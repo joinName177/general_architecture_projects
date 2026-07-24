@@ -15,15 +15,15 @@ CI 和受保护分支设置是权威门禁。本地 Hook 只提供快速反馈�
 
 允许的 type：
 
-~~~text
+```text
 feat | fix | refactor | perf | test | docs | build | ci | chore | revert
-~~~
+```
 
 ## 3. 本地命令契约
 
 实例项目必须在 `package.json#scripts` 提供以下稳定命令：
 
-~~~text
+```text
 pnpm format
 pnpm format:check
 pnpm lint
@@ -37,43 +37,48 @@ pnpm architecture:check
 pnpm cycle:check
 pnpm diagram:check
 pnpm commit:check
+pnpm staged:check
 pnpm test
 pnpm test:coverage
 pnpm test:e2e
 pnpm build
 pnpm verify
-~~~
+```
 
 `pnpm verify` 是非修改型聚合门禁，不得调用 `format`、`lint:fix` 或写回生成文件。开发者可以使用修改型命令修复问题，但提交前必须运行检查型命令。
 
+仓库必须提交版本化的 pre-commit Hook，调用 `pnpm staged:check` 检查 Git 暂存快照中的新增、复制、重命名和修改文件，而不是未暂存的工作区内容。该命令至少执行格式、ESLint（包含单文件 500 行及复杂度门禁）、类型影响和 Secret 检查；无匹配文件时成功退出，删除文件不应产生假失败。Hook 只能调用仓库内受版本和 lockfile 管理的工具，不得依赖开发者全局安装；本地 Hook 通过 `node scripts/run-pnpm.mjs` 解析 `package.json#packageManager` 指定的 pnpm（必要时经 Corepack），避免 IDE 或 Git 子进程的 PATH 缺少全局 `pnpm` 时失败。`--no-verify` 被禁止，但本地 Hook 只是快速反馈；CI 必须对完整仓库重新执行同一权威配置，防止绕过和增量漏检。
+
 脚本名与 CI Required Check id 使用以下固定映射，避免文档、分支保护和流水线各自命名：
 
-| package script | CI check id |
-| --- | --- |
-| `instructions:check` | `instructions-check` |
-| `profile:check` | `profile-check` |
-| `toolchain:check` | `toolchain-check` |
-| `generated:check` | `generated-code-drift` |
-| `format:check` | `format-check` |
-| `commit:check` | `commit-policy-check` |
-| `typecheck` | `typecheck` |
-| `lint` | `lint-zero-warning` |
-| `architecture:check` | `architecture-check` |
-| `cycle:check` | `cycle-check` |
-| `diagram:check` | `diagram-check` |
+| package script       | CI check id            |
+| -------------------- | ---------------------- |
+| `instructions:check` | `instructions-check`   |
+| `profile:check`      | `profile-check`        |
+| `toolchain:check`    | `toolchain-check`      |
+| `generated:check`    | `generated-code-drift` |
+| `format:check`       | `format-check`         |
+| `commit:check`       | `commit-policy-check`  |
+| `typecheck`          | `typecheck`            |
+| `lint`               | `lint-zero-warning`    |
+| `architecture:check` | `architecture-check`   |
+| `cycle:check`        | `cycle-check`          |
+| `diagram:check`      | `diagram-check`        |
+
+`staged:check` 只用于本地暂存快照，不建立 CI check id；它复用表中各权威检查的配置，不得维护较宽松或不一致的第二套规则。
 
 分支保护只能引用该表中的稳定 check id；重命名必须在同一变更中更新脚本、CI、保护设置、文档和 instructions-check。
 
 Tauri 项目还必须提供：
 
-~~~text
+```text
 pnpm desktop:dev
 pnpm desktop:build
 pnpm rust:format:check
 pnpm rust:clippy
 pnpm rust:test
 pnpm rust:supply-chain
-~~~
+```
 
 浏览器项目不得保留空的桌面脚本；Tauri 项目不得保留浏览器部署脚本作为备用路径。
 
@@ -81,9 +86,9 @@ pnpm rust:supply-chain
 
 提交和 PR 标题使用：
 
-~~~text
+```text
 type(scope)!: imperative summary
-~~~
+```
 
 - `type` 只能使用第 2 节的封闭集合。
 - `scope` 使用 `architecture-profile.yaml` 中稳定的 Context/Module id，或 `app`、`ui`、`auth`、`build`、`ci`、`deps`、`desktop`、`docs`。
