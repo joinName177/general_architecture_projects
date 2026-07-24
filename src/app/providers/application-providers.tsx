@@ -2,10 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createContext, useContext, useMemo } from "react";
 import type { PropsWithChildren } from "react";
 
-import "@/shared/i18n/i18n";
+import "@/app/i18n/i18n";
 import type { RuntimeConfig } from "@/app/bootstrap/runtime-config";
 import type { AuthGateway } from "@/modules/auth/application/auth-gateway";
 import { createAuthGateway } from "@/modules/auth/composition";
+import { ApplicationI18nProvider } from "@/shared/i18n/application-i18n";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,9 +32,11 @@ export function ApplicationProviders({
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthGatewayContext value={authGateway}>{children}</AuthGatewayContext>
-    </QueryClientProvider>
+    <ApplicationI18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthGatewayContext value={authGateway}>{children}</AuthGatewayContext>
+      </QueryClientProvider>
+    </ApplicationI18nProvider>
   );
 }
 

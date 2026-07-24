@@ -20,6 +20,7 @@ flowchart LR
 ```text
 src/
 ├── app/                       # Bootstrap、Provider、Router、静态 Module Catalog
+│   └── i18n/                  # 汇总各模块消息资源并初始化 i18next
 ├── generated/dify-agent-api/ # OpenAPI 生成类型与 Zod Schema，禁止手改
 ├── modules/auth/
 │   ├── application/           # AuthGateway port 与命令
@@ -31,9 +32,11 @@ src/
 
 ## 3. 依赖、状态与契约
 
-依赖方向固定为 `presentation → application ← infrastructure`。Presentation 不得直接 `fetch`；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，Zod 校验输入和所有 API 成功/错误响应，React state 只保存登录/注册模式。
+依赖方向固定为 `presentation → application ← infrastructure`。Presentation 不得直接 `fetch`；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，Zod 校验输入和所有 API 成功/错误响应，React state 只保存登录/注册模式。i18next 是界面语言和文案资源的唯一 owner：启动时从浏览器偏好检测 `zh-CN` 或 `en-GB`，语言切换只在当前页面会话生效，不写入浏览器持久化；日期与数字统一通过语言上下文封装的 `Intl` 格式化。每个业务模块在自身 Presentation 边界维护按消息键组织的双语资源，中英文必须并排且完整；`app/i18n` 是唯一资源组合与 i18next 初始化点，组件只使用稳定消息 id。
 
 `contracts/dify-agent-api/v1/openapi.yaml` 与 `.sha256` 是唯一 transport 来源。`pnpm generate:api` 产生只读类型和 Schema，`generated:check` 在临时目录重新生成并进行逐文件零漂移比较。Runtime Config 必须同时匹配 contract id 与 SHA-256；远程 API 必须使用 HTTPS，配置不合法时应用 fail-closed。
+
+本地开发先运行 `pnpm runtime-config:init` 创建或同步被 Git 忽略的 `public/runtime-config.json`；该命令刷新契约字段，但保留已有 API 地址与 release id。`pnpm dev` 启动前执行非修改型 `runtime-config:check`，配置缺失、格式错误或契约过期时立即失败。`profile:check` 同时保证版本化示例配置与 Profile 一致。
 
 ## 4. 认证与安全
 

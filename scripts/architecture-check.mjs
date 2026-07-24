@@ -2,10 +2,11 @@ import { readFile } from "node:fs/promises";
 
 const requiredPaths = [
   "src/app/bootstrap/bootstrap-application.tsx",
+  "src/app/i18n/i18n.ts",
   "src/app/module-catalog.ts",
   "src/app/providers/application-providers.tsx",
   "src/app/router/app-router.tsx",
-  "src/shared/i18n/i18n.ts",
+  "src/shared/i18n/message-catalog.ts",
   "src/styles/theme.css",
 ];
 

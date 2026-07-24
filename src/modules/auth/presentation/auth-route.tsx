@@ -11,6 +11,7 @@ import type {
   RegisterCommand,
 } from "@/modules/auth/application/auth-gateway";
 import { ApiError } from "@/shared/http/http-client";
+import { LanguageSelector } from "@/shared/i18n/language-selector";
 
 const loginSchema = z.object({ email: z.email(), password: z.string().min(1) });
 const registerSchema = loginSchema.extend({
@@ -110,6 +111,7 @@ function AuthForm({
 
   return (
     <main className="auth-shell">
+      <LanguageSelector />
       <section className="auth-intro" aria-labelledby="auth-heading">
         <p className="auth-kicker">Dify Agent</p>
         <h1 id="auth-heading">{t("auth.heroTitle")}</h1>
@@ -235,6 +237,7 @@ function AuthenticatedCard(props: AuthenticatedCardProps) {
   const { t } = useTranslation();
   return (
     <main className="auth-shell auth-shell--center">
+      <LanguageSelector />
       <section className="auth-card">
         <header>
           <p className="auth-kicker">
@@ -270,6 +273,7 @@ function AuthenticatedCard(props: AuthenticatedCardProps) {
 function StatusCard({ text }: { readonly text: string }) {
   return (
     <main className="auth-shell auth-shell--center">
+      <LanguageSelector />
       <section className="auth-card">
         <div>
           <p role="status">{text}</p>

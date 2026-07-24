@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { parse } from "yaml";
 
+import { assertRuntimeConfigContract } from "./runtime-config-contract.mjs";
+
 const schema = JSON.parse(
   await readFile("architecture-profile.schema.json", "utf8"),
 );
@@ -27,3 +29,7 @@ const artifactDigest = createHash("sha256").update(artifact).digest("hex");
 if (artifactDigest !== digest) {
   throw new Error("Pinned OpenAPI artifact does not match its digest file.");
 }
+
+await assertRuntimeConfigContract({
+  configPath: "public/runtime-config.example.json",
+});

@@ -1,10 +1,15 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import "@/shared/i18n/i18n";
 import type { AuthGateway } from "@/modules/auth/application/auth-gateway";
 import { AuthScreen } from "@/modules/auth/presentation/auth-route";
+import { i18n } from "@/app/i18n/i18n";
+import { ApplicationI18nProvider } from "@/shared/i18n/application-i18n";
+
+beforeEach(async () => {
+  await i18n.changeLanguage("zh-CN");
+});
 
 describe("AuthScreen", () => {
   it("logs in and renders the authenticated identity", async () => {
@@ -26,9 +31,11 @@ describe("AuthScreen", () => {
       defaultOptions: { queries: { retry: false } },
     });
     render(
-      <QueryClientProvider client={queryClient}>
-        <AuthScreen gateway={gateway} />
-      </QueryClientProvider>,
+      <ApplicationI18nProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthScreen gateway={gateway} />
+        </QueryClientProvider>
+      </ApplicationI18nProvider>,
     );
 
     await screen.findByRole("heading", { name: "登录账号" });

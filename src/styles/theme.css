@@ -12,6 +12,7 @@ body {
 }
 
 .auth-shell {
+  position: relative;
   display: grid;
   min-height: 100dvh;
   grid-template-columns: minmax(0, 1fr) minmax(20rem, 28rem);
@@ -25,6 +26,34 @@ body {
       transparent 30rem
     ),
     linear-gradient(145deg, #f8faff, #e9eef7);
+}
+
+.language-selector {
+  position: absolute;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background: rgb(255 255 255 / 90%);
+  color: #243b82;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.language-selector select {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.language-selector:focus-within {
+  outline: 3px solid rgb(70 110 231 / 18%);
 }
 
 .auth-shell--center {
@@ -161,6 +190,7 @@ button:disabled {
 @media (max-width: 760px) {
   .auth-shell {
     grid-template-columns: 1fr;
+    padding-top: 5rem;
   }
 
   .auth-intro h1 {
