@@ -1,0 +1,27 @@
+{
+  "project": "dify-agent",
+  "owner": "@joinName177",
+  "runtime": "browser-spa",
+  "modules": ["auth"],
+  "api":
+    {
+      "contractId": "dify-agent-api/v1",
+      "artifact": "contracts/dify-agent-api/v1/openapi.yaml",
+      "digestFile": "contracts/dify-agent-api/v1/openapi.sha256",
+      "sha256": "5e5c088e0c646f93fe50c5c145729ccdd5a0c07f0cc5eaa6864274365d67c317",
+    },
+  "auth":
+    {
+      "strategy": "local-credentials-server-session",
+      "accessTokenStorage": "memory",
+      "refreshTokenStorage": "http-only-cookie",
+    },
+  "origins":
+    {
+      "developmentWeb": "http://localhost:3000",
+      "developmentApi": "http://localhost:18080/api/v1",
+    },
+  "data":
+    { "classification": "confidential-pii", "browserPersistence": "none" },
+  "performance": { "initialJsGzipKiB": 150, "cssGzipKiB": 75 },
+}

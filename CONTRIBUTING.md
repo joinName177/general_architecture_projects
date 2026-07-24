@@ -47,6 +47,19 @@ pnpm verify
 
 `pnpm verify` 是非修改型聚合门禁，不得调用 `format`、`lint:fix` 或写回生成文件。开发者可以使用修改型命令修复问题，但提交前必须运行检查型命令。
 
+日常提交按以下固定流程执行：
+
+```bash
+pnpm commit:prepare
+git diff
+git status --short
+git add -- <本次提交的文件路径>
+pnpm commit:ready
+git commit -m "type(scope): imperative summary"
+```
+
+`commit:prepare` 依次重新生成 API 客户端、格式化工作区并运行完整 `verify`；该命令可能修改文件，因此执行后必须审查差异。`commit:ready` 对实际暂存快照执行 `git diff --cached --check` 和 `staged:check`。流程不得自动运行 `git add -A`，提交者必须明确选择本次变更范围；如果生成、格式化或修复发生在暂存之后，必须重新暂存受影响文件并再次运行 `commit:ready`。
+
 仓库必须提交版本化的 pre-commit Hook，调用 `pnpm staged:check` 检查 Git 暂存快照中的新增、复制、重命名和修改文件，而不是未暂存的工作区内容。该命令至少执行格式、ESLint（包含单文件 500 行及复杂度门禁）、类型影响和 Secret 检查；无匹配文件时成功退出，删除文件不应产生假失败。Hook 只能调用仓库内受版本和 lockfile 管理的工具，不得依赖开发者全局安装；本地 Hook 通过 `node scripts/run-pnpm.mjs` 解析 `package.json#packageManager` 指定的 pnpm（必要时经 Corepack），避免 IDE 或 Git 子进程的 PATH 缺少全局 `pnpm` 时失败。`--no-verify` 被禁止，但本地 Hook 只是快速反馈；CI 必须对完整仓库重新执行同一权威配置，防止绕过和增量漏检。
 
 脚本名与 CI Required Check id 使用以下固定映射，避免文档、分支保护和流水线各自命名：
@@ -115,6 +128,8 @@ PR 描述必须包含：
 6. 发布、停止放量及浏览器回滚或桌面前向回滚方式。
 
 禁止空 PR 描述、仅贴截图、仅声明“测试通过”或把关键说明留在即时通讯中。
+
+PR 作者和审查者使用 `docs/code-review.md` 作为审查清单；该清单帮助收集证据，但不替代本文件规定的 Required Checks、CODEOWNERS 或合并条件。
 
 ## 6. Review 与合并
 

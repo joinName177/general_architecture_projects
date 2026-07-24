@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dify-agent.local/architecture-profile.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "owner",
+    "runtime",
+    "modules",
+    "api",
+    "auth",
+    "origins",
+    "data",
+    "performance"
+  ],
+  "properties": {
+    "project": { "const": "dify-agent" },
+    "owner": { "type": "string", "pattern": "^@[A-Za-z0-9-]+$" },
+    "runtime": { "const": "browser-spa" },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" }
+    },
+    "api": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractId", "artifact", "digestFile", "sha256"],
+      "properties": {
+        "contractId": { "const": "dify-agent-api/v1" },
+        "artifact": { "type": "string" },
+        "digestFile": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "accessTokenStorage", "refreshTokenStorage"],
+      "properties": {
+        "strategy": { "const": "local-credentials-server-session" },
+        "accessTokenStorage": { "const": "memory" },
+        "refreshTokenStorage": { "const": "http-only-cookie" }
+      }
+    },
+    "origins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["developmentWeb", "developmentApi"],
+      "properties": {
+        "developmentWeb": { "type": "string", "format": "uri" },
+        "developmentApi": { "type": "string", "format": "uri" }
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "browserPersistence"],
+      "properties": {
+        "classification": { "const": "confidential-pii" },
+        "browserPersistence": { "const": "none" }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["initialJsGzipKiB", "cssGzipKiB"],
+      "properties": {
+        "initialJsGzipKiB": { "type": "integer", "minimum": 1, "maximum": 150 },
+        "cssGzipKiB": { "type": "integer", "minimum": 1, "maximum": 75 }
+      }
+    }
+  }
+}

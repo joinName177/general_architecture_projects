@@ -1,14 +1,15 @@
 import { access, readdir } from "node:fs/promises";
 import { join } from "node:path";
 
-const requiredRootFiles = [
+const requiredFiles = [
+  ".github/pull_request_template.md",
   "AGENTS.md",
   "ARCHITECTURE.md",
   "CONTRIBUTING.md",
   "engineering-standards.md",
 ];
 
-for (const fileName of requiredRootFiles) {
+for (const fileName of requiredFiles) {
   await access(fileName);
 }
 

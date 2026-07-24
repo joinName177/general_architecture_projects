@@ -2,3 +2,4 @@ dist/
 node_modules/
 coverage/
 pnpm-lock.yaml
+contracts/dify-agent-api/v1/openapi.yaml

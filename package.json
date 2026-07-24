@@ -5,11 +5,12 @@
   "type": "module",
   "packageManager": "pnpm@11.9.0",
   "engines": {
-    "node": "24.14.0",
+    "node": "24.18.0",
     "pnpm": "11.9.0"
   },
   "scripts": {
     "dev": "rspack serve --config rspack.config.ts",
+    "generate:api": "node scripts/generate-api-client.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings=0",
@@ -23,6 +24,8 @@
     "cycle:check": "depcruise --validate .dependency-cruiser.cjs src",
     "diagram:check": "node scripts/diagram-check.mjs",
     "commit:check": "git log -1 --format=%B | commitlint",
+    "commit:prepare": "pnpm generate:api && pnpm format && pnpm verify",
+    "commit:ready": "git diff --cached --check && pnpm staged:check",
     "staged:check": "lint-staged",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage.enabled=true",
@@ -47,15 +50,18 @@
     "@commitlint/cli": "21.2.0",
     "@commitlint/config-conventional": "21.2.0",
     "@eslint/js": "9.39.5",
+    "@hey-api/openapi-ts": "0.99.0",
     "@rspack/cli": "2.1.5",
     "@rspack/core": "2.1.5",
     "@rspack/dev-server": "2.1.0",
     "@rspack/plugin-react-refresh": "2.0.2",
     "@testing-library/react": "16.3.2",
-    "@vitest/coverage-v8": "4.1.10",
     "@types/node": "24.10.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "@vitest/coverage-v8": "4.1.10",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "dependency-cruiser": "18.1.0",
     "eslint": "9.39.5",
     "eslint-plugin-import-x": "4.17.1",
@@ -69,17 +75,18 @@
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "typescript-eslint": "8.65.0",
-    "vitest": "4.1.10"
+    "vitest": "4.1.10",
+    "yaml": "2.9.0"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
       "prettier --check",
-      "eslint --max-warnings=0",
+      "eslint --max-warnings=0 --no-warn-ignored",
       "node scripts/staged-typecheck.mjs"
     ],
     "*.{cjs,js,jsx,mjs}": [
       "prettier --check",
-      "eslint --max-warnings=0"
+      "eslint --max-warnings=0 --no-warn-ignored"
     ],
     "*.{css,cts,json,mts,yaml,yml}": [
       "prettier --check"

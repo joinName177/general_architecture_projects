@@ -1,6 +1,7 @@
 dist/
 node_modules/
 coverage/
+public/runtime-config.json
 .env
 .env.*
 !.env.example

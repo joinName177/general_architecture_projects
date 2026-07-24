@@ -44,8 +44,12 @@
 
 - Prettier 是格式唯一来源，ESLint 不重复承担纯格式规则；`format:check` 必须检查源码、配置、测试和文档。
 - UTF-8、LF、末尾换行、缩进和尾随空白由 `.editorconfig` 与 `.gitattributes` 固定。
+- [Case-based 命名规范](docs/case-based-naming-conventions.md) 是本节不可分割的细则与审查参考；与本文件或可执行配置冲突时，以可执行配置优先，其次以本文件为准。不得在模块、PR 或其他文档维护第二套命名规则。
 - 源文件使用 kebab-case；React 组件、类型和类使用 PascalCase；变量和函数使用 camelCase；布尔值使用 `is/has/can/should` 前缀。
 - 名称必须表达业务角色、单位和生命周期；禁止 `data`、`info`、`item`、`obj`、`temp`、`utils`、`common`、`manager`、`handler` 等脱离上下文无法判断职责的泛化名称。集合使用复数，带单位的数值在名称中标明单位，事件处理函数使用 `handle<Event>`，作为参数传入的回调使用 `on<Event>`。
+- 模块和领域名使用单数 kebab-case id；用例使用动词加名词的 PascalCase，例如 `CreateAgentUseCase`；Port 使用能力名，例如 `AgentGateway`；Infrastructure Adapter 以实现机制前缀命名，例如 `HttpAgentGateway`；Mapper 使用 `<Source><Target>Mapper`。DTO 必须明确方向和边界，例如 `CreateAgentRequestDto`、`AgentResponseDto`，不得用 `Payload`、`Result` 或 `Model` 掩盖来源。
+- 领域事件使用过去式 PascalCase，例如 `AgentCreated`；错误类型使用 `<Reason>Error`，稳定错误码使用全大写 snake case，例如 `AGENT_NOT_FOUND`。i18n key 采用 `<module>.<feature>.<meaning>`，例如 `agent.form.submit`；语义 Design Token 采用 `--<category>-<role>-<state>`，不得用颜色或序号表达业务含义。
+- 测试文件使用被测单元命名；`describe` 指向单元，`it` 使用 `should <expected behavior> when <condition>`。测试 fixture、factory 和 mock 必须在名称中表达其场景与边界，例如 `createAuthorizedAgent`、`unauthorizedAgentGateway`，不得使用 `mockData` 或 `testItem`。
 - 默认使用 named export。只有工具协议明确要求默认导出或路由懒加载边界允许 default export。
 - 禁止全局 barrel。跨模块只允许架构规定的 `public.ts`；模块内部直接引用具体文件。
 - 测试使用 `*.test.ts(x)`，E2E 使用 `*.spec.ts`，生成文件位于明确的 `generated/` 目录并带有禁止手改标识。
@@ -55,7 +59,8 @@
 - 文件、组件、Hook、类和函数只承担一个可用一句话描述的职责；发生变化的原因不同、依赖的边界不同或测试场景不同，即应拆分。拆分必须沿业务能力和架构边界进行，禁止仅为满足行数创建无语义的碎片文件。
 - 公共 API 保持最小且显式；内部实现默认不导出。跨模块调用只能通过模块 `public.ts` 暴露的稳定契约，不得深层导入或共享可变状态。
 - 优先使用早返回、守卫子句、穷尽 `switch` 和具名纯函数降低嵌套；禁止把条件、异常或异步控制流压缩成难以调试的一行表达式。
-- 注释解释约束、原因和取舍，不复述代码。复杂业务规则必须同时具备表达意图的名称、契约测试，以及必要时的 ADR；不得用长注释维持不可理解的实现。
+- 注释解释约束、原因和取舍，不复述代码。以下情况必须在相邻代码处简要说明，或在内容超过局部上下文时链接 ADR：安全、隐私或权限决策；非直观的外部契约行为；算法、状态机或性能取舍；临时兼容/绕过方案及其移除条件。复杂业务规则必须同时具备表达意图的名称、契约测试，以及必要时的 ADR；不得用长注释维持不可理解的实现。
+- 不要求为每个导出、函数、类型或显而易见的控制流添加注释。可由类型、名称、Schema、测试或 ADR 准确表达的信息不得复制到注释；注释失效时必须与实现一起删除或更新。
 - 重复业务知识应收敛到唯一所有者；只因代码形状相似不得提前抽象。抽象必须至少有真实调用者并形成比重复实现更小、更稳定的公共契约。
 - 禁止循环依赖，包括直接环、跨 barrel 的间接环、动态 import 环、类型导入环和测试辅助代码引入的环。ESLint 负责快速反馈，`dependency-cruiser` 的 `cycle:check` 对全依赖图作最终判定，两者都不得配置已知环基线。
 - 架构层只能依赖架构允许的下一层或公开端口；不得借助 callback、service locator、全局 registry、事件总线或依赖注入容器隐藏反向依赖。

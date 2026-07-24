@@ -2,38 +2,49 @@
 
 ## 1. 选型与范围
 
-本项目选择 `medium` 档位和 `browser-spa` 运行目标，基线来源为已审阅的《中型纯前端项目架构方案》。项目只交付浏览器 SPA、静态资源、前端构建和前端交付配置；不创建 API 服务、BFF、数据库、任务或文件存储。
+本项目是 `medium` 档位的 `browser-spa`，只交付 React SPA、静态资源、前端构建和部署配置。Go API、PostgreSQL、迁移与服务端 Secret 位于独立的 `dify-agent-api` 仓库，两个部署单元只通过锁定版本的 OpenAPI 与 HTTPS 通信。真实配置见 `architecture-profile.yaml`。
 
-项目目前处于 [架构初始化状态](docs/architecture-bootstrap.md)，尚无业务模块、外部 API、OIDC 参数和生产环境。初始化期间的例外仅限于没有业务代码，不是对最终架构门禁的放宽。
+## 2. 系统上下文
 
-## 2. 最终模块形态
+```mermaid
+flowchart LR
+    Person["用户 / 超级管理员"] --> SPA["Dify Agent SPA"]
+    SPA -->|"HTTPS / OpenAPI v1"| API["dify-agent-api"]
+    API --> DB[("PostgreSQL")]
+    Deploy["静态制品 + Runtime Config"] --> SPA
+    Secret["部署 Secret"] --> API
+```
 
-产品开发开始后，按 3–8 个稳定业务能力组织 `src/modules/<module-id>/`。有外部 I/O 的模块必须至少包含 `application`、`infrastructure`、`presentation`；只有真实不变量、状态流转或跨页面规则才增加 `domain`。禁止空的 Repository、Entity、Store 或 Domain。
+当前唯一业务模块是 `auth`，其边界是注册、登录、会话恢复、注销与展示当前身份。后续只在出现稳定业务边界和真实 owner 时增加模块，不预建空 Repository、Entity、Store 或 Domain。
 
 ```text
 src/
-├── app/              # Bootstrap、Provider、Router、静态 Module Catalog
-├── shared/           # 与业务无关且至少两模块稳定复用的能力
-├── modules/          # 业务模块，仅在具备真实边界后创建
-└── styles/           # 单一主题和语义 Token
+├── app/                       # Bootstrap、Provider、Router、静态 Module Catalog
+├── generated/dify-agent-api/ # OpenAPI 生成类型与 Zod Schema，禁止手改
+├── modules/auth/
+│   ├── application/           # AuthGateway port 与命令
+│   ├── infrastructure/        # HTTP adapter、响应校验、token 内存管理
+│   └── presentation/          # 登录、注册与身份页
+├── shared/http/               # 唯一通用 HTTP client
+└── styles/                    # 单一主题
 ```
 
-每个模块仅通过 `public.ts` 向其他模块公开只读类型或稳定 Facade。`module.ts` 只包含静态元数据和路由级 `lazy()`；`composition.ts` 只在异步 chunk 中创建 Adapter、Use Case、Store 与幂等 `dispose()`。
+## 3. 依赖、状态与契约
 
-## 3. 依赖和状态
+依赖方向固定为 `presentation → application ← infrastructure`。Presentation 不得直接 `fetch`；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，Zod 校验输入和所有 API 成功/错误响应，React state 只保存登录/注册模式。
 
-Presentation 不得直接 `fetch`。外部 I/O 必须经 Application Port 和 Infrastructure Adapter；Domain 不依赖 React、Router、Query、HeroUI、fetch、shared 或 Infrastructure。App 只组装通用依赖，禁止承载业务编排。所有依赖必须无环。
+`contracts/dify-agent-api/v1/openapi.yaml` 与 `.sha256` 是唯一 transport 来源。`pnpm generate:api` 产生只读类型和 Schema，`generated:check` 在临时目录重新生成并进行逐文件零漂移比较。Runtime Config 必须同时匹配 contract id 与 SHA-256；远程 API 必须使用 HTTPS，配置不合法时应用 fail-closed。
 
-TanStack Query 是远程数据唯一缓存，RHF 拥有表单，URL 只包含可分享且非敏感的筛选状态，React state 仅保存页面局部状态。默认不安装 MobX；真实跨页工作流无法保持唯一所有权时，须经 ADR 才能原子引入。
+## 4. 认证与安全
 
-## 4. 平台与体验
+认证策略由 [ADR 0001](docs/adr/0001-local-auth-session.md) 固化。用户凭据只发送给 Go API；短期随机 access token 仅在 `HttpClient` 内存保存，长期 refresh token 仅由服务端 HttpOnly、SameSite Cookie 承载。前端启动调用 refresh 恢复会话，注销无论服务端响应如何都清除内存 token。错误界面只映射稳定错误码，不展示服务端原文或敏感数据。
 
-React、TypeScript、Rspack、React Router、TanStack Query、RHF、Zod、i18next、HeroUI v3 和 Tailwind CSS v4 是唯一前端技术基线。HeroUI v3 是唯一基础组件系统，业务样式只使用语义 Token；所有核心页面须满足 WCAG 2.2 AA。
+`auth` 模块不自行判断或提升角色；超级管理员身份完全来自后端验证后的 `UserResponse.role`。前端仅据此展示身份状态，所有权限控制仍必须由 API 执行。
 
-唯一 HTTP Client 负责 HTTPS allowlist、认证、超时、取消、错误映射、trace id 和安全日志。唯一 AuthAdapter 使用 Authorization Code + PKCE，Token 只保留在内存。OpenAPI artifact、digest 和 Zod Schema 是唯一 Transport 来源；响应必须在 Infrastructure 校验和映射后成为不可变 ReadModel。
+## 5. 体验、交付与验收
 
-## 5. 交付与验收
+界面使用语义化 HTML、键盘可达控件、清晰焦点态与响应式布局，目标为 WCAG 2.2 AA。所有用户可见文案由 i18next 管理；启动配置失败使用最小静态故障页，因为 i18n 本身尚未安全启动。
 
-生产构建必须路由级拆包，并验证首包与 bundle budget。部署以不可变、内容寻址的 Artifact 为单位；公开 Runtime Config、Entry、Manifest、CSP 和 API contract id 必须在 Bootstrap 阶段校验，任何不一致 fail-closed。稳定入口只可原子切换，并保留当前和上一完整部署单元。
+生产构建路由级拆包并执行 gzip 预算：初始 JavaScript 不超过 150 KiB，CSS 不超过 75 KiB。静态制品与公开 Runtime Config 分离发布，部署时从 `public/runtime-config.example.json` 生成实际 `runtime-config.json`，不得把 token、密码或数据库信息写入其中。
 
-业务开始后，Profile、Schema、架构图、Context Map、CODEOWNERS、风险矩阵、SLO、Runbook、数据分类、遥测字典和存储清单必须同代码一并维护。测试至少覆盖 Domain（存在时）、Application、Contract/Mapper、Component/Integration、核心 E2E、a11y 和视觉回归；不得用 skip、retry、quarantine 或降低阈值规避失败。
+合并前执行 `pnpm verify`，覆盖 Profile、契约生成漂移、格式、类型、Lint、依赖环、架构图、单元/组件测试和生产构建。认证需求、残余风险、SLO、Runbook 与数据清单分别维护在 `docs/requirements-risk-matrix.md`、`docs/slo.md`、`docs/runbook-authentication.md` 与 `docs/data-classification.md`。
