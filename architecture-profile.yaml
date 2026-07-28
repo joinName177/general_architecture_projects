@@ -8,7 +8,7 @@
       "contractId": "dify-agent-api/v1",
       "artifact": "contracts/dify-agent-api/v1/openapi.yaml",
       "digestFile": "contracts/dify-agent-api/v1/openapi.sha256",
-      "sha256": "5e5c088e0c646f93fe50c5c145729ccdd5a0c07f0cc5eaa6864274365d67c317",
+      "sha256": "49184e9d62e836a155fd2f6ed555107cfdb657f8f2dd5a7dd6dc7cd36b56ae2d",
     },
   "auth":
     {

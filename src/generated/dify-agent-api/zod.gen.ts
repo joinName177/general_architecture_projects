@@ -11,7 +11,16 @@ export const zLoginRequest = z.object({
   email: z.email().max(254),
 });
 
-export const zUserResponse = z.object({
+export const zLogoutResponse = z.object({
+  code: z.literal(200),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
+  data: z.object({
+    revoked: z.boolean(),
+  }),
+});
+
+export const zUserData = z.object({
   id: z.uuid(),
   email: z.email(),
   displayName: z.string(),
@@ -19,10 +28,24 @@ export const zUserResponse = z.object({
   createdAt: z.iso.datetime({ offset: true }),
 });
 
-export const zAuthResponse = z.object({
+export const zAuthSessionData = z.object({
   accessToken: z.string().min(40),
   expiresAt: z.iso.datetime({ offset: true }),
-  user: zUserResponse,
+  user: zUserData,
+});
+
+export const zAuthResponse = z.object({
+  code: z.union([z.literal(200), z.literal(201)]),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
+  data: zAuthSessionData,
+});
+
+export const zUserResponse = z.object({
+  code: z.literal(200),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
+  data: zUserData,
 });
 
 export const zFieldError = z.object({
@@ -32,29 +55,45 @@ export const zFieldError = z.object({
 });
 
 export const zErrorResponse = z.object({
-  code: z.string().regex(/^[A-Z][A-Z0-9_]+$/),
-  message: z.string(),
-  requestId: z.string(),
+  code: z.int().gte(100).lte(599),
+  errorCode: z.string().regex(/^[A-Z][A-Z0-9_]+$/),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
   errors: z.array(zFieldError).optional(),
 });
 
 export const zHealthResponse = z.object({
-  status: z.enum(["ok"]),
+  code: z.literal(200),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
+  data: z.object({
+    status: z.enum(["ok"]),
+  }),
 });
 
 export const zReadinessResponse = z.object({
-  status: z.enum(["ok"]),
-  checks: z.object({
-    database: z.enum(["ok"]),
-    migrations: z.enum(["ok"]),
+  code: z.literal(200),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
+  data: z.object({
+    status: z.enum(["ok"]),
+    checks: z.object({
+      database: z.enum(["ok"]),
+      migrations: z.enum(["ok"]),
+    }),
   }),
 });
 
 export const zVersionResponse = z.object({
-  releaseId: z.string(),
-  buildCommit: z.string(),
-  contractId: z.string(),
-  openapiDigest: z.string().regex(/^[a-f0-9]{64}$/),
+  code: z.literal(200),
+  message: z.string().min(1),
+  requestId: z.string().min(1),
+  data: z.object({
+    releaseId: z.string(),
+    buildCommit: z.string(),
+    contractId: z.string(),
+    openapiDigest: z.string().regex(/^[a-f0-9]{64}$/),
+  }),
 });
 
 export const zRegisterRequestWritable = z.object({
@@ -105,7 +144,7 @@ export const zRefreshSessionResponse = zAuthResponse;
 /**
  * Session revoked or already absent.
  */
-export const zLogoutUserResponse = z.void();
+export const zLogoutUserResponse = zLogoutResponse;
 
 /**
  * Current authenticated user.

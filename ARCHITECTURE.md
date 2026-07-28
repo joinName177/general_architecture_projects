@@ -32,7 +32,9 @@ src/
 
 ## 3. 依赖、状态与契约
 
-依赖方向固定为 `presentation → application ← infrastructure`。Application 拥有认证命令、用户视图和稳定错误，不暴露生成的 Transport DTO；Infrastructure 负责生成 DTO、HTTP 错误与 Application 契约之间的映射。Presentation 不得直接 `fetch` 或依赖 Infrastructure；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。这些方向由 ESLint、dependency-cruiser 和直接 fetch 检查共同阻断。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，Zod 校验输入和所有 API 成功/错误响应，React state 只保存登录/注册模式。i18next 是界面语言和文案资源的唯一 owner：启动时从浏览器偏好检测 `zh-CN` 或 `en-GB`，语言切换只在当前页面会话生效，不写入浏览器持久化；日期与数字统一通过语言上下文封装的 `Intl` 格式化。每个业务模块在自身 Presentation 边界维护按消息键组织的双语资源，中英文必须并排且完整；`app/i18n` 是唯一资源组合与 i18next 初始化点，组件只使用稳定消息 id。
+依赖方向固定为 `presentation → application ← infrastructure`。Application 拥有认证命令、用户视图和稳定错误，不暴露生成的 Transport DTO；Infrastructure 负责生成 DTO、HTTP 错误与 Application 契约之间的映射。Presentation 不得直接 `fetch` 或依赖 Infrastructure；所有远程 I/O 经 `AuthGateway` 和唯一 `HttpClient`。`HttpClient` 基于浏览器 `fetch` 提供 `GET`、`POST`、`PUT`、`PATCH`、`DELETE`，统一处理 JSON、Cookie、内存 bearer token、超时、取消及标准响应解包；当前能力不引入 Axios，避免重复网络栈和无必要依赖。这些方向由 ESLint、dependency-cruiser 和直接 fetch 检查共同阻断。
+
+API 成功响应固定为 `code / message / requestId / data`，错误响应固定为 `code / errorCode / message / requestId / errors?`。数字 `code` 必须等于实际 HTTP 状态码；稳定字符串 `errorCode` 表达业务失败原因。Zod 在 Infrastructure 边界校验全部成功和错误响应，并拒绝响应体 `code` 与 HTTP 状态不一致的错误；界面只根据已知 `errorCode` 映射 i18n 消息，不直接展示远端 `message`。TanStack Query 是远程会话状态的唯一缓存，RHF 拥有表单，React state 只保存登录/注册模式。i18next 是界面语言和文案资源的唯一 owner：启动时从浏览器偏好检测 `zh-CN` 或 `en-GB`，语言切换只在当前页面会话生效，不写入浏览器持久化；日期与数字统一通过语言上下文封装的 `Intl` 格式化。每个业务模块在自身 Presentation 边界维护按消息键组织的双语资源，中英文必须并排且完整；`app/i18n` 是唯一资源组合与 i18next 初始化点，组件只使用稳定消息 id。
 
 `contracts/dify-agent-api/v1/openapi.yaml` 与 `.sha256` 是唯一 transport 来源。`pnpm generate:api` 产生只读类型和 Schema，`generated:check` 在临时目录重新生成并进行逐文件零漂移比较。Runtime Config 必须同时匹配 contract id 与 SHA-256；远程 API 必须使用 HTTPS，配置不合法时应用 fail-closed。
 

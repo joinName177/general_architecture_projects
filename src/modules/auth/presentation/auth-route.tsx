@@ -115,7 +115,7 @@ function AuthForm({
     onSuccess: onAuthenticated,
   });
 
-  const submit = handleSubmit(async (values) => {
+  const submit = handleSubmit((values) => {
     const result = (
       mode === "login" ? loginCommandSchema : registerCommandSchema
     ).safeParse(values);
@@ -132,7 +132,7 @@ function AuthForm({
       }
       return;
     }
-    await mutation.mutateAsync(values);
+    mutation.mutate(values);
   });
 
   return (

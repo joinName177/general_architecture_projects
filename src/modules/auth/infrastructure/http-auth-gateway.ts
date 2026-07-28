@@ -6,7 +6,7 @@ import type {
 } from "~/modules/auth/application/auth-gateway";
 import { AuthError } from "~/modules/auth/application/auth-gateway";
 import type { AuthOperationOptions } from "~/modules/auth/application/auth-gateway";
-import type { AuthResponse } from "~/generated/dify-agent-api/types.gen";
+import type { AuthSessionData } from "~/generated/dify-agent-api/types.gen";
 import {
   zAuthResponse,
   zErrorResponse,
@@ -30,8 +30,7 @@ export class HttpAuthGateway implements AuthGateway {
 
   public async logout(options: AuthOperationOptions = {}): Promise<void> {
     try {
-      await this.httpClient.request("/auth/logout", zLogoutUserResponse, {
-        method: "POST",
+      await this.httpClient.post("/auth/logout", zLogoutUserResponse, {
         ...(options.signal === undefined ? {} : { signal: options.signal }),
       });
     } catch (error) {
@@ -57,11 +56,10 @@ export class HttpAuthGateway implements AuthGateway {
     options: AuthOperationOptions = {},
   ): Promise<AuthenticatedUser | null> {
     try {
-      const response = await this.httpClient.request<AuthResponse>(
+      const response = await this.httpClient.post(
         "/auth/refresh",
         zAuthResponse,
         {
-          method: "POST",
           ...(options.signal === undefined ? {} : { signal: options.signal }),
         },
       );
@@ -83,18 +81,13 @@ export class HttpAuthGateway implements AuthGateway {
     options: AuthOperationOptions,
   ): Promise<AuthenticatedUser> {
     try {
-      const request: RequestInit = {
-        method: "POST",
+      const request = {
         ...(options.signal === undefined ? {} : { signal: options.signal }),
+        ...(requestSchema === undefined || command === undefined
+          ? {}
+          : { body: requestSchema.parse(command) }),
       };
-      if (requestSchema !== undefined && command !== undefined) {
-        request.body = JSON.stringify(requestSchema.parse(command));
-      }
-      const response = await this.httpClient.request<AuthResponse>(
-        path,
-        zAuthResponse,
-        request,
-      );
+      const response = await this.httpClient.post(path, zAuthResponse, request);
       this.httpClient.setAccessToken(response.accessToken);
       return mapAuthenticatedUser(response);
     } catch (error) {
@@ -103,7 +96,7 @@ export class HttpAuthGateway implements AuthGateway {
   }
 }
 
-function mapAuthenticatedUser(response: AuthResponse): AuthenticatedUser {
+function mapAuthenticatedUser(response: AuthSessionData): AuthenticatedUser {
   return {
     createdAt: response.user.createdAt,
     displayName: response.user.displayName,
@@ -120,21 +113,22 @@ function mapAuthError(error: unknown): Error {
   }
 
   const parsedError = zErrorResponse.safeParse(error.body);
-  const code = parsedError.success ? parsedError.data.code : undefined;
-  return new AuthError(isKnownAuthErrorCode(code) ? code : "UNAVAILABLE");
+  if (!parsedError.success || parsedError.data.code !== error.status) {
+    return new AuthError("UNAVAILABLE");
+  }
+  return new AuthError(mapAuthErrorCode(parsedError.data.errorCode));
 }
 
-function isKnownAuthErrorCode(
-  code: string | undefined,
-): code is
-  | "EMAIL_ALREADY_REGISTERED"
-  | "INVALID_CREDENTIALS"
-  | "RATE_LIMITED"
-  | "VALIDATION_ERROR" {
-  return (
-    code === "EMAIL_ALREADY_REGISTERED" ||
-    code === "INVALID_CREDENTIALS" ||
-    code === "RATE_LIMITED" ||
-    code === "VALIDATION_ERROR"
-  );
+function mapAuthErrorCode(code: string | undefined): AuthError["code"] {
+  switch (code) {
+    case "EMAIL_ALREADY_REGISTERED":
+    case "INVALID_CREDENTIALS":
+    case "RATE_LIMITED":
+    case "VALIDATION_ERROR":
+      return code;
+    case "UNAUTHENTICATED":
+      return "INVALID_CREDENTIALS";
+    default:
+      return "UNAVAILABLE";
+  }
 }

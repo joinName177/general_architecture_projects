@@ -14,12 +14,35 @@ export type LoginRequest = {
 };
 
 export type AuthResponse = {
+  code: 200 | 201;
+  message: string;
+  requestId: string;
+  data: AuthSessionData;
+};
+
+export type AuthSessionData = {
   accessToken: string;
   expiresAt: string;
-  user: UserResponse;
+  user: UserData;
 };
 
 export type UserResponse = {
+  code: 200;
+  message: string;
+  requestId: string;
+  data: UserData;
+};
+
+export type LogoutResponse = {
+  code: 200;
+  message: string;
+  requestId: string;
+  data: {
+    revoked: boolean;
+  };
+};
+
+export type UserData = {
   id: string;
   email: string;
   displayName: string;
@@ -34,29 +57,45 @@ export type FieldError = {
 };
 
 export type ErrorResponse = {
-  code: string;
+  code: number;
+  errorCode: string;
   message: string;
   requestId: string;
   errors?: Array<FieldError>;
 };
 
 export type HealthResponse = {
-  status: "ok";
+  code: 200;
+  message: string;
+  requestId: string;
+  data: {
+    status: "ok";
+  };
 };
 
 export type ReadinessResponse = {
-  status: "ok";
-  checks: {
-    database: "ok";
-    migrations: "ok";
+  code: 200;
+  message: string;
+  requestId: string;
+  data: {
+    status: "ok";
+    checks: {
+      database: "ok";
+      migrations: "ok";
+    };
   };
 };
 
 export type VersionResponse = {
-  releaseId: string;
-  buildCommit: string;
-  contractId: string;
-  openapiDigest: string;
+  code: 200;
+  message: string;
+  requestId: string;
+  data: {
+    releaseId: string;
+    buildCommit: string;
+    contractId: string;
+    openapiDigest: string;
+  };
 };
 
 export type RegisterRequestWritable = {
@@ -78,6 +117,10 @@ export type GetLivezData = {
 };
 
 export type GetLivezErrors = {
+  /**
+   * Too many requests were submitted.
+   */
+  429: ErrorResponse;
   /**
    * An unexpected server error occurred.
    */
@@ -103,6 +146,10 @@ export type GetReadyzData = {
 };
 
 export type GetReadyzErrors = {
+  /**
+   * Too many requests were submitted.
+   */
+  429: ErrorResponse;
   /**
    * An unexpected server error occurred.
    */
@@ -133,6 +180,10 @@ export type GetVersionData = {
 
 export type GetVersionErrors = {
   /**
+   * Too many requests were submitted.
+   */
+  429: ErrorResponse;
+  /**
    * An unexpected server error occurred.
    */
   500: ErrorResponse;
@@ -158,9 +209,21 @@ export type RegisterUserData = {
 
 export type RegisterUserErrors = {
   /**
+   * The request body is malformed.
+   */
+  400: ErrorResponse;
+  /**
+   * The request origin or identity is not permitted.
+   */
+  403: ErrorResponse;
+  /**
    * The request conflicts with existing state.
    */
   409: ErrorResponse;
+  /**
+   * The request body does not use application/json.
+   */
+  415: ErrorResponse;
   /**
    * The request is syntactically valid but contains invalid values.
    */
@@ -196,9 +259,21 @@ export type LoginUserData = {
 
 export type LoginUserErrors = {
   /**
+   * The request body is malformed.
+   */
+  400: ErrorResponse;
+  /**
    * Authentication credentials are missing or invalid.
    */
   401: ErrorResponse;
+  /**
+   * The request origin or identity is not permitted.
+   */
+  403: ErrorResponse;
+  /**
+   * The request body does not use application/json.
+   */
+  415: ErrorResponse;
   /**
    * The request is syntactically valid but contains invalid values.
    */
@@ -237,6 +312,10 @@ export type RefreshSessionErrors = {
    */
   401: ErrorResponse;
   /**
+   * The request origin or identity is not permitted.
+   */
+  403: ErrorResponse;
+  /**
    * Too many requests were submitted.
    */
   429: ErrorResponse;
@@ -268,6 +347,10 @@ export type LogoutUserData = {
 
 export type LogoutUserErrors = {
   /**
+   * The request origin or identity is not permitted.
+   */
+  403: ErrorResponse;
+  /**
    * Too many requests were submitted.
    */
   429: ErrorResponse;
@@ -283,7 +366,7 @@ export type LogoutUserResponses = {
   /**
    * Session revoked or already absent.
    */
-  204: void;
+  200: LogoutResponse;
 };
 
 export type LogoutUserResponse = LogoutUserResponses[keyof LogoutUserResponses];
@@ -300,6 +383,10 @@ export type GetCurrentUserErrors = {
    * Authentication credentials are missing or invalid.
    */
   401: ErrorResponse;
+  /**
+   * Too many requests were submitted.
+   */
+  429: ErrorResponse;
   /**
    * An unexpected server error occurred.
    */

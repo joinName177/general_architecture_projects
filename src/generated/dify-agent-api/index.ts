@@ -2,6 +2,7 @@
 
 export type {
   AuthResponse,
+  AuthSessionData,
   ClientOptions,
   ErrorResponse,
   FieldError,
@@ -33,6 +34,7 @@ export type {
   LoginUserErrors,
   LoginUserResponse,
   LoginUserResponses,
+  LogoutResponse,
   LogoutUserData,
   LogoutUserError,
   LogoutUserErrors,
@@ -51,6 +53,7 @@ export type {
   RegisterUserErrors,
   RegisterUserResponse,
   RegisterUserResponses,
+  UserData,
   UserResponse,
   VersionResponse,
 } from "./types.gen";

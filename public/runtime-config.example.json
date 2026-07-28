@@ -1,6 +1,6 @@
 {
   "apiBaseUrl": "http://localhost:18080/api/v1",
   "apiContractId": "dify-agent-api/v1",
-  "apiContractSha256": "5e5c088e0c646f93fe50c5c145729ccdd5a0c07f0cc5eaa6864274365d67c317",
+  "apiContractSha256": "49184e9d62e836a155fd2f6ed555107cfdb657f8f2dd5a7dd6dc7cd36b56ae2d",
   "releaseId": "local"
 }

@@ -15,6 +15,12 @@ const authResponse = {
     role: "super_admin" as const,
   },
 };
+const authEnvelope = {
+  code: 200,
+  data: authResponse,
+  message: "Authentication succeeded.",
+  requestId: "request-1",
+} as const;
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -22,8 +28,15 @@ describe("HttpAuthGateway", () => {
   it("logs in, keeps the access token in memory and sends cookies", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(Response.json(authResponse))
-      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+      .mockResolvedValueOnce(Response.json(authEnvelope))
+      .mockResolvedValueOnce(
+        Response.json({
+          code: 200,
+          data: { revoked: true },
+          message: "Session revoked.",
+          requestId: "request-2",
+        }),
+      );
     vi.stubGlobal("fetch", fetchMock);
     const gateway = new HttpAuthGateway(
       new HttpClient("https://api.example.test/api/v1"),
@@ -52,7 +65,8 @@ describe("HttpAuthGateway", () => {
       vi.fn<typeof fetch>().mockResolvedValue(
         Response.json(
           {
-            code: "INVALID_SESSION",
+            code: 401,
+            errorCode: "INVALID_SESSION",
             message: "Authentication required.",
             requestId: "request-1",
           },
@@ -75,7 +89,8 @@ describe("HttpAuthGateway error mapping", () => {
       vi.fn<typeof fetch>().mockResolvedValue(
         Response.json(
           {
-            code: "EMAIL_ALREADY_REGISTERED",
+            code: 409,
+            errorCode: "EMAIL_ALREADY_REGISTERED",
             message: "Conflict.",
             requestId: "request-2",
           },
@@ -118,15 +133,72 @@ describe("HttpAuthGateway error mapping", () => {
   });
 });
 
+describe("HttpAuthGateway error protocol", () => {
+  it("maps unauthenticated codes to the safe credentials prompt", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(
+        Response.json(
+          {
+            code: 401,
+            errorCode: "UNAUTHENTICATED",
+            message: "Authentication failed.",
+            requestId: "request-3",
+          },
+          { status: 401 },
+        ),
+      ),
+    );
+    const gateway = new HttpAuthGateway(
+      new HttpClient("https://api.example.test/api/v1"),
+    );
+
+    await expect(
+      gateway.login({
+        email: "admin@example.test",
+        password: "local-admin-password",
+      }),
+    ).rejects.toEqual(new AuthError("INVALID_CREDENTIALS"));
+  });
+
+  it("rejects an error envelope whose code differs from the HTTP status", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(
+        Response.json(
+          {
+            code: 500,
+            errorCode: "INVALID_CREDENTIALS",
+            message: "Authentication failed.",
+            requestId: "request-4",
+          },
+          { status: 401 },
+        ),
+      ),
+    );
+    const gateway = new HttpAuthGateway(
+      new HttpClient("https://api.example.test/api/v1"),
+    );
+
+    await expect(
+      gateway.login({
+        email: "admin@example.test",
+        password: "local-admin-password",
+      }),
+    ).rejects.toEqual(new AuthError("UNAVAILABLE"));
+  });
+});
+
 describe("HttpAuthGateway lifecycle", () => {
   it("clears the access token even when remote logout fails", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(Response.json(authResponse))
+      .mockResolvedValueOnce(Response.json(authEnvelope))
       .mockResolvedValueOnce(
         Response.json(
           {
-            code: "UNAVAILABLE",
+            code: 503,
+            errorCode: "UNAVAILABLE",
             message: "Unavailable.",
             requestId: "request-3",
           },
@@ -136,7 +208,8 @@ describe("HttpAuthGateway lifecycle", () => {
       .mockResolvedValueOnce(
         Response.json(
           {
-            code: "INVALID_SESSION",
+            code: 401,
+            errorCode: "INVALID_SESSION",
             message: "Authentication required.",
             requestId: "request-4",
           },

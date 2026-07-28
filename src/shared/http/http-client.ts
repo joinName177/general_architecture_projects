@@ -1,5 +1,18 @@
 import type { z } from "zod";
 
+interface ApiSuccessResponse<T> {
+  readonly data: T;
+}
+
+interface HttpRequestOptions {
+  readonly body?: unknown;
+  readonly headers?: HeadersInit;
+  readonly signal?: AbortSignal;
+}
+
+type HttpReadOptions = Omit<HttpRequestOptions, "body">;
+type HttpMethod = "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
+
 export class HttpResponseError extends Error {
   public constructor(
     public readonly status: number,
@@ -23,24 +36,68 @@ export class HttpClient {
     this.accessToken = accessToken;
   }
 
-  public async request<T>(
+  public delete<T>(
     path: string,
-    schema: z.ZodType<T>,
-    init: RequestInit = {},
+    schema: z.ZodType<ApiSuccessResponse<T>>,
+    options: HttpRequestOptions = {},
   ): Promise<T> {
-    const headers = new Headers(init.headers);
+    return this.request("DELETE", path, schema, options);
+  }
+
+  public get<T>(
+    path: string,
+    schema: z.ZodType<ApiSuccessResponse<T>>,
+    options: HttpReadOptions = {},
+  ): Promise<T> {
+    return this.request("GET", path, schema, options);
+  }
+
+  public patch<T>(
+    path: string,
+    schema: z.ZodType<ApiSuccessResponse<T>>,
+    options: HttpRequestOptions = {},
+  ): Promise<T> {
+    return this.request("PATCH", path, schema, options);
+  }
+
+  public post<T>(
+    path: string,
+    schema: z.ZodType<ApiSuccessResponse<T>>,
+    options: HttpRequestOptions = {},
+  ): Promise<T> {
+    return this.request("POST", path, schema, options);
+  }
+
+  public put<T>(
+    path: string,
+    schema: z.ZodType<ApiSuccessResponse<T>>,
+    options: HttpRequestOptions = {},
+  ): Promise<T> {
+    return this.request("PUT", path, schema, options);
+  }
+
+  private async request<T>(
+    method: HttpMethod,
+    path: string,
+    schema: z.ZodType<ApiSuccessResponse<T>>,
+    options: HttpRequestOptions,
+  ): Promise<T> {
+    const headers = new Headers(options.headers);
     headers.set("Accept", "application/json");
-    if (init.body !== undefined)
+    if (options.body !== undefined)
       headers.set("Content-Type", "application/json");
     if (this.accessToken !== undefined) {
       headers.set("Authorization", `Bearer ${this.accessToken}`);
     }
 
     const response = await fetch(`${this.baseUrl}${path}`, {
-      ...init,
+      ...(options.body === undefined
+        ? {}
+        : { body: JSON.stringify(options.body) }),
       credentials: "include",
       headers,
-      signal: init.signal ?? AbortSignal.timeout(10_000),
+      method,
+      signal: options.signal ?? AbortSignal.timeout(10_000),
     });
 
     if (!response.ok) {
@@ -50,8 +107,7 @@ export class HttpClient {
       );
     }
 
-    if (response.status === 204) return schema.parse(undefined);
-    return schema.parse(await response.json());
+    return schema.parse(await response.json()).data;
   }
 }
 

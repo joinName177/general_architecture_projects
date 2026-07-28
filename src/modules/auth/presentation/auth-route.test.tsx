@@ -81,6 +81,28 @@ describe("AuthScreen", () => {
     fireEvent.click(sendButton);
     expect(screen.getByText(/对话能力将在下一阶段接入/u)).toBeTruthy();
   });
+
+  it("shows invalid credentials as a handled form message", async () => {
+    const gateway: AuthGateway = {
+      login: vi.fn().mockRejectedValue(new AuthError("INVALID_CREDENTIALS")),
+      logout: vi.fn().mockResolvedValue(undefined),
+      register: vi.fn().mockResolvedValue(authenticatedUser),
+      restoreSession: vi.fn().mockResolvedValue(null),
+    };
+    renderAuthScreen(gateway);
+
+    await screen.findByRole("heading", { name: "登录账号" });
+    fireEvent.change(screen.getByLabelText("邮箱"), {
+      target: { value: authenticatedUser.email },
+    });
+    fireEvent.change(screen.getByLabelText("密码"), {
+      target: { value: "incorrect-password" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "登录" }));
+
+    expect(await screen.findByText("邮箱或密码不正确。")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "登录账号" })).toBeTruthy();
+  });
 });
 
 describe("AuthScreen logout", () => {

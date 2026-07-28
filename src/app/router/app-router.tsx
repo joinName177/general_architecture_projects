@@ -1,5 +1,3 @@
-import { Card } from "@heroui/react/card";
-import { Spinner } from "@heroui/react/spinner";
 import { RouterProvider, createBrowserRouter } from "react-router";
 import { useTranslation } from "react-i18next";
 
@@ -24,14 +22,11 @@ function RouteLoading() {
   const { t } = useTranslation();
   return (
     <main className={styles.shell}>
-      <Card className={styles.card}>
-        <Card.Content className={styles.cardContent}>
-          <div className={styles.statusContent} role="status">
-            <Spinner aria-hidden="true" size="sm" />
-            <span>{t("auth.loading")}</span>
-          </div>
-        </Card.Content>
-      </Card>
+      <section className={`${styles.card} ${styles.cardContent}`}>
+        <div className={styles.statusContent} role="status">
+          <span>{t("auth.loading")}</span>
+        </div>
+      </section>
     </main>
   );
 }

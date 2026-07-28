@@ -37,14 +37,26 @@ test("should complete login and logout through the browser", async ({
   await page.route("**/api/v1/auth/login", async (route) => {
     await route.fulfill({
       json: {
-        accessToken: "a".repeat(40),
-        expiresAt: "2026-07-24T12:00:00Z",
-        user: authenticatedUser,
+        code: 200,
+        data: {
+          accessToken: "a".repeat(40),
+          expiresAt: "2026-07-24T12:00:00Z",
+          user: authenticatedUser,
+        },
+        message: "Authentication succeeded.",
+        requestId: "e2e-login-request",
       },
     });
   });
   await page.route("**/api/v1/auth/logout", async (route) => {
-    await route.fulfill({ status: 204 });
+    await route.fulfill({
+      json: {
+        code: 200,
+        data: { revoked: true },
+        message: "Session revoked.",
+        requestId: "e2e-logout-request",
+      },
+    });
   });
 
   await page.goto("/");
@@ -94,14 +106,35 @@ test("should expose no automatically detectable accessibility violations", async
   expect(accessibilityResults.violations).toEqual([]);
 });
 
+test("should show invalid credentials without a runtime error", async ({
+  page,
+}) => {
+  const pageErrors: Error[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error));
+  await page.route("**/api/v1/auth/login", async (route) => {
+    await fulfillApiError(route, 401, "INVALID_CREDENTIALS");
+  });
+
+  await page.goto("/");
+  await page.getByLabel("Email").fill(authenticatedUser.email);
+  await page.getByLabel("Password").fill("incorrect-password");
+  await page.getByRole("button", { name: "Sign in" }).click();
+
+  await expect(
+    page.getByText("The email or password is incorrect."),
+  ).toBeVisible();
+  expect(pageErrors).toEqual([]);
+});
+
 async function fulfillApiError(
   route: Route,
   status: number,
-  code: string,
+  errorCode: string,
 ): Promise<void> {
   await route.fulfill({
     json: {
-      code,
+      code: status,
+      errorCode,
       message: "Authentication required.",
       requestId: "e2e-request",
     },
