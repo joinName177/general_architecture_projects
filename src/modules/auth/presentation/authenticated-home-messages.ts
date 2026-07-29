@@ -9,6 +9,10 @@ export const authenticatedHomeMessages = defineMessages({
     "en-GB": "Message your agent",
     "zh-CN": "向智能体发送消息",
   },
+  composerHeading: {
+    "en-GB": "Start with a thought",
+    "zh-CN": "从一个想法开始",
+  },
   composerPlaceholder: {
     "en-GB": "Ask anything, plan a task, or explore an idea…",
     "zh-CN": "提出问题、规划任务，或探索一个新想法…",
@@ -38,6 +42,10 @@ export const authenticatedHomeMessages = defineMessages({
   send: {
     "en-GB": "Send message",
     "zh-CN": "发送消息",
+  },
+  sessionReady: {
+    "en-GB": "Workspace ready",
+    "zh-CN": "工作台已就绪",
   },
   staticNotice: {
     "en-GB": "Conversation support is coming next. Your draft is still here.",

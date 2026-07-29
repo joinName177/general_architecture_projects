@@ -137,23 +137,38 @@ function AuthForm({
 
   return (
     <main className={styles.shell}>
-      <LanguageSelector />
+      <LiquidBackdrop />
+      <header className={styles.topbar}>
+        <Brand />
+        <LanguageSelector placement="inline" />
+      </header>
       <section className={styles.intro} aria-labelledby="auth-heading">
-        <p className={styles.kicker}>Dify Agent</p>
+        <p className={styles.kicker}>{t("auth.brandTagline")}</p>
         <h1 className={styles.heading} id="auth-heading">
           {t("auth.heroTitle")}
         </h1>
         <p className={styles.description}>{t("auth.heroDescription")}</p>
+        <ul className={styles.highlights}>
+          {(["private", "focused", "ready"] as const).map((highlight) => (
+            <li key={highlight}>
+              <span aria-hidden="true" className={styles.highlightMark} />
+              {t(`auth.highlights.${highlight}`)}
+            </li>
+          ))}
+        </ul>
       </section>
-      <CredentialsCard
-        error={mutation.isError ? mutation.error : undefined}
-        errors={formState.errors}
-        mode={mode}
-        onModeChange={onModeChange}
-        onSubmit={(event) => void submit(event)}
-        pending={mutation.isPending}
-        register={register}
-      />
+      <div className={styles.formRegion}>
+        <CredentialsCard
+          error={mutation.isError ? mutation.error : undefined}
+          errors={formState.errors}
+          mode={mode}
+          onModeChange={onModeChange}
+          onSubmit={(event) => void submit(event)}
+          pending={mutation.isPending}
+          register={register}
+        />
+        <p className={styles.privacyNote}>{t("auth.privacyNote")}</p>
+      </div>
     </main>
   );
 }
@@ -172,7 +187,9 @@ function CredentialsCard(props: CredentialsCardProps) {
   const { t } = useTranslation();
   return (
     <Card className={styles.card}>
+      <div aria-hidden="true" className={styles.cardSheen} />
       <Card.Header className={styles.cardHeader}>
+        <p className={styles.cardEyebrow}>{t("auth.accessLabel")}</p>
         <h2>{t(`auth.${props.mode}.title`)}</h2>
         <p>{t(`auth.${props.mode}.description`)}</p>
       </Card.Header>
@@ -214,6 +231,7 @@ function CredentialsForm(props: CredentialsFormProps) {
         >
           <Input
             autoComplete="name"
+            className={styles.input}
             fullWidth
             {...props.register("displayName")}
           />
@@ -222,6 +240,7 @@ function CredentialsForm(props: CredentialsFormProps) {
       <FormField label={t("auth.email")} error={props.errors.email?.message}>
         <Input
           autoComplete="email"
+          className={styles.input}
           fullWidth
           inputMode="email"
           {...props.register("email")}
@@ -236,12 +255,13 @@ function CredentialsForm(props: CredentialsFormProps) {
             props.mode === "login" ? "current-password" : "new-password"
           }
           fullWidth
+          className={styles.input}
           type="password"
           {...props.register("password")}
         />
       </FormField>
       {props.error !== undefined && (
-        <Alert status="danger" role="alert">
+        <Alert className={styles.alert} status="danger" role="alert">
           <Alert.Indicator />
           <Alert.Content>
             <Alert.Description>
@@ -255,7 +275,10 @@ function CredentialsForm(props: CredentialsFormProps) {
         isDisabled={props.pending}
         type="submit"
       >
-        {t(`auth.${props.mode}.submit`)}
+        <span>{t(`auth.${props.mode}.submit`)}</span>
+        <span aria-hidden="true" className={styles.actionArrow}>
+          →
+        </span>
       </Button>
     </Form>
   );
@@ -274,7 +297,7 @@ function FormField({ children, error, label }: FormFieldProps) {
       fullWidth
       isInvalid={error !== undefined}
     >
-      <Label>{label}</Label>
+      <Label className={styles.fieldLabel}>{label}</Label>
       {children}
       {error !== undefined && <FieldError>{error}</FieldError>}
     </TextField>
@@ -290,25 +313,56 @@ function StatusCard({
 }) {
   return (
     <main className={`${styles.shell} ${styles.shellCentered}`}>
-      <LanguageSelector />
-      <Card className={styles.card}>
-        <Card.Content className={styles.cardContent}>
-          {status === "loading" ? (
-            <div className={styles.statusContent} role="status">
-              <Spinner aria-hidden="true" size="sm" />
-              <span>{text}</span>
-            </div>
-          ) : (
-            <Alert status="danger" role="alert">
-              <Alert.Indicator />
-              <Alert.Content>
-                <Alert.Description>{text}</Alert.Description>
-              </Alert.Content>
-            </Alert>
-          )}
-        </Card.Content>
-      </Card>
+      <LiquidBackdrop />
+      <header className={styles.topbar}>
+        <Brand />
+        <LanguageSelector placement="inline" />
+      </header>
+      <div className={styles.statusRegion}>
+        <Card className={styles.card}>
+          <Card.Content className={styles.cardContent}>
+            {status === "loading" ? (
+              <div className={styles.statusContent} role="status">
+                <Spinner aria-hidden="true" size="sm" />
+                <span>{text}</span>
+              </div>
+            ) : (
+              <Alert className={styles.alert} status="danger" role="alert">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{text}</Alert.Description>
+                </Alert.Content>
+              </Alert>
+            )}
+          </Card.Content>
+        </Card>
+      </div>
     </main>
+  );
+}
+
+function Brand() {
+  const { t } = useTranslation();
+  return (
+    <div className={styles.brand}>
+      <span aria-hidden="true" className={styles.brandMark}>
+        <span className={styles.brandCore} />
+      </span>
+      <span className={styles.brandCopy}>
+        <strong>{t("auth.brand")}</strong>
+        <small>{t("auth.brandTagline")}</small>
+      </span>
+    </div>
+  );
+}
+
+function LiquidBackdrop() {
+  return (
+    <div aria-hidden="true" className={styles.liquidBackdrop}>
+      <span className={styles.liquidOrbPrimary} />
+      <span className={styles.liquidOrbSecondary} />
+      <span className={styles.liquidLens} />
+    </div>
   );
 }
 

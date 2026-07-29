@@ -1,20 +1,74 @@
 .selector {
   position: absolute;
+  z-index: 2;
   top: clamp(var(--space-md), 3vw, var(--space-xl));
   right: clamp(var(--space-md), 3vw, var(--space-xl));
   display: flex;
+  flex-direction: row;
   min-height: 2.75rem;
   align-items: center;
-  gap: var(--space-xs);
-  padding: 0 var(--space-sm);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-overlay);
-  color: var(--color-text-accent);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  gap: var(--space-2xs);
+  padding: var(--space-2xs);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset);
+  backdrop-filter: blur(1.5rem) saturate(140%);
+  color: var(--color-glass-text-secondary);
 }
 
-.selector:focus-within {
-  outline: 3px solid var(--color-focus-ring);
+.inline {
+  position: static;
+}
+
+.option {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding-inline: var(--space-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--color-glass-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  transition:
+    color 180ms var(--ease-glass-out),
+    background-color 180ms var(--ease-glass-out),
+    border-color 180ms var(--ease-glass-out);
+}
+
+.option > span {
+  color: inherit;
+}
+
+.option[data-hovered] {
+  color: var(--color-glass-text-primary);
+  background: var(--color-glass-surface);
+}
+
+.option[data-selected] {
+  border-color: var(--color-glass-border-strong);
+  background: var(--color-glass-accent-soft);
+  color: var(--color-glass-action);
+  box-shadow: var(--shadow-liquid-inset);
+}
+
+.option[data-focus-visible] {
+  outline: 3px solid var(--color-glass-accent-soft);
+  outline-offset: var(--space-2xs);
+}
+
+@media (max-width: 480px) {
+  .option {
+    padding-inline: var(--space-xs);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option {
+    transition: none;
+  }
 }

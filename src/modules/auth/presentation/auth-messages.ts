@@ -1,6 +1,18 @@
 import { defineMessages } from "~/shared/i18n/message-catalog";
 
 export const authMessages = defineMessages({
+  accessLabel: {
+    "en-GB": "Secure access",
+    "zh-CN": "安全访问",
+  },
+  brand: {
+    "en-GB": "Dify Agent",
+    "zh-CN": "Dify Agent",
+  },
+  brandTagline: {
+    "en-GB": "Private agent workspace",
+    "zh-CN": "私有智能体工作空间",
+  },
   displayName: {
     "en-GB": "Display name",
     "zh-CN": "显示名称",
@@ -37,8 +49,22 @@ export const authMessages = defineMessages({
     "zh-CN": "一个清晰、安全的入口，让团队专注于真正重要的智能体工作。",
   },
   heroTitle: {
-    "en-GB": "Welcome to your agent workspace",
-    "zh-CN": "欢迎来到你的智能体工作台",
+    "en-GB": "Ideas become clear next steps.",
+    "zh-CN": "让每个想法，都成为清晰的下一步。",
+  },
+  highlights: {
+    focused: {
+      "en-GB": "A focused space for meaningful work",
+      "zh-CN": "专注于真正重要的工作",
+    },
+    private: {
+      "en-GB": "Private session by design",
+      "zh-CN": "默认保护会话隐私",
+    },
+    ready: {
+      "en-GB": "Ready when inspiration arrives",
+      "zh-CN": "灵感到来时，随时开始",
+    },
   },
   loading: {
     "en-GB": "Loading authentication…",
@@ -69,6 +95,11 @@ export const authMessages = defineMessages({
   password: {
     "en-GB": "Password",
     "zh-CN": "密码",
+  },
+  privacyNote: {
+    "en-GB":
+      "Credentials are encrypted in transit and never stored in this browser.",
+    "zh-CN": "凭据经加密传输，且不会存储在此浏览器中。",
   },
   register: {
     description: {

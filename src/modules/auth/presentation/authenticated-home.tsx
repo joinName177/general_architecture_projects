@@ -43,27 +43,40 @@ export function AuthenticatedHome(props: AuthenticatedHomeProps) {
 
   return (
     <main className={styles.shell}>
-      <div aria-hidden="true" className={styles.ambientShape} />
+      <div aria-hidden="true" className={styles.ambientBackdrop}>
+        <span className={styles.ambientPrimary} />
+        <span className={styles.ambientSecondary} />
+        <span className={styles.ambientLens} />
+      </div>
       <header className={styles.header}>
         <a className={styles.brand} href="/" aria-label={t("home.brand")}>
           <span aria-hidden="true" className={styles.brandMark}>
-            D
+            <span className={styles.brandCore} />
           </span>
-          <span>{t("home.brand")}</span>
+          <span className={styles.brandCopy}>
+            <strong>{t("home.brand")}</strong>
+            <small>{t("auth.brandTagline")}</small>
+          </span>
         </a>
-        <Button
-          className={logoutButtonClassName}
-          isDisabled={props.isLoggingOut}
-          onClick={props.onLogout}
-          type="button"
-        >
-          {t("auth.logout")}
-        </Button>
+        <div className={styles.headerActions}>
+          <LanguageSelector placement="inline" />
+          <Button
+            className={logoutButtonClassName}
+            isDisabled={props.isLoggingOut}
+            onClick={props.onLogout}
+            type="button"
+          >
+            {t("auth.logout")}
+          </Button>
+        </div>
       </header>
-      <LanguageSelector />
       <section className={styles.content} aria-labelledby="home-heading">
         <div className={styles.intro}>
           <p className={styles.eyebrow}>{t("home.eyebrow")}</p>
+          <p className={styles.readyStatus}>
+            <span aria-hidden="true" className={styles.readyDot} />
+            {t("home.sessionReady")}
+          </p>
           <h1 className={styles.heading} id="home-heading">
             {t("home.title", { name: props.displayName })}
           </h1>
@@ -91,6 +104,10 @@ function HomeComposer() {
           if (canSend) setIsStaticNoticeVisible(true);
         }}
       >
+        <div className={styles.composerTopline}>
+          <span>{t("home.composerHeading")}</span>
+          <span className={styles.composerIndex}>01</span>
+        </div>
         <TextArea
           aria-label={t("home.composerLabel")}
           className={styles.textArea}
@@ -107,6 +124,7 @@ function HomeComposer() {
             aria-label={t("home.modelLabel")}
             className={modelGroupClassName}
             onChange={setModelId}
+            orientation="horizontal"
             value={modelId}
           >
             {modelOptions.map((option) => (
@@ -127,7 +145,7 @@ function HomeComposer() {
           >
             {t("home.send")}
             <span aria-hidden="true" className={styles.sendArrow}>
-              ↑
+              →
             </span>
           </Button>
         </div>

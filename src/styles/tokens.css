@@ -58,7 +58,9 @@
   --palette-red-900: #7f1d1d;
   --palette-red-950: #450a0a;
 
-  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans:
+    "Avenir Next", "SF Pro Display", "Segoe UI Variable", ui-sans-serif,
+    system-ui, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -88,6 +90,9 @@
   --shadow-home-composer: 0 1.75rem 5rem rgb(45 42 36 / 10%);
   --radius-home-composer: 2rem;
   --layout-viewport-min-inline-size: 20rem;
+  --radius-glass-lg: 1.75rem;
+  --radius-glass-xl: 2.25rem;
+  --ease-glass-out: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Components consume semantic aliases only; themes remap this layer. */
   --color-surface-canvas: var(--palette-slate-100);
@@ -116,6 +121,59 @@
   --color-home-ink: #1f201e;
   --color-home-option-selected: rgb(184 139 74 / 12%);
   --color-home-text-secondary: var(--palette-slate-600);
+  --color-glass-accent: #83bea9;
+  --color-glass-accent-soft: rgb(131 190 169 / 18%);
+  --color-glass-action: #d8ede5;
+  --color-glass-action-border: rgb(241 255 249 / 72%);
+  --color-glass-action-hover: #e5f4ee;
+  --color-glass-action-text: #10201b;
+  --color-glass-ambient-primary: radial-gradient(
+    circle,
+    rgb(82 143 124 / 46%),
+    rgb(82 143 124 / 8%) 54%,
+    transparent 72%
+  );
+  --color-glass-ambient-secondary: radial-gradient(
+    circle,
+    rgb(151 190 176 / 28%),
+    rgb(151 190 176 / 4%) 58%,
+    transparent 74%
+  );
+  --color-glass-border: rgb(225 244 237 / 16%);
+  --color-glass-border-strong: rgb(235 250 244 / 26%);
+  --color-glass-canvas: #0d1515;
+  --color-glass-danger-border: rgb(244 166 157 / 38%);
+  --color-glass-danger-surface: rgb(126 43 38 / 22%);
+  --color-glass-danger-text: #ffd7d2;
+  --color-glass-highlight: rgb(255 255 255 / 20%);
+  --color-glass-input: rgb(4 12 11 / 26%);
+  --color-glass-input-hover: rgb(8 19 17 / 38%);
+  --color-glass-lens: rgb(215 239 230 / 5%);
+  --color-glass-refraction: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 9%),
+    transparent 38%,
+    rgb(131 190 169 / 5%)
+  );
+  --color-glass-surface: rgb(225 242 236 / 10%);
+  --color-glass-surface-strong: rgb(225 242 236 / 14%);
+  --color-glass-text-muted: #8d9c97;
+  --color-glass-text-primary: #f3f7f5;
+  --color-glass-text-secondary: #b6c4bf;
+  --shadow-glass-accent-ring: 0 0 0 0.22rem var(--color-glass-accent-soft);
+  --shadow-glass-action: 0 0.8rem 2.25rem rgb(5 18 15 / 28%);
+  --shadow-glass-action-hover: 0 1rem 2.75rem rgb(5 18 15 / 38%);
+  --shadow-glass-lens:
+    inset 0 1px 0 var(--color-glass-highlight), 0 2rem 6rem rgb(3 12 10 / 20%);
+  --shadow-liquid-inset:
+    inset 0 1px 0 var(--color-glass-highlight),
+    inset 0 -1px 0 rgb(3 12 10 / 16%);
+  --shadow-liquid-raised: 0 2rem 6rem rgb(2 10 9 / 42%);
+  --texture-glass-noise: radial-gradient(
+    circle at 30% 20%,
+    rgb(255 255 255 / 8%) 0 0.04rem,
+    transparent 0.06rem
+  );
 }
 
 :root[data-theme="dark"] {
@@ -146,4 +204,10 @@
   --color-home-ink: #f3f1eb;
   --color-home-option-selected: rgb(211 170 109 / 14%);
   --color-home-text-secondary: var(--palette-slate-300);
+  --color-glass-border: rgb(225 244 237 / 18%);
+  --color-glass-border-strong: rgb(235 250 244 / 30%);
+  --color-glass-input: rgb(4 12 11 / 34%);
+  --color-glass-input-hover: rgb(8 19 17 / 46%);
+  --color-glass-surface: rgb(225 242 236 / 11%);
+  --color-glass-surface-strong: rgb(225 242 236 / 16%);
 }
