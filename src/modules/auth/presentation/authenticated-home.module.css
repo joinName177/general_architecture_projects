@@ -78,9 +78,9 @@
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--color-glass-border);
   border-radius: var(--radius-glass-lg);
-  background: var(--color-glass-surface);
-  box-shadow: var(--shadow-liquid-inset);
-  backdrop-filter: blur(2rem) saturate(145%);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  backdrop-filter: blur(2.25rem) saturate(165%);
 }
 
 .brand {
@@ -141,16 +141,19 @@
 .logoutButton {
   min-height: 2.75rem;
   border: 1px solid var(--color-glass-border);
-  border-radius: var(--radius-md);
-  background: var(--color-glass-surface);
+  border-radius: var(--radius-lg);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
   color: var(--color-glass-text-primary);
   transition:
     transform 180ms var(--ease-glass-out),
-    background-color 180ms var(--ease-glass-out);
+    background-color 180ms var(--ease-glass-out),
+    box-shadow 180ms var(--ease-glass-out);
 }
 
 .logoutButton[data-hovered] {
   background: var(--color-glass-surface-strong);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
   transform: translateY(-0.0625rem);
 }
 
@@ -197,11 +200,11 @@
   padding-inline: var(--space-sm);
   border: 1px solid var(--color-glass-border);
   border-radius: var(--radius-lg);
-  background: var(--color-glass-surface);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
   color: var(--color-glass-text-secondary);
   font-size: var(--font-size-xs);
-  box-shadow: var(--shadow-liquid-inset);
-  backdrop-filter: blur(1rem);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  backdrop-filter: blur(1.5rem) saturate(155%);
 }
 
 .readyDot,
@@ -243,7 +246,7 @@
   border-radius: var(--radius-glass-xl);
   background: var(--color-glass-refraction), var(--color-glass-surface-strong);
   box-shadow: var(--shadow-liquid-inset), var(--shadow-liquid-raised);
-  backdrop-filter: blur(2.5rem) saturate(150%);
+  backdrop-filter: blur(3rem) saturate(165%);
   animation: reveal 700ms 120ms var(--ease-glass-out) both;
 }
 
@@ -328,23 +331,27 @@
   border: 1px solid var(--color-glass-border);
   border-radius: var(--radius-lg);
   background: var(--color-glass-input);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
   color: var(--color-glass-text-secondary);
   cursor: pointer;
   font-size: var(--font-size-xs);
   transition:
     transform 180ms var(--ease-glass-out),
     border-color 180ms var(--ease-glass-out),
-    background-color 180ms var(--ease-glass-out);
+    background-color 180ms var(--ease-glass-out),
+    box-shadow 180ms var(--ease-glass-out);
 }
 
 .modelOption[data-hovered] {
   background: var(--color-glass-input-hover);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
   transform: translateY(-0.0625rem);
 }
 
 .modelOption[data-selected] {
   border-color: var(--color-glass-border-strong);
   background: var(--color-glass-accent-soft);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
   color: var(--color-glass-text-primary);
 }
 
@@ -359,7 +366,7 @@
   border: 1px solid var(--color-glass-action-border);
   border-radius: var(--radius-lg);
   background: var(--color-glass-action);
-  box-shadow: var(--shadow-glass-action);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action);
   color: var(--color-glass-action-text);
   transition:
     transform 180ms var(--ease-glass-out),
@@ -369,11 +376,12 @@
 
 .sendButton[data-hovered] {
   background: var(--color-glass-action-hover);
-  box-shadow: var(--shadow-glass-action-hover);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action-hover);
   transform: translateY(-0.125rem);
 }
 
 .sendButton[data-pressed] {
+  background: var(--color-glass-action-pressed);
   transform: scale(0.98);
 }
 

@@ -26,10 +26,17 @@ describe("ApplicationI18nProvider", () => {
       </ApplicationI18nProvider>,
     );
 
-    fireEvent.click(screen.getByRole("radio", { name: "English" }));
+    const languageButton = screen.getByRole("button", { name: "切换到英文" });
+    expect(languageButton.querySelector("svg")).toBeTruthy();
+    expect(languageButton.textContent).toBe("");
+    fireEvent.click(languageButton);
 
     await waitFor(() => {
-      expect(screen.getByRole("radiogroup", { name: "Language" })).toBeTruthy();
+      expect(
+        screen.getByRole("button", {
+          name: "Switch to Simplified Chinese",
+        }),
+      ).toBeTruthy();
       expect(document.documentElement.lang).toBe("en-GB");
     });
   });

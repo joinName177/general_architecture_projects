@@ -43,7 +43,7 @@
   border-radius: var(--radius-glass-lg);
   background: var(--color-glass-refraction), var(--color-glass-surface-strong);
   box-shadow: var(--shadow-liquid-inset), var(--shadow-liquid-raised);
-  backdrop-filter: blur(2rem) saturate(145%);
+  backdrop-filter: blur(2.75rem) saturate(165%);
 }
 
 .cardContent {

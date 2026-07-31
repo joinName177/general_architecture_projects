@@ -48,7 +48,7 @@ API 成功响应固定为 `code / message / requestId / data`，错误响应固�
 
 ## 5. 体验、交付与验收
 
-界面使用语义化 HTML、键盘可达控件、清晰焦点态与响应式布局，目标为 WCAG 2.2 AA。视觉系统采用深色矿物色基底与低饱和海沫绿单一强调色，通过语义 Token 组合半透明表面、折射高光、模糊和内嵌阴影形成液态玻璃层次；动态只使用 GPU 友好的位移与透明度，并为 `prefers-reduced-motion` 提供静态回退。所有用户可见文案由 i18next 管理；启动配置失败使用最小静态故障页，因为 i18n 本身尚未安全启动。
+界面使用语义化 HTML、键盘可达控件、清晰焦点态与响应式布局，目标为 WCAG 2.2 AA。视觉系统采用暖白基底，并以杏色、粉色、淡紫和青色的大范围柔焦渐变构成环境背景；前景通过语义 Token 组合浅色半透明表面、折射高光、模糊和内嵌阴影形成液态玻璃层次，同时以深灰蓝文字和深青动作色维持可读性。动态只使用 GPU 友好的位移与透明度，并为 `prefers-reduced-motion` 提供静态回退。所有用户可见文案由 i18next 管理；启动配置失败使用最小静态故障页，因为 i18n 本身尚未安全启动。
 
 HeroUI v3 是交互控件、反馈状态和容器组件的唯一基础体系，业务样式只通过组件公开属性、公开 className、就近的 `*.module.css` 和语义 Token 扩展。`src/styles/tokens.css` 维护按浅到深排序的原始调色板，并映射为颜色、排版、间距、圆角和阴影的语义 Token；业务 CSS 只能使用语义 Token，未来主题仅重映射该语义层。除 `src/styles/theme.css`（入口与基础重置）和 `src/styles/tokens.css` 外，不得新增全局 CSS。动作和选择控件使用 HeroUI 所依赖的 `react-aria-components` 公开 `Button`、`RadioGroup`、`Radio` 原语，并只组合 HeroUI 公开的对应 variants；该依赖必须精确锁定，禁止本地适配器、类型断言、依赖补丁、`skipLibCheck` 或其他绕过方式。原生 HTML 仅用于文档和语义结构，不承担交互控件。
 

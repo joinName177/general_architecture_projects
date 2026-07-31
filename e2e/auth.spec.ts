@@ -106,6 +106,35 @@ test("should expose no automatically detectable accessibility violations", async
   expect(accessibilityResults.violations).toEqual([]);
 });
 
+test("should render the sampled pastel canvas palette", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
+
+  const canvasBackgroundImage = await page
+    .locator("main")
+    .evaluate((main) =>
+      getComputedStyle(main).getPropertyValue("background-image"),
+    );
+  expect(canvasBackgroundImage).toContain("rgb(245, 206, 190)");
+  expect(canvasBackgroundImage).toContain("rgb(242, 181, 188)");
+  expect(canvasBackgroundImage).toContain("rgb(216, 201, 225)");
+  expect(canvasBackgroundImage).toContain("rgb(177, 236, 245)");
+});
+
+test("should render the technology-blue primary action palette", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const primaryAction = page.getByRole("button", { name: "Sign in" });
+  await expect(primaryAction).toHaveCSS(
+    "background-color",
+    "rgb(62, 102, 136)",
+  );
+
+  await primaryAction.hover();
+  await expect(primaryAction).toHaveCSS("background-color", "rgb(49, 84, 115)");
+});
+
 test("should show invalid credentials without a runtime error", async ({
   page,
 }) => {

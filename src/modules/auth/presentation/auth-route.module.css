@@ -97,9 +97,9 @@
   overflow: hidden;
   border: 1px solid var(--color-glass-border-strong);
   border-radius: 0.9rem;
-  background: var(--color-glass-surface-strong);
-  box-shadow: var(--shadow-liquid-inset);
-  backdrop-filter: blur(1.25rem) saturate(135%);
+  background: var(--color-glass-refraction), var(--color-glass-surface-strong);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  backdrop-filter: blur(1.5rem) saturate(160%);
 }
 
 .brandMark::before {
@@ -212,9 +212,9 @@
   overflow: hidden;
   border: 1px solid var(--color-glass-border-strong);
   border-radius: var(--radius-glass-xl);
-  background: var(--color-glass-surface);
+  background: var(--color-glass-refraction), var(--color-glass-surface-strong);
   box-shadow: var(--shadow-liquid-raised), var(--shadow-liquid-inset);
-  backdrop-filter: blur(2rem) saturate(145%);
+  backdrop-filter: blur(2.75rem) saturate(165%);
 }
 
 .card::after {
@@ -235,8 +235,8 @@
   height: 7rem;
   border-radius: 50%;
   background: var(--color-glass-highlight);
-  filter: blur(1.8rem);
-  opacity: 0.75;
+  filter: blur(2rem);
+  opacity: 0.52;
   pointer-events: none;
   transform: rotate(-8deg);
 }
@@ -293,27 +293,31 @@
 }
 
 .input {
-  min-height: 3.25rem;
+  min-height: 3.5rem;
   border: 1px solid var(--color-glass-border);
-  border-radius: var(--radius-md);
+  border-radius: 1rem;
   background: var(--color-glass-input);
   color: var(--color-glass-text-primary);
-  box-shadow: var(--shadow-liquid-inset);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
   transition:
     border-color 180ms ease,
     background-color 180ms ease,
-    transform 180ms ease;
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .input[data-hovered] {
   border-color: var(--color-glass-border-strong);
   background: var(--color-glass-input-hover);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
 }
 
 .input[data-focus-visible] {
   border-color: var(--color-glass-accent);
   outline: 3px solid var(--color-focus-ring);
   outline-offset: var(--space-2xs);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
+  transform: translateY(-0.0625rem);
 }
 
 .alert {
@@ -327,13 +331,24 @@
   min-height: 2.75rem;
   justify-self: start;
   border: 1px solid var(--color-glass-border);
-  background: var(--color-glass-surface);
+  border-radius: var(--radius-lg);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
   color: var(--color-glass-text-secondary);
+  transition:
+    transform 180ms var(--ease-glass-out),
+    color 180ms var(--ease-glass-out),
+    box-shadow 180ms var(--ease-glass-out);
 }
 
 .modeSwitch[data-hovered] {
   color: var(--color-glass-text-primary);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
   transform: translateX(0.18rem);
+}
+
+.modeSwitch[data-pressed] {
+  transform: scale(0.98);
 }
 
 .primaryAction {
@@ -343,8 +358,9 @@
   justify-content: space-between;
   padding-inline: var(--space-lg);
   border: 1px solid var(--color-glass-action-border);
+  border-radius: 1rem;
   background: var(--color-glass-action);
-  box-shadow: var(--shadow-glass-action);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action);
   color: var(--color-glass-action-text);
   transition:
     background-color 180ms ease,
@@ -354,11 +370,12 @@
 
 .primaryAction[data-hovered] {
   background: var(--color-glass-action-hover);
-  box-shadow: var(--shadow-glass-action-hover);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action-hover);
   transform: translateY(-0.12rem);
 }
 
 .primaryAction[data-pressed] {
+  background: var(--color-glass-action-pressed);
   transform: scale(0.98);
 }
 

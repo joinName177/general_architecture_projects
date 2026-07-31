@@ -3,14 +3,6 @@ export type SupportedLanguage = (typeof supportedLanguages)[number];
 
 export const defaultLanguage: SupportedLanguage = "zh-CN";
 
-export const languageOptions: readonly {
-  readonly labelKey: "language.zhCn" | "language.enGb";
-  readonly value: SupportedLanguage;
-}[] = [
-  { labelKey: "language.zhCn", value: "zh-CN" },
-  { labelKey: "language.enGb", value: "en-GB" },
-];
-
 export interface LocalizedName {
   readonly en?: string;
   readonly zh?: string;

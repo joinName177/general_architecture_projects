@@ -1,13 +1,16 @@
-import { radioGroupVariants, radioVariants } from "@heroui/styles";
-import { Radio, RadioGroup } from "react-aria-components/RadioGroup";
+import { buttonVariants } from "@heroui/styles";
+import { Languages } from "lucide-react";
+import { Button } from "react-aria-components/Button";
 import { useTranslation } from "react-i18next";
 
 import { useApplicationI18n } from "~/shared/i18n/application-i18n";
-import { isSupportedLanguage, languageOptions } from "~/shared/i18n/language";
 
 import * as styles from "./language-selector.module.css";
 
-const languageRadioStyles = radioVariants();
+const languageButtonClassName = `${buttonVariants({
+  isIconOnly: true,
+  variant: "tertiary",
+})} ${styles.selector}`;
 
 interface LanguageSelectorProps {
   readonly placement?: "floating" | "inline";
@@ -18,30 +21,21 @@ export function LanguageSelector({
 }: LanguageSelectorProps) {
   const { t } = useTranslation();
   const { language, setLanguage } = useApplicationI18n();
+  const nextLanguage = language === "zh-CN" ? "en-GB" : "zh-CN";
+  const accessibleLabel = t(
+    nextLanguage === "en-GB"
+      ? "language.switchToEnglish"
+      : "language.switchToChinese",
+  );
 
   return (
-    <RadioGroup
-      aria-label={t("language.label")}
-      className={`${radioGroupVariants()} ${styles.selector} ${placement === "inline" ? styles.inline : ""}`}
-      orientation="horizontal"
-      onChange={(nextLanguage) => {
-        if (isSupportedLanguage(nextLanguage)) {
-          setLanguage(nextLanguage);
-        }
-      }}
-      value={language}
+    <Button
+      aria-label={accessibleLabel}
+      className={`${languageButtonClassName} ${placement === "inline" ? styles.inline : ""}`}
+      onClick={() => setLanguage(nextLanguage)}
+      type="button"
     >
-      {languageOptions.map((option) => (
-        <Radio
-          className={`${languageRadioStyles.base()} ${styles.option}`}
-          key={option.value}
-          value={option.value}
-        >
-          <span className={languageRadioStyles.content()}>
-            {t(option.labelKey)}
-          </span>
-        </Radio>
-      ))}
-    </RadioGroup>
+      <Languages aria-hidden="true" className={styles.icon} strokeWidth={2} />
+    </Button>
   );
 }

@@ -1,16 +1,12 @@
 import { defineMessages } from "~/shared/i18n/message-catalog";
 
 export const languageMessages = defineMessages({
-  enGb: {
-    "en-GB": "English",
-    "zh-CN": "English",
+  switchToChinese: {
+    "en-GB": "Switch to Simplified Chinese",
+    "zh-CN": "切换到简体中文",
   },
-  label: {
-    "en-GB": "Language",
-    "zh-CN": "语言",
-  },
-  zhCn: {
-    "en-GB": "Simplified Chinese",
-    "zh-CN": "简体中文",
+  switchToEnglish: {
+    "en-GB": "Switch to English",
+    "zh-CN": "切换到英文",
   },
 });
