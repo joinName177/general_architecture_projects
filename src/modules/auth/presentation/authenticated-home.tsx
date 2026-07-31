@@ -5,6 +5,7 @@ import {
   radioVariants,
 } from "@heroui/styles";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Button } from "react-aria-components/Button";
 import { Radio, RadioGroup } from "react-aria-components/RadioGroup";
 import { useTranslation } from "react-i18next";
@@ -90,69 +91,61 @@ export function AuthenticatedHome(props: AuthenticatedHomeProps) {
 
 function HomeComposer() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [draft, setDraft] = useState("");
   const [modelId, setModelId] = useState("balanced");
-  const [isStaticNoticeVisible, setIsStaticNoticeVisible] = useState(false);
   const canSend = draft.trim().length > 0;
 
   return (
-    <>
-      <form
-        className={styles.composer}
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (canSend) setIsStaticNoticeVisible(true);
-        }}
-      >
-        <div className={styles.composerTopline}>
-          <span>{t("home.composerHeading")}</span>
-          <span className={styles.composerIndex}>01</span>
-        </div>
-        <TextArea
-          aria-label={t("home.composerLabel")}
-          className={styles.textArea}
-          fullWidth
-          onChange={(event) => {
-            setDraft(event.currentTarget.value);
-            setIsStaticNoticeVisible(false);
-          }}
-          placeholder={t("home.composerPlaceholder")}
-          value={draft}
-        />
-        <div className={styles.composerFooter}>
-          <RadioGroup
-            aria-label={t("home.modelLabel")}
-            className={modelGroupClassName}
-            onChange={setModelId}
-            orientation="horizontal"
-            value={modelId}
-          >
-            {modelOptions.map((option) => (
-              <Radio
-                className={modelRadioClassName}
-                key={option.id}
-                value={option.id}
-              >
-                <span aria-hidden="true" className={styles.modelPulse} />
-                {t(option.labelKey)}
-              </Radio>
-            ))}
-          </RadioGroup>
-          <Button
-            className={sendButtonClassName}
-            isDisabled={!canSend}
-            type="submit"
-          >
-            {t("home.send")}
-            <span aria-hidden="true" className={styles.sendArrow}>
-              →
-            </span>
-          </Button>
-        </div>
-      </form>
-      <p className={styles.notice} aria-live="polite">
-        {isStaticNoticeVisible ? t("home.staticNotice") : ""}
-      </p>
-    </>
+    <form
+      className={styles.composer}
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (canSend) void navigate("/chat");
+      }}
+    >
+      <div className={styles.composerTopline}>
+        <span>{t("home.composerHeading")}</span>
+        <span className={styles.composerIndex}>01</span>
+      </div>
+      <TextArea
+        aria-label={t("home.composerLabel")}
+        className={styles.textArea}
+        fullWidth
+        onChange={(event) => setDraft(event.currentTarget.value)}
+        placeholder={t("home.composerPlaceholder")}
+        value={draft}
+      />
+      <div className={styles.composerFooter}>
+        <RadioGroup
+          aria-label={t("home.modelLabel")}
+          className={modelGroupClassName}
+          onChange={setModelId}
+          orientation="horizontal"
+          value={modelId}
+        >
+          {modelOptions.map((option) => (
+            <Radio
+              className={modelRadioClassName}
+              key={option.id}
+              value={option.id}
+            >
+              <span aria-hidden="true" className={styles.modelPulse} />
+              {t(option.labelKey)}
+            </Radio>
+          ))}
+        </RadioGroup>
+        <Button
+          className={sendButtonClassName}
+          isDisabled={!canSend}
+          type="submit"
+        >
+          {t("home.send")}
+          <span aria-hidden="true" className={styles.sendArrow}>
+            →
+          </span>
+        </Button>
+      </div>
+    </form>
   );
 }

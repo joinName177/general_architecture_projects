@@ -86,6 +86,27 @@ export type ReadinessResponse = {
   };
 };
 
+export type ToolDefinition = {
+  name: string;
+  description: string;
+  /**
+   * JSON Schema describing the tool parameters.
+   */
+  parameters: {
+    [key: string]: unknown;
+  };
+};
+
+export type ChatMessage = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
+export type ChatRequest = {
+  messages: Array<ChatMessage>;
+  tools?: Array<ToolDefinition>;
+};
+
 export type VersionResponse = {
   code: 200;
   message: string;
@@ -405,3 +426,45 @@ export type GetCurrentUserResponses = {
 
 export type GetCurrentUserResponse =
   GetCurrentUserResponses[keyof GetCurrentUserResponses];
+
+export type ChatWithAgentData = {
+  body: ChatRequest;
+  path?: never;
+  query?: never;
+  url: "/agent/chat";
+};
+
+export type ChatWithAgentErrors = {
+  /**
+   * The request body is malformed.
+   */
+  400: ErrorResponse;
+  /**
+   * Authentication credentials are missing or invalid.
+   */
+  401: ErrorResponse;
+  /**
+   * The request origin or identity is not permitted.
+   */
+  403: ErrorResponse;
+  /**
+   * Too many requests were submitted.
+   */
+  429: ErrorResponse;
+  /**
+   * An unexpected server error occurred.
+   */
+  500: ErrorResponse;
+};
+
+export type ChatWithAgentError = ChatWithAgentErrors[keyof ChatWithAgentErrors];
+
+export type ChatWithAgentResponses = {
+  /**
+   * SSE stream of chat events (text_delta, done, error).
+   */
+  200: string;
+};
+
+export type ChatWithAgentResponse =
+  ChatWithAgentResponses[keyof ChatWithAgentResponses];

@@ -18,4 +18,14 @@ export const moduleCatalog: readonly ModuleDefinition[] = [
       return { Component: AuthRoute };
     },
   },
+  {
+    id: "chat",
+    routeId: "chat",
+    path: "/chat",
+    lazy: async () => {
+      const { ChatRoute } =
+        await import("~/modules/chat/presentation/chat-route");
+      return { Component: ChatRoute };
+    },
+  },
 ];

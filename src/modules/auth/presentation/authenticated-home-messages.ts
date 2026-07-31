@@ -47,10 +47,6 @@ export const authenticatedHomeMessages = defineMessages({
     "en-GB": "Workspace ready",
     "zh-CN": "工作台已就绪",
   },
-  staticNotice: {
-    "en-GB": "Conversation support is coming next. Your draft is still here.",
-    "zh-CN": "对话能力将在下一阶段接入，你的草稿仍保留在输入框中。",
-  },
   subtitle: {
     "en-GB": "Bring a question. Leave with a clearer next step.",
     "zh-CN": "从一个问题出发，把下一步想清楚。",

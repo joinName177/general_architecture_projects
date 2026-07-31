@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthError } from "~/modules/auth/application/auth-gateway";
@@ -79,7 +80,7 @@ describe("AuthScreen", () => {
     expect(fastModel.matches(":checked")).toBe(true);
     expect(sendButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(sendButton);
-    expect(screen.getByText(/对话能力将在下一阶段接入/u)).toBeTruthy();
+    expect(await screen.findByText("chat-route")).toBeTruthy();
   });
 
   it("shows invalid credentials as a handled form message", async () => {
@@ -164,7 +165,12 @@ function renderAuthScreen(gateway: AuthGateway) {
   return render(
     <ApplicationI18nProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthScreen gateway={gateway} />
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route element={<AuthScreen gateway={gateway} />} path="*" />
+            <Route element={<div>chat-route</div>} path="/chat" />
+          </Routes>
+        </MemoryRouter>
       </QueryClientProvider>
     </ApplicationI18nProvider>,
   );

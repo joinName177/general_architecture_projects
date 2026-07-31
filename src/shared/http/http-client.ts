@@ -32,6 +32,10 @@ export class HttpClient {
     this.accessToken = undefined;
   }
 
+  public getAccessToken(): string | undefined {
+    return this.accessToken;
+  }
+
   public setAccessToken(accessToken: string): void {
     this.accessToken = accessToken;
   }
@@ -74,6 +78,32 @@ export class HttpClient {
     options: HttpRequestOptions = {},
   ): Promise<T> {
     return this.request("PUT", path, schema, options);
+  }
+
+  public async stream(
+    path: string,
+    method: HttpMethod,
+    options: HttpRequestOptions = {},
+  ): Promise<Response> {
+    const headers = new Headers(options.headers);
+    headers.set("Accept", "text/event-stream");
+    if (options.body !== undefined)
+      headers.set("Content-Type", "application/json");
+    if (this.accessToken !== undefined) {
+      headers.set("Authorization", `Bearer ${this.accessToken}`);
+    }
+
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      ...(options.body === undefined
+        ? {}
+        : { body: JSON.stringify(options.body) }),
+      ...(options.signal === undefined ? {} : { signal: options.signal }),
+      credentials: "include",
+      headers,
+      method,
+    });
+
+    return response;
   }
 
   private async request<T>(

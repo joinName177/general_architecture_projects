@@ -1,7 +1,7 @@
 import { HttpAuthGateway } from "~/modules/auth/infrastructure/http-auth-gateway";
 import type { AuthGateway } from "~/modules/auth/application/auth-gateway";
-import { HttpClient } from "~/shared/http/http-client";
+import type { HttpClient } from "~/shared/http/http-client";
 
-export function createAuthGateway(apiBaseUrl: string): AuthGateway {
-  return new HttpAuthGateway(new HttpClient(apiBaseUrl));
+export function createAuthGateway(httpClient: HttpClient): AuthGateway {
+  return new HttpAuthGateway(httpClient);
 }

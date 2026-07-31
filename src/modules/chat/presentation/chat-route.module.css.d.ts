@@ -1,0 +1,27 @@
+declare const styles: {
+  readonly shell: string;
+  readonly header: string;
+  readonly heading: string;
+  readonly statusRegion: string;
+  readonly chatArea: string;
+  readonly chatCard: string;
+  readonly chatContent: string;
+  readonly chatFooter: string;
+  readonly messageList: string;
+  readonly messageRow: string;
+  readonly messageRowUser: string;
+  readonly messageRowAssistant: string;
+  readonly avatar: string;
+  readonly avatarUser: string;
+  readonly avatarAssistant: string;
+  readonly messageBubble: string;
+  readonly messageText: string;
+  readonly emptyState: string;
+  readonly emptyText: string;
+  readonly streamingIndicator: string;
+  readonly streamingDot: string;
+  readonly composer: string;
+  readonly textArea: string;
+  readonly composerActions: string;
+};
+export = styles;

@@ -84,6 +84,22 @@ export const zReadinessResponse = z.object({
   }),
 });
 
+export const zToolDefinition = z.object({
+  name: z.string().min(1).max(128),
+  description: z.string().min(1).max(1024),
+  parameters: z.record(z.string(), z.unknown()),
+});
+
+export const zChatMessage = z.object({
+  role: z.enum(["user", "assistant", "system"]),
+  content: z.string().min(1).max(32768),
+});
+
+export const zChatRequest = z.object({
+  messages: z.array(zChatMessage).min(1),
+  tools: z.array(zToolDefinition).optional(),
+});
+
 export const zVersionResponse = z.object({
   code: z.literal(200),
   message: z.string().min(1),
@@ -150,3 +166,10 @@ export const zLogoutUserResponse = zLogoutResponse;
  * Current authenticated user.
  */
 export const zGetCurrentUserResponse = zUserResponse;
+
+export const zChatWithAgentBody = zChatRequest;
+
+/**
+ * SSE stream of chat events (text_delta, done, error).
+ */
+export const zChatWithAgentResponse = z.string();
