@@ -25,20 +25,6 @@ export const authenticatedHomeMessages = defineMessages({
     "en-GB": "Model",
     "zh-CN": "模型",
   },
-  modelOptions: {
-    balanced: {
-      "en-GB": "Balanced",
-      "zh-CN": "均衡模型",
-    },
-    fast: {
-      "en-GB": "Fast",
-      "zh-CN": "快速模型",
-    },
-    reasoning: {
-      "en-GB": "Reasoning",
-      "zh-CN": "推理模型",
-    },
-  },
   send: {
     "en-GB": "Send message",
     "zh-CN": "发送消息",

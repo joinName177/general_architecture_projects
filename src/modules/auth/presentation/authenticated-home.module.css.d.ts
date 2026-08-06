@@ -32,3 +32,6 @@ export declare const sendButton: string;
 export declare const shell: string;
 export declare const subtitle: string;
 export declare const textArea: string;
+export declare const webSearchLabel: string;
+export declare const webSearchSwitch: string;
+export declare const webSearchToggle: string;

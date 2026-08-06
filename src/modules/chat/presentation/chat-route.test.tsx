@@ -7,7 +7,7 @@ import type { AuthGateway } from "~/modules/auth/application/auth-gateway";
 import { AuthGatewayProvider } from "~/modules/auth/presentation/auth-gateway-context";
 import type { ChatGateway } from "~/modules/chat/application/chat-gateway";
 import type { StreamEvent } from "~/modules/chat/application/chat-gateway";
-import { chatMessages } from "~/modules/chat/presentation/chat-ui-messages";
+import { chatMessages } from "~/modules/chat/presentation/chat-messages";
 import { ChatGatewayContext } from "~/modules/chat/presentation/chat-gateway-context";
 import { ChatRoute } from "~/modules/chat/presentation/chat-route";
 import { authMessages } from "~/modules/auth/presentation/auth-messages";
@@ -97,10 +97,10 @@ describe("ChatRoute", () => {
   });
 
   it("stops streaming when the stop button is clicked", async () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
     async function* chatStream(): AsyncIterable<StreamEvent> {
       yield { type: "text_delta", content: "Part 1" };
-      // Never yields "done" — simulates an in-progress stream
+      // 保持流持续进行（永不 yield "done"），以便停止按钮保持可见
+      await new Promise<void>(() => {});
     }
 
     const chatGateway: ChatGateway = {

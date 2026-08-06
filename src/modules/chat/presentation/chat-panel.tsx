@@ -4,16 +4,19 @@ import { Expand, Minimize2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "react-aria-components/Button";
 
-import type { ChatMessage } from "~/modules/chat/application/chat-gateway";
-import type { ChatModel } from "~/modules/chat/presentation/chat-input";
+import type {
+  ChatMessage,
+  ChatModel,
+} from "~/modules/chat/application/chat-gateway";
 import { ChatInput } from "~/modules/chat/presentation/chat-input";
-import { ChatMessages } from "~/modules/chat/presentation/chat-messages";
+import { ChatMessageList } from "~/modules/chat/presentation/chat-message-list";
 
 import * as styles from "./chat-panel.module.css";
 
 export type ChatPanelMode = "fullscreen" | "inline";
 
 interface ChatPanelProps {
+  readonly error: string | undefined;
   readonly isStreaming: boolean;
   readonly messages: readonly ChatMessage[];
   readonly mode: ChatPanelMode;
@@ -28,6 +31,7 @@ interface ChatPanelProps {
 }
 
 interface ChatPanelViewProps {
+  readonly error: string | undefined;
   readonly isStreaming: boolean;
   readonly messages: readonly ChatMessage[];
   readonly model: ChatModel;
@@ -41,6 +45,7 @@ interface ChatPanelViewProps {
 }
 
 function FullscreenView({
+  error,
   isStreaming,
   messages,
   model,
@@ -81,7 +86,8 @@ function FullscreenView({
           </div>
         </header>
         <section className={styles.fullscreenBody}>
-          <ChatMessages
+          <ChatMessageList
+            error={error}
             isStreaming={isStreaming}
             messages={messages}
             variant="fullscreen"
@@ -95,7 +101,6 @@ function FullscreenView({
             onModelChange={onModelChange}
             onSend={onSend}
             onStop={onStop}
-            variant="fullscreen"
             webSearch={webSearch}
             onWebSearchChange={onWebSearchChange}
           />
@@ -106,13 +111,14 @@ function FullscreenView({
 }
 
 function InlineView({
+  error,
   messages,
   isStreaming,
   onClear,
   onToggleMode,
 }: Pick<
   ChatPanelViewProps,
-  "isStreaming" | "messages" | "onClear" | "onToggleMode"
+  "error" | "isStreaming" | "messages" | "onClear" | "onToggleMode"
 >) {
   const { t } = useTranslation();
 
@@ -141,7 +147,8 @@ function InlineView({
         </div>
       </div>
       <div className={styles.inlineBody}>
-        <ChatMessages
+        <ChatMessageList
+          error={error}
           isStreaming={isStreaming}
           messages={messages}
           variant="inline"
@@ -152,6 +159,7 @@ function InlineView({
 }
 
 export function ChatPanel({
+  error,
   isStreaming,
   messages,
   mode,
@@ -169,6 +177,7 @@ export function ChatPanel({
   if (mode === "fullscreen") {
     return (
       <FullscreenView
+        error={error}
         isStreaming={isStreaming}
         messages={messages}
         model={model}
@@ -187,6 +196,7 @@ export function ChatPanel({
 
   return (
     <InlineView
+      error={error}
       isStreaming={isStreaming}
       messages={messages}
       onClear={onClear}

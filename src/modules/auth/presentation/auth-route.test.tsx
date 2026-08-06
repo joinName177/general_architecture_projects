@@ -13,7 +13,7 @@ import { authenticatedHomeMessages } from "~/modules/auth/presentation/authentic
 import { AuthScreen } from "~/modules/auth/presentation/auth-route";
 import type { ChatGateway } from "~/modules/chat/application/chat-gateway";
 import { ChatGatewayContext } from "~/modules/chat/presentation/chat-gateway-context";
-import { chatMessages } from "~/modules/chat/presentation/chat-ui-messages";
+import { chatMessages } from "~/modules/chat/presentation/chat-messages";
 import { ApplicationI18nProvider } from "~/shared/i18n/application-i18n";
 import { initializeI18n } from "~/shared/i18n/i18n";
 import { languageMessages } from "~/shared/i18n/language-messages";
@@ -88,9 +88,9 @@ describe("AuthScreen", () => {
     fireEvent.change(screen.getByLabelText("向智能体发送消息"), {
       target: { value: "帮我规划今天的工作" },
     });
-    const fastModel = screen.getByRole("radio", { name: "快速模型" });
-    fireEvent.click(fastModel);
-    expect(fastModel.matches(":checked")).toBe(true);
+    const flashModel = screen.getByRole("radio", { name: "极速版" });
+    fireEvent.click(flashModel);
+    expect(flashModel.matches(":checked")).toBe(true);
     expect(sendButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(sendButton);
     expect(await screen.findByRole("button", { name: "全屏" })).toBeTruthy();

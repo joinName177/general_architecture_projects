@@ -5,6 +5,8 @@ import type { AuthGateway } from "~/modules/auth/application/auth-gateway";
 
 const AuthGatewayContext = createContext<AuthGateway | undefined>(undefined);
 
+export { AuthGatewayContext };
+
 interface AuthGatewayProviderProps extends PropsWithChildren {
   readonly gateway: AuthGateway;
 }

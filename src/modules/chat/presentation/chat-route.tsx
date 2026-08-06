@@ -1,109 +1,24 @@
 "use client";
 
+import { Alert } from "@heroui/react/alert";
 import { Card } from "@heroui/react/card";
 import { Spinner } from "@heroui/react/spinner";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+import { Navigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
-import { useAuthGateway } from "~/modules/auth/presentation/auth-gateway-context";
 import type {
   ChatMessage,
+  ChatModel,
   ChatStreamOptions,
-  StreamEvent,
 } from "~/modules/chat/application/chat-gateway";
-import type { ChatModel } from "~/modules/chat/presentation/chat-input";
-import { useChatGateway } from "~/modules/chat/presentation/chat-gateway-context";
+import { resolveChatModelName } from "~/modules/chat/application/chat-gateway";
+import { useAuthSession } from "~/modules/auth/presentation/use-auth-session";
 import { ChatInput } from "~/modules/chat/presentation/chat-input";
-import { ChatMessages } from "~/modules/chat/presentation/chat-messages";
+import { ChatMessageList } from "~/modules/chat/presentation/chat-message-list";
+import { useChat } from "~/modules/chat/presentation/use-chat";
 
 import * as styles from "./chat-route.module.css";
-
-type ChatStatus = "error" | "idle" | "streaming";
-
-interface UseChatStreamResult {
-  readonly messages: ChatMessage[];
-  readonly status: ChatStatus;
-  readonly handleSend: (content: string) => Promise<void>;
-  readonly handleStop: () => void;
-}
-
-function useChatStream(
-  model: ChatModel,
-  webSearch: boolean,
-): UseChatStreamResult {
-  const gateway = useChatGateway();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [status, setStatus] = useState<ChatStatus>("idle");
-  const abortRef = useRef<AbortController | undefined>(undefined);
-
-  const streamOptions = useMemo<ChatStreamOptions>(
-    () => ({
-      model: model === "pro" ? "deepseek-v4-pro" : "deepseek-v4-flash",
-      webSearch,
-    }),
-    [model, webSearch],
-  );
-
-  const appendContent = useCallback((content: string) => {
-    setMessages((prev) => {
-      const copy = [...prev];
-      const last = copy[copy.length - 1];
-      if (last?.role === "assistant") {
-        copy[copy.length - 1] = { ...last, content: last.content + content };
-      }
-      return copy;
-    });
-  }, []);
-
-  const handleEvent = useCallback(
-    (event: StreamEvent) => {
-      if (event.type === "text_delta") {
-        appendContent(event.content ?? "");
-      } else if (event.type === "done") {
-        setStatus("idle");
-      } else if (event.type === "error") {
-        setStatus("error");
-      }
-    },
-    [appendContent],
-  );
-
-  const handleSend = useCallback(
-    async (content: string) => {
-      const userMessage: ChatMessage = { role: "user", content };
-      const updatedMessages = [...messages, userMessage];
-      setMessages(updatedMessages);
-      setStatus("streaming");
-
-      const controller = new AbortController();
-      abortRef.current = controller;
-
-      setMessages([...updatedMessages, { role: "assistant", content: "" }]);
-
-      try {
-        for await (const event of gateway.chatStream(
-          updatedMessages,
-          controller.signal,
-          streamOptions,
-        )) {
-          handleEvent(event);
-        }
-      } catch {
-        setStatus(controller.signal.aborted ? "idle" : "error");
-      } finally {
-        abortRef.current = undefined;
-      }
-    },
-    [gateway, messages, handleEvent, streamOptions],
-  );
-
-  const handleStop = useCallback(() => {
-    abortRef.current?.abort();
-  }, []);
-
-  return { messages, status, handleSend, handleStop };
-}
 
 function ChatLoading() {
   return (
@@ -115,32 +30,49 @@ function ChatLoading() {
   );
 }
 
+function ChatUnavailable({ text }: { readonly text: string }) {
+  return (
+    <main className={styles.shell}>
+      <div className={styles.statusRegion}>
+        <Card className={styles.chatCard}>
+          <Card.Content className={styles.chatContent}>
+            <Alert status="danger" role="alert">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>{text}</Alert.Description>
+              </Alert.Content>
+            </Alert>
+          </Card.Content>
+        </Card>
+      </div>
+    </main>
+  );
+}
+
 export function ChatRoute() {
-  const authGateway = useAuthGateway();
-
-  const session = useQuery({
-    queryFn: ({ signal }) => authGateway.restoreSession({ signal }),
-    queryKey: ["auth", "session"],
-    staleTime: Number.POSITIVE_INFINITY,
-  });
-
+  const session = useAuthSession();
+  const { t } = useTranslation();
   const [model, setModel] = useState<ChatModel>("pro");
   const [webSearch, setWebSearch] = useState(false);
-  const { messages, status, handleSend, handleStop } = useChatStream(
-    model,
-    webSearch,
+  const streamOptions = useMemo<ChatStreamOptions>(
+    () => ({ model: resolveChatModelName(model), webSearch }),
+    [model, webSearch],
   );
+  const { messages, status, send, stop } = useChat({ streamOptions });
 
   if (session.isPending) return <ChatLoading />;
+  if (session.isError) return <ChatUnavailable text={t("chat.error")} />;
+  if (session.data === null) return <Navigate to="/" replace />;
 
   return (
     <ChatLayout
+      error={status === "error" ? t("chat.error") : undefined}
       isStreaming={status === "streaming"}
       messages={messages}
       model={model}
       onModelChange={setModel}
-      onSend={(content) => void handleSend(content)}
-      onStop={handleStop}
+      onSend={send}
+      onStop={stop}
       webSearch={webSearch}
       onWebSearchChange={setWebSearch}
     />
@@ -148,6 +80,7 @@ export function ChatRoute() {
 }
 
 interface ChatLayoutProps {
+  readonly error: string | undefined;
   readonly isStreaming: boolean;
   readonly messages: readonly ChatMessage[];
   readonly model: ChatModel;
@@ -159,6 +92,7 @@ interface ChatLayoutProps {
 }
 
 function ChatLayout({
+  error,
   isStreaming,
   messages,
   model,
@@ -178,7 +112,11 @@ function ChatLayout({
       <section className={styles.chatArea}>
         <Card className={styles.chatCard}>
           <Card.Content className={styles.chatContent}>
-            <ChatMessages isStreaming={isStreaming} messages={messages} />
+            <ChatMessageList
+              error={error}
+              isStreaming={isStreaming}
+              messages={messages}
+            />
           </Card.Content>
           <Card.Footer className={styles.chatFooter}>
             <ChatInput

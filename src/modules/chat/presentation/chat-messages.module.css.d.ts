@@ -1,0 +1,15 @@
+export declare const avatar: string;
+export declare const avatarAssistant: string;
+export declare const avatarUser: string;
+export declare const emptyState: string;
+export declare const emptyText: string;
+export declare const errorBanner: string;
+export declare const messageBubble: string;
+export declare const messageList: string;
+export declare const messageListFullscreen: string;
+export declare const messageRow: string;
+export declare const messageRowAssistant: string;
+export declare const messageRowUser: string;
+export declare const messageText: string;
+export declare const streamingDot: string;
+export declare const streamingIndicator: string;

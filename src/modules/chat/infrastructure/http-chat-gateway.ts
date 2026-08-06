@@ -18,7 +18,7 @@ export class HttpChatGateway implements ChatGateway {
   ): AsyncIterable<StreamEvent> {
     const parsed = zChatRequest.parse({
       ...(options.model === undefined ? {} : { model: options.model }),
-      messages: [...messages],
+      messages: [...messages].map(({ role, content }) => ({ role, content })),
       ...(options.webSearch === undefined
         ? {}
         : { web_search: options.webSearch }),

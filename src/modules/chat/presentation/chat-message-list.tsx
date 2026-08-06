@@ -6,21 +6,23 @@ import { useTranslation } from "react-i18next";
 
 import type { ChatMessage } from "~/modules/chat/application/chat-gateway";
 
-import * as styles from "./chat-route.module.css";
+import * as styles from "./chat-messages.module.css";
 
-interface ChatMessagesProps {
+interface ChatMessageListProps {
+  readonly error: string | undefined;
   readonly isStreaming: boolean;
   readonly messages: readonly ChatMessage[];
-  readonly variant?: ChatMessagesVariant | undefined;
+  readonly variant?: ChatMessageListVariant | undefined;
 }
 
-export type ChatMessagesVariant = "fullscreen" | "inline";
+export type ChatMessageListVariant = "fullscreen" | "inline";
 
-export function ChatMessages({
+export function ChatMessageList({
+  error,
   messages,
   isStreaming,
   variant,
-}: ChatMessagesProps) {
+}: ChatMessageListProps) {
   const { t } = useTranslation();
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -44,7 +46,7 @@ export function ChatMessages({
       {messages.map((message, index) => (
         <div
           className={`${styles.messageRow} ${message.role === "user" ? styles.messageRowUser : styles.messageRowAssistant}`}
-          key={index}
+          key={message.id}
         >
           <span
             aria-hidden="true"
@@ -62,6 +64,11 @@ export function ChatMessages({
           </div>
         </div>
       ))}
+      {error !== undefined && (
+        <div className={styles.errorBanner} role="alert">
+          {error}
+        </div>
+      )}
       {isStreaming && (
         <div className={styles.streamingIndicator}>
           <span className={styles.streamingDot} />

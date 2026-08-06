@@ -10,7 +10,7 @@ import { HttpClient } from "~/shared/http/http-client";
 afterEach(() => vi.unstubAllGlobals());
 
 const defaultMessages: readonly ChatMessage[] = [
-  { role: "user", content: "Hi" },
+  { id: "message-1", role: "user", content: "Hi" },
 ];
 
 async function collectEvents(

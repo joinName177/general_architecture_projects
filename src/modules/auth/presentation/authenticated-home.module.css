@@ -207,8 +207,7 @@
   backdrop-filter: blur(1.5rem) saturate(155%);
 }
 
-.readyDot,
-.modelPulse {
+.readyDot {
   width: 0.5rem;
   height: 0.5rem;
   flex: none;
@@ -235,178 +234,6 @@
   line-height: var(--line-height-relaxed);
 }
 
-.composer {
-  position: relative;
-  display: grid;
-  min-height: 24rem;
-  gap: var(--space-lg);
-  padding: clamp(var(--space-lg), 3vw, var(--space-xl));
-  overflow: hidden;
-  border: 1px solid var(--color-glass-border-strong);
-  border-radius: var(--radius-glass-xl);
-  background: var(--color-glass-refraction), var(--color-glass-surface-strong);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-liquid-raised);
-  backdrop-filter: blur(3rem) saturate(165%);
-  animation: reveal 700ms 120ms var(--ease-glass-out) both;
-}
-
-.composer::before {
-  position: absolute;
-  top: -5rem;
-  right: -5rem;
-  width: 13rem;
-  height: 13rem;
-  border: 1px solid var(--color-glass-border);
-  border-radius: 50%;
-  background: var(--color-glass-lens);
-  content: "";
-  pointer-events: none;
-}
-
-.composer:focus-within {
-  border-color: var(--color-glass-accent);
-  box-shadow:
-    var(--shadow-liquid-inset), var(--shadow-liquid-raised),
-    var(--shadow-glass-accent-ring);
-}
-
-.composerTopline {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  color: var(--color-glass-text-secondary);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.composerIndex {
-  color: var(--color-glass-accent);
-}
-
-.textArea {
-  position: relative;
-  min-height: 13rem;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  color: var(--color-glass-text-primary);
-  font-size: clamp(var(--font-size-lg), 2vw, var(--font-size-2xl));
-  line-height: var(--line-height-relaxed);
-  resize: none;
-}
-
-.textArea::placeholder {
-  color: var(--color-glass-text-muted);
-}
-
-.textArea:focus-visible {
-  outline: 0;
-}
-
-.composerFooter {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-}
-
-.modelGroup {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.modelOption {
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  gap: var(--space-xs);
-  padding-inline: var(--space-sm);
-  border: 1px solid var(--color-glass-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-glass-input);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
-  color: var(--color-glass-text-secondary);
-  cursor: pointer;
-  font-size: var(--font-size-xs);
-  transition:
-    transform 180ms var(--ease-glass-out),
-    border-color 180ms var(--ease-glass-out),
-    background-color 180ms var(--ease-glass-out),
-    box-shadow 180ms var(--ease-glass-out);
-}
-
-.modelOption[data-hovered] {
-  background: var(--color-glass-input-hover);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
-  transform: translateY(-0.0625rem);
-}
-
-.modelOption[data-selected] {
-  border-color: var(--color-glass-border-strong);
-  background: var(--color-glass-accent-soft);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
-  color: var(--color-glass-text-primary);
-}
-
-.modelOption[data-focus-visible] {
-  outline: 3px solid var(--color-glass-accent-soft);
-  outline-offset: var(--space-2xs);
-}
-
-.sendButton {
-  min-width: 8.5rem;
-  min-height: 3rem;
-  border: 1px solid var(--color-glass-action-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-glass-action);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action);
-  color: var(--color-glass-action-text);
-  transition:
-    transform 180ms var(--ease-glass-out),
-    background-color 180ms var(--ease-glass-out),
-    box-shadow 180ms var(--ease-glass-out);
-}
-
-.sendButton[data-hovered] {
-  background: var(--color-glass-action-hover);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action-hover);
-  transform: translateY(-0.125rem);
-}
-
-.sendButton[data-pressed] {
-  background: var(--color-glass-action-pressed);
-  transform: scale(0.98);
-}
-
-.sendButton[data-focus-visible] {
-  outline: 3px solid var(--color-glass-accent-soft);
-  outline-offset: var(--space-2xs);
-}
-
-.sendButton[data-disabled] {
-  box-shadow: none;
-  opacity: 0.42;
-}
-
-.sendArrow {
-  font-size: var(--font-size-lg);
-  line-height: 1;
-}
-
-.notice {
-  min-height: 1.5rem;
-  margin: var(--space-md) var(--space-lg) 0;
-  color: var(--color-glass-text-secondary);
-  font-size: var(--font-size-sm);
-}
-
 /* ── Chat integration ── */
 
 .contentChatActive {
@@ -418,24 +245,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-}
-
-.compactComposer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-glass-border);
-  border-radius: var(--radius-glass-lg);
-  background: var(--color-glass-refraction), var(--color-glass-surface);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
-  backdrop-filter: blur(2rem) saturate(165%);
-  animation: reveal 200ms var(--ease-glass-out);
-}
-
-.compactComposerIcon {
-  color: var(--color-glass-accent);
-  flex-shrink: 0;
 }
 
 @keyframes reveal {
@@ -515,46 +324,17 @@
   .heading {
     font-size: clamp(2.75rem, 15vw, 4.25rem);
   }
-
-  .composer {
-    min-height: 27rem;
-    padding: var(--space-lg);
-    border-radius: var(--radius-glass-lg);
-  }
-
-  .composerFooter {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .modelGroup,
-  .sendButton {
-    width: 100%;
-  }
-
-  .modelGroup {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .modelOption {
-    justify-content: center;
-    padding-inline: var(--space-2xs);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ambientPrimary,
   .ambientSecondary,
   .ambientLens,
-  .composer,
   .intro {
     animation: none;
   }
 
-  .logoutButton,
-  .modelOption,
-  .sendButton {
+  .logoutButton {
     transition: none;
   }
 }

@@ -1,0 +1,16 @@
+export declare const alert: string;
+export declare const brand: string;
+export declare const brandCopy: string;
+export declare const brandCore: string;
+export declare const brandMark: string;
+export declare const card: string;
+export declare const cardContent: string;
+export declare const liquidBackdrop: string;
+export declare const liquidLens: string;
+export declare const liquidOrbPrimary: string;
+export declare const liquidOrbSecondary: string;
+export declare const shell: string;
+export declare const shellCentered: string;
+export declare const statusContent: string;
+export declare const statusRegion: string;
+export declare const topbar: string;

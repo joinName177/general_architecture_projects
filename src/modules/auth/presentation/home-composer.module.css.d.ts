@@ -1,0 +1,15 @@
+export declare const compactComposer: string;
+export declare const compactComposerIcon: string;
+export declare const composer: string;
+export declare const composerFooter: string;
+export declare const composerIndex: string;
+export declare const composerTopline: string;
+export declare const modelGroup: string;
+export declare const modelOption: string;
+export declare const modelPulse: string;
+export declare const sendArrow: string;
+export declare const sendButton: string;
+export declare const textArea: string;
+export declare const webSearchLabel: string;
+export declare const webSearchSwitch: string;
+export declare const webSearchToggle: string;

@@ -9,9 +9,9 @@ import { Button } from "react-aria-components/Button";
 import { Switch } from "react-aria-components/Switch";
 import { useTranslation } from "react-i18next";
 
-import * as styles from "./chat-route.module.css";
+import type { ChatModel } from "~/modules/chat/application/chat-gateway";
 
-export type ChatModel = "pro" | "flash";
+import * as styles from "./chat-input.module.css";
 
 interface ChatInputProps {
   readonly disabled: boolean;
@@ -20,12 +20,9 @@ interface ChatInputProps {
   readonly onModelChange: (model: ChatModel) => void;
   readonly onSend: (content: string) => void;
   readonly onStop: () => void;
-  readonly variant?: ChatInputVariant | undefined;
   readonly webSearch: boolean;
   readonly onWebSearchChange: (enabled: boolean) => void;
 }
-
-export type ChatInputVariant = "fullscreen" | "inline";
 
 interface ChatControlsProps {
   readonly model: ChatModel;
@@ -75,7 +72,6 @@ export function ChatInput({
   onModelChange,
   onSend,
   onStop,
-  variant: _variant,
   webSearch,
   onWebSearchChange,
 }: ChatInputProps) {

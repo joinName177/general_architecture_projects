@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/runtime-config.json", async (route) => {
     await route.fulfill({
       json: {
-        apiBaseUrl: "http://127.0.0.1:3000/api/v1",
+        apiBaseUrl: "http://127.0.0.1:3000",
         apiContractId,
         apiContractSha256,
         releaseId: "e2e",
@@ -58,6 +58,20 @@ test("should complete login and logout through the browser", async ({
       },
     });
   });
+  await page.route("**/api/v1/agent/chat", async (route) => {
+    await route.fulfill({
+      body: [
+        'data: {"type":"text_delta","content":"Hello from the agent"}',
+        "",
+        'data: {"type":"done"}',
+        "",
+        "data: [DONE]",
+        "",
+      ].join("\n"),
+      contentType: "text/event-stream",
+      status: 200,
+    });
+  });
 
   await page.goto("/");
   await page.getByLabel("Email").fill(authenticatedUser.email);
@@ -78,15 +92,12 @@ test("should complete login and logout through the browser", async ({
   ).toBeEnabled();
   await page
     .getByRole("radiogroup", { name: "Model" })
-    .getByText("Fast", { exact: true })
+    .getByText("Flash", { exact: true })
     .click();
-  await expect(page.getByRole("radio", { name: "Fast" })).toBeChecked();
+  await expect(page.getByRole("radio", { name: "Flash" })).toBeChecked();
   await page.getByRole("button", { name: "Send message" }).click();
-  await expect(
-    page.getByText(
-      "Conversation support is coming next. Your draft is still here.",
-    ),
-  ).toBeVisible();
+  await expect(page.getByText("Hello from the agent")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Fullscreen" })).toBeVisible();
 
   const homeAccessibilityResults = await new AxeBuilder({ page }).analyze();
   expect(homeAccessibilityResults.violations).toEqual([]);

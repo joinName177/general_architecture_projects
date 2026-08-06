@@ -22,7 +22,16 @@ export interface UseChatReturn {
   readonly clear: () => void;
 }
 
+function createUserMessage(content: string): ChatMessage {
+  return { id: crypto.randomUUID(), role: "user", content };
+}
+
+function createAssistantPlaceholder(): ChatMessage {
+  return { id: crypto.randomUUID(), role: "assistant", content: "" };
+}
+
 export function useChat(options: UseChatOptions = {}): UseChatReturn {
+  const { onEvent, streamOptions } = options;
   const gateway = useChatGateway();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>("idle");
@@ -41,7 +50,7 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
 
   const handleEvent = useCallback(
     (event: StreamEvent) => {
-      options.onEvent?.(event);
+      onEvent?.(event);
       if (event.type === "text_delta") {
         appendContent(event.content ?? "");
       } else if (event.type === "done") {
@@ -50,14 +59,14 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
         setStatus("error");
       }
     },
-    [appendContent, options],
+    [appendContent, onEvent],
   );
 
   const send = useCallback(
     (content: string) => {
       abortRef.current?.abort();
 
-      const userMessage: ChatMessage = { role: "user", content };
+      const userMessage = createUserMessage(content);
       const updatedMessages = [...messages, userMessage];
       setMessages(updatedMessages);
       setStatus("streaming");
@@ -65,14 +74,14 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
       const controller = new AbortController();
       abortRef.current = controller;
 
-      setMessages([...updatedMessages, { role: "assistant", content: "" }]);
+      setMessages([...updatedMessages, createAssistantPlaceholder()]);
 
       void (async () => {
         try {
           for await (const event of gateway.chatStream(
             updatedMessages,
             controller.signal,
-            options.streamOptions,
+            streamOptions,
           )) {
             handleEvent(event);
           }
@@ -84,7 +93,7 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
         }
       })();
     },
-    [gateway, messages, handleEvent, options.streamOptions],
+    [gateway, messages, handleEvent, streamOptions],
   );
 
   const stop = useCallback(() => {
