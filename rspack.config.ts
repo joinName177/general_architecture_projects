@@ -94,5 +94,11 @@ export default defineConfig({
   devServer: {
     historyApiFallback: true,
     port: 3000,
+    proxy: [
+      {
+        context: ["/api/v1"],
+        target: "http://localhost:18080",
+      },
+    ],
   },
 });

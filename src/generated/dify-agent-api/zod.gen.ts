@@ -97,7 +97,9 @@ export const zChatMessage = z.object({
 
 export const zChatRequest = z.object({
   messages: z.array(zChatMessage).min(1),
+  model: z.string().min(1).optional(),
   tools: z.array(zToolDefinition).optional(),
+  web_search: z.boolean().optional().default(false),
 });
 
 export const zVersionResponse = z.object({

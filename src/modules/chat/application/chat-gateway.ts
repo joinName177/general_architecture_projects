@@ -12,9 +12,15 @@ export interface StreamEvent {
   };
 }
 
+export interface ChatStreamOptions {
+  readonly model?: string | undefined;
+  readonly webSearch?: boolean | undefined;
+}
+
 export interface ChatGateway {
   chatStream(
     messages: readonly ChatMessage[],
     signal: AbortSignal,
+    options?: ChatStreamOptions,
   ): AsyncIterable<StreamEvent>;
 }

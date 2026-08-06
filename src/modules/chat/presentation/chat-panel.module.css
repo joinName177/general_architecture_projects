@@ -1,0 +1,154 @@
+/* ── Fullscreen overlay ── */
+
+.fullscreenOverlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-glass-canvas);
+  backdrop-filter: blur(2rem) saturate(165%);
+  animation: overlay-in 200ms var(--ease-glass-out);
+}
+
+.fullscreenShell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.fullscreenHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--color-glass-border);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  backdrop-filter: blur(2.25rem) saturate(165%);
+  flex-shrink: 0;
+}
+
+.fullscreenTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-glass-text-primary);
+}
+
+.fullscreenActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fullscreenBody {
+  flex: 1;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.fullscreenFooter {
+  flex-shrink: 0;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-glass-border);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  backdrop-filter: blur(2.25rem) saturate(165%);
+}
+
+.fullscreenButton,
+.clearButton {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.375rem;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  color: var(--color-glass-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition:
+    transform 180ms var(--ease-glass-out),
+    background-color 180ms var(--ease-glass-out),
+    box-shadow 180ms var(--ease-glass-out);
+}
+
+.fullscreenButton[data-hovered],
+.clearButton[data-hovered] {
+  background: var(--color-glass-surface-strong);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
+  transform: translateY(-0.0625rem);
+}
+
+.fullscreenButton[data-pressed],
+.clearButton[data-pressed] {
+  transform: scale(0.98);
+}
+
+.fullscreenButton[data-focus-visible],
+.clearButton[data-focus-visible] {
+  outline: 3px solid var(--color-glass-accent-soft);
+  outline-offset: var(--space-2xs);
+}
+
+/* ── Inline panel ── */
+
+.inlinePanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-glass-lg);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  backdrop-filter: blur(2rem) saturate(165%);
+  animation: overlay-in 200ms var(--ease-glass-out);
+  overflow: hidden;
+}
+
+.inlineHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-glass-border);
+  flex-shrink: 0;
+}
+
+.inlineTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-glass-text-primary);
+}
+
+.inlineActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inlineBody {
+  max-height: min(26rem, 52dvh);
+  overflow-y: auto;
+}
+
+/* ── Animations ── */
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fullscreenOverlay {
+    animation: none;
+  }
+}

@@ -39,6 +39,29 @@ beforeEach(async () => {
 });
 
 describe("ChatRoute", () => {
+  it("shows empty-response placeholder when the stream yields no content", async () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async function* chatStream(): AsyncIterable<StreamEvent> {
+      yield { type: "done" };
+    }
+
+    const chatGateway: ChatGateway = {
+      chatStream: vi.fn().mockImplementation(chatStream),
+    };
+    renderChatRoute(chatGateway);
+
+    await screen.findByRole("heading", { name: "智能体对话" });
+
+    fireEvent.change(screen.getByLabelText("输入你的消息"), {
+      target: { value: "Hello" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "发送" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("未收到回复。")).toBeTruthy();
+    });
+  });
+
   it("renders the chat heading and empty state", async () => {
     const chatGateway: ChatGateway = {
       chatStream: vi.fn(),

@@ -63,6 +63,10 @@
   padding: 0.5rem 0;
 }
 
+.messageListFullscreen {
+  max-height: none;
+}
+
 .messageRow {
   display: flex;
   gap: 0.75rem;
@@ -142,7 +146,25 @@
   gap: 0.5rem;
   color: var(--heroui-default-400);
   font-size: 0.875rem;
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--heroui-primary-100) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .streamingDot {
@@ -165,13 +187,69 @@
 
 .composer {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: flex-end;
   width: 100%;
 }
 
+.controlsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.webSearchSwitch {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.webSearchToggle {
+  display: flex;
+  align-items: center;
+  width: 2.25rem;
+  height: 1.25rem;
+  padding: 0.125rem;
+  border-radius: 9999px;
+  background: var(--heroui-default-300);
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.webSearchToggle::after {
+  content: "";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+  transform: translateX(0);
+}
+
+.webSearchSwitch[data-selected] .webSearchToggle {
+  background: var(--heroui-primary);
+}
+
+.webSearchSwitch[data-selected] .webSearchToggle::after {
+  transform: translateX(1rem);
+}
+
+.webSearchLabel {
+  font-size: 0.8125rem;
+  color: var(--heroui-default-500);
+  user-select: none;
+}
+
 .textArea {
   flex: 1;
+  min-width: 12rem;
 }
 
 .composerActions {

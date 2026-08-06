@@ -25,12 +25,17 @@ export class HttpAuthGateway implements AuthGateway {
     command: LoginCommand,
     options: AuthOperationOptions = {},
   ): Promise<AuthenticatedUser> {
-    return this.authenticate("/auth/login", zLoginUserBody, command, options);
+    return this.authenticate(
+      "/api/v1/auth/login",
+      zLoginUserBody,
+      command,
+      options,
+    );
   }
 
   public async logout(options: AuthOperationOptions = {}): Promise<void> {
     try {
-      await this.httpClient.post("/auth/logout", zLogoutUserResponse, {
+      await this.httpClient.post("/api/v1/auth/logout", zLogoutUserResponse, {
         ...(options.signal === undefined ? {} : { signal: options.signal }),
       });
     } catch (error) {
@@ -45,7 +50,7 @@ export class HttpAuthGateway implements AuthGateway {
     options: AuthOperationOptions = {},
   ): Promise<AuthenticatedUser> {
     return this.authenticate(
-      "/auth/register",
+      "/api/v1/auth/register",
       zRegisterUserBody,
       command,
       options,
@@ -57,7 +62,7 @@ export class HttpAuthGateway implements AuthGateway {
   ): Promise<AuthenticatedUser | null> {
     try {
       const response = await this.httpClient.post(
-        "/auth/refresh",
+        "/api/v1/auth/refresh",
         zAuthResponse,
         {
           ...(options.signal === undefined ? {} : { signal: options.signal }),

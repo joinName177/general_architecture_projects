@@ -14,7 +14,7 @@ describe("loadRuntimeConfig", () => {
       "fetch",
       vi.fn<typeof fetch>().mockResolvedValue(
         Response.json({
-          apiBaseUrl: "http://localhost:18080/api/v1",
+          apiBaseUrl: "http://localhost:18080",
           apiContractId,
           apiContractSha256,
           releaseId: "test",
@@ -28,12 +28,31 @@ describe("loadRuntimeConfig", () => {
     });
   });
 
+  it("accepts an empty apiBaseUrl for same-origin proxy mode", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(
+        Response.json({
+          apiBaseUrl: "",
+          apiContractId,
+          apiContractSha256,
+          releaseId: "test",
+        }),
+      ),
+    );
+
+    await expect(loadRuntimeConfig()).resolves.toMatchObject({
+      apiBaseUrl: "",
+      releaseId: "test",
+    });
+  });
+
   it("rejects an unencrypted remote API", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn<typeof fetch>().mockResolvedValue(
         Response.json({
-          apiBaseUrl: "http://api.example.test/api/v1",
+          apiBaseUrl: "http://api.example.test",
           apiContractId,
           apiContractSha256,
           releaseId: "test",

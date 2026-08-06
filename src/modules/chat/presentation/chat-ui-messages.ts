@@ -22,8 +22,8 @@ export const chatMessages = defineMessages({
     "zh-CN": "停止",
   },
   streaming: {
-    "en-GB": "Agent is thinking…",
-    "zh-CN": "智能体正在思考…",
+    "en-GB": "Thinking…",
+    "zh-CN": "思考中…",
   },
   error: {
     "en-GB": "Something went wrong. Please try again.",
@@ -32,5 +32,33 @@ export const chatMessages = defineMessages({
   navLabel: {
     "en-GB": "Chat",
     "zh-CN": "对话",
+  },
+  fullscreen: {
+    "en-GB": "Fullscreen",
+    "zh-CN": "全屏",
+  },
+  minimize: {
+    "en-GB": "Exit fullscreen",
+    "zh-CN": "退出全屏",
+  },
+  clear: {
+    "en-GB": "Clear",
+    "zh-CN": "清除",
+  },
+  emptyResponse: {
+    "en-GB": "No response received.",
+    "zh-CN": "未收到回复。",
+  },
+  modelPro: {
+    "en-GB": "Pro",
+    "zh-CN": "专业版",
+  },
+  modelFlash: {
+    "en-GB": "Flash",
+    "zh-CN": "极速版",
+  },
+  webSearch: {
+    "en-GB": "Web Search",
+    "zh-CN": "联网搜索",
   },
 });

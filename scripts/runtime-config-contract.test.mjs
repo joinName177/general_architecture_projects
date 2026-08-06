@@ -18,7 +18,7 @@ async function createFixture() {
   const examplePath = join(directoryPath, "runtime-config.example.json");
   const configPath = join(directoryPath, "runtime-config.json");
   const runtimeConfig = {
-    apiBaseUrl: "http://localhost:18080/api/v1",
+    apiBaseUrl: "http://localhost:18080",
     apiContractId: contractId,
     apiContractSha256: contractSha256,
     releaseId: "local",
@@ -82,7 +82,7 @@ describe("runtime config contract", () => {
       fixture.configPath,
       JSON.stringify({
         ...fixture.runtimeConfig,
-        apiBaseUrl: "http://127.0.0.1:19090/api/v1",
+        apiBaseUrl: "http://127.0.0.1:19090",
         apiContractSha256: "stale",
         releaseId: "developer-a",
       }),
@@ -94,7 +94,7 @@ describe("runtime config contract", () => {
     );
 
     expect(initializedConfig).toMatchObject({
-      apiBaseUrl: "http://127.0.0.1:19090/api/v1",
+      apiBaseUrl: "http://127.0.0.1:19090",
       apiContractSha256: contractSha256,
       releaseId: "developer-a",
     });

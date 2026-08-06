@@ -39,7 +39,7 @@ describe("HttpAuthGateway", () => {
       );
     vi.stubGlobal("fetch", fetchMock);
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await expect(
@@ -75,7 +75,7 @@ describe("HttpAuthGateway", () => {
       ),
     );
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await expect(gateway.restoreSession()).resolves.toBeNull();
@@ -99,7 +99,7 @@ describe("HttpAuthGateway error mapping", () => {
       ),
     );
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await expect(
@@ -121,7 +121,7 @@ describe("HttpAuthGateway error mapping", () => {
         ),
     );
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await expect(
@@ -150,7 +150,7 @@ describe("HttpAuthGateway error protocol", () => {
       ),
     );
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await expect(
@@ -177,7 +177,7 @@ describe("HttpAuthGateway error protocol", () => {
       ),
     );
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await expect(
@@ -218,7 +218,7 @@ describe("HttpAuthGateway lifecycle", () => {
       );
     vi.stubGlobal("fetch", fetchMock);
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
 
     await gateway.login({
@@ -238,7 +238,7 @@ describe("HttpAuthGateway lifecycle", () => {
     const abortError = new DOMException("Request aborted.", "AbortError");
     vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockRejectedValue(abortError));
     const gateway = new HttpAuthGateway(
-      new HttpClient("https://api.example.test/api/v1"),
+      new HttpClient("https://api.example.test"),
     );
     const controller = new AbortController();
 

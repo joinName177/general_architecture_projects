@@ -11,6 +11,9 @@ import type {
 import { authMessages } from "~/modules/auth/presentation/auth-messages";
 import { authenticatedHomeMessages } from "~/modules/auth/presentation/authenticated-home-messages";
 import { AuthScreen } from "~/modules/auth/presentation/auth-route";
+import type { ChatGateway } from "~/modules/chat/application/chat-gateway";
+import { ChatGatewayContext } from "~/modules/chat/presentation/chat-gateway-context";
+import { chatMessages } from "~/modules/chat/presentation/chat-ui-messages";
 import { ApplicationI18nProvider } from "~/shared/i18n/application-i18n";
 import { initializeI18n } from "~/shared/i18n/i18n";
 import { languageMessages } from "~/shared/i18n/language-messages";
@@ -19,10 +22,20 @@ import { buildTranslationResources } from "~/shared/i18n/message-catalog";
 const i18n = initializeI18n(
   buildTranslationResources({
     auth: authMessages,
+    chat: chatMessages,
     home: authenticatedHomeMessages,
     language: languageMessages,
   }),
 );
+function createStubChatGateway(): ChatGateway {
+  return {
+    chatStream: () =>
+      (async function* () {
+        // stub — no events
+      })(),
+  };
+}
+
 const authenticatedUser: AuthenticatedUser = {
   createdAt: "2026-07-24T11:00:00Z",
   displayName: "管理员",
@@ -80,7 +93,7 @@ describe("AuthScreen", () => {
     expect(fastModel.matches(":checked")).toBe(true);
     expect(sendButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(sendButton);
-    expect(await screen.findByText("chat-route")).toBeTruthy();
+    expect(await screen.findByRole("button", { name: "全屏" })).toBeTruthy();
   });
 
   it("shows invalid credentials as a handled form message", async () => {
@@ -165,12 +178,14 @@ function renderAuthScreen(gateway: AuthGateway) {
   return render(
     <ApplicationI18nProvider>
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={["/"]}>
-          <Routes>
-            <Route element={<AuthScreen gateway={gateway} />} path="*" />
-            <Route element={<div>chat-route</div>} path="/chat" />
-          </Routes>
-        </MemoryRouter>
+        <ChatGatewayContext.Provider value={createStubChatGateway()}>
+          <MemoryRouter initialEntries={["/"]}>
+            <Routes>
+              <Route element={<AuthScreen gateway={gateway} />} path="*" />
+              <Route element={<div>chat-route</div>} path="/chat" />
+            </Routes>
+          </MemoryRouter>
+        </ChatGatewayContext.Provider>
       </QueryClientProvider>
     </ApplicationI18nProvider>,
   );

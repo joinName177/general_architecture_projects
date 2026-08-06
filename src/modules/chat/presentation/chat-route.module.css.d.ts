@@ -8,6 +8,7 @@ declare const styles: {
   readonly chatContent: string;
   readonly chatFooter: string;
   readonly messageList: string;
+  readonly messageListFullscreen: string;
   readonly messageRow: string;
   readonly messageRowUser: string;
   readonly messageRowAssistant: string;
@@ -21,7 +22,11 @@ declare const styles: {
   readonly streamingIndicator: string;
   readonly streamingDot: string;
   readonly composer: string;
+  readonly controlsRow: string;
   readonly textArea: string;
   readonly composerActions: string;
+  readonly webSearchSwitch: string;
+  readonly webSearchToggle: string;
+  readonly webSearchLabel: string;
 };
 export = styles;

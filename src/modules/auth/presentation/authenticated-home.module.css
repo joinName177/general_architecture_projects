@@ -407,6 +407,37 @@
   font-size: var(--font-size-sm);
 }
 
+/* ── Chat integration ── */
+
+.contentChatActive {
+  align-items: flex-start;
+  padding-block: 2rem;
+}
+
+.composerColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.compactComposer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-glass-lg);
+  background: var(--color-glass-refraction), var(--color-glass-surface);
+  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  backdrop-filter: blur(2rem) saturate(165%);
+  animation: reveal 200ms var(--ease-glass-out);
+}
+
+.compactComposerIcon {
+  color: var(--color-glass-accent);
+  flex-shrink: 0;
+}
+
 @keyframes reveal {
   from {
     transform: translateY(1.25rem);
@@ -441,6 +472,11 @@
     grid-template-columns: 1fr;
     gap: var(--space-2xl);
     padding-block: clamp(4rem, 9vh, 6rem);
+  }
+
+  .contentChatActive {
+    gap: var(--space-lg);
+    padding-block: 2rem;
   }
 
   .intro {

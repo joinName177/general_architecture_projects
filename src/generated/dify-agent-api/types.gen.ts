@@ -104,7 +104,9 @@ export type ChatMessage = {
 
 export type ChatRequest = {
   messages: Array<ChatMessage>;
+  model?: string;
   tools?: Array<ToolDefinition>;
+  web_search?: boolean;
 };
 
 export type VersionResponse = {

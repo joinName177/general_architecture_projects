@@ -4,12 +4,18 @@ import {
   radioGroupVariants,
   radioVariants,
 } from "@heroui/styles";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { MessagesSquare } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Button } from "react-aria-components/Button";
 import { Radio, RadioGroup } from "react-aria-components/RadioGroup";
 import { useTranslation } from "react-i18next";
 
+import type { ChatMessage } from "~/modules/chat/application/chat-gateway";
+import { ChatPanel } from "~/modules/chat/presentation/chat-panel";
+import type { ChatPanelMode } from "~/modules/chat/presentation/chat-panel";
+import type { ChatModel } from "~/modules/chat/presentation/chat-input";
+import { ChatInput } from "~/modules/chat/presentation/chat-input";
+import { useChat } from "~/modules/chat/presentation/use-chat";
 import { LanguageSelector } from "~/shared/i18n/language-selector";
 
 import * as styles from "./authenticated-home.module.css";
@@ -71,39 +77,172 @@ export function AuthenticatedHome(props: AuthenticatedHomeProps) {
           </Button>
         </div>
       </header>
-      <section className={styles.content} aria-labelledby="home-heading">
-        <div className={styles.intro}>
-          <p className={styles.eyebrow}>{t("home.eyebrow")}</p>
-          <p className={styles.readyStatus}>
-            <span aria-hidden="true" className={styles.readyDot} />
-            {t("home.sessionReady")}
-          </p>
-          <h1 className={styles.heading} id="home-heading">
-            {t("home.title", { name: props.displayName })}
-          </h1>
-          <p className={styles.subtitle}>{t("home.subtitle")}</p>
-        </div>
-        <HomeComposer />
-      </section>
+      <HomeContent displayName={props.displayName} />
     </main>
   );
 }
 
-function HomeComposer() {
+interface HomeChatAreaProps {
+  readonly chat: ReturnType<typeof useChat>;
+  readonly model: ChatModel;
+  readonly onModelChange: (model: ChatModel) => void;
+  readonly webSearch: boolean;
+  readonly onWebSearchChange: (enabled: boolean) => void;
+  readonly panelMode: ChatPanelMode;
+  readonly onToggleMode: () => void;
+}
+
+function HomeChatArea({
+  chat,
+  model,
+  onModelChange,
+  webSearch,
+  onWebSearchChange,
+  panelMode,
+  onToggleMode,
+}: HomeChatAreaProps) {
+  const hasMessages = chat.messages.length > 0;
+  const isChatActive = hasMessages || chat.status === "streaming";
+
+  return (
+    <>
+      <div className={styles.composerColumn}>
+        {isChatActive ? (
+          <CompactComposer
+            isStreaming={chat.status === "streaming"}
+            messages={chat.messages}
+            model={model}
+            onModelChange={onModelChange}
+            onSend={chat.send}
+            onStop={chat.stop}
+            webSearch={webSearch}
+            onWebSearchChange={onWebSearchChange}
+          />
+        ) : (
+          <IdleComposer
+            isStreaming={false}
+            messages={[]}
+            model={model}
+            onModelChange={onModelChange}
+            onSend={chat.send}
+            onStop={chat.stop}
+            webSearch={webSearch}
+            onWebSearchChange={onWebSearchChange}
+          />
+        )}
+        <ChatPanel
+          isStreaming={chat.status === "streaming"}
+          messages={chat.messages}
+          mode={panelMode}
+          model={model}
+          onClear={chat.clear}
+          onModelChange={onModelChange}
+          onSend={chat.send}
+          onStop={chat.stop}
+          onToggleMode={onToggleMode}
+          webSearch={webSearch}
+          onWebSearchChange={onWebSearchChange}
+        />
+      </div>
+
+      {panelMode === "fullscreen" && (
+        <ChatPanel
+          isStreaming={chat.status === "streaming"}
+          messages={chat.messages}
+          mode="fullscreen"
+          model={model}
+          onClear={chat.clear}
+          onModelChange={onModelChange}
+          onSend={chat.send}
+          onStop={chat.stop}
+          onToggleMode={onToggleMode}
+          webSearch={webSearch}
+          onWebSearchChange={onWebSearchChange}
+        />
+      )}
+    </>
+  );
+}
+
+function HomeContent({ displayName }: { readonly displayName: string }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const [model, setModel] = useState<ChatModel>("pro");
+  const [webSearch, setWebSearch] = useState(false);
+  const chat = useChat({
+    streamOptions: {
+      model: model === "pro" ? "deepseek-v4-pro" : "deepseek-v4-flash",
+      webSearch,
+    },
+  });
+  const [panelMode, setPanelMode] = useState<ChatPanelMode>("inline");
+
+  const handleToggleMode = useCallback(() => {
+    setPanelMode((prev) => (prev === "fullscreen" ? "inline" : "fullscreen"));
+  }, []);
+
+  const isChatActive = chat.messages.length > 0 || chat.status === "streaming";
+
+  return (
+    <section
+      className={`${styles.content} ${isChatActive ? styles.contentChatActive : ""}`}
+      aria-labelledby="home-heading"
+    >
+      <div className={styles.intro}>
+        <p className={styles.eyebrow}>{t("home.eyebrow")}</p>
+        <p className={styles.readyStatus}>
+          <span aria-hidden="true" className={styles.readyDot} />
+          {t("home.sessionReady")}
+        </p>
+        <h1 className={styles.heading} id="home-heading">
+          {t("home.title", { name: displayName })}
+        </h1>
+        <p className={styles.subtitle}>{t("home.subtitle")}</p>
+      </div>
+      <HomeChatArea
+        chat={chat}
+        model={model}
+        onModelChange={setModel}
+        webSearch={webSearch}
+        onWebSearchChange={setWebSearch}
+        panelMode={panelMode}
+        onToggleMode={handleToggleMode}
+      />
+    </section>
+  );
+}
+
+interface ComposerProps {
+  readonly isStreaming: boolean;
+  readonly messages: readonly ChatMessage[];
+  readonly model: ChatModel;
+  readonly onModelChange: (model: ChatModel) => void;
+  readonly onSend: (content: string) => void;
+  readonly onStop: () => void;
+  readonly webSearch: boolean;
+  readonly onWebSearchChange: (enabled: boolean) => void;
+}
+
+function IdleComposer({
+  model: _model,
+  onModelChange: _onModelChange,
+  onSend,
+  webSearch: _webSearch,
+  onWebSearchChange: _onWebSearchChange,
+}: ComposerProps) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState("");
   const [modelId, setModelId] = useState("balanced");
   const canSend = draft.trim().length > 0;
 
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!canSend) return;
+    onSend(draft.trim());
+    setDraft("");
+  };
+
   return (
-    <form
-      className={styles.composer}
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (canSend) void navigate("/chat");
-      }}
-    >
+    <form className={styles.composer} onSubmit={handleSubmit}>
       <div className={styles.composerTopline}>
         <span>{t("home.composerHeading")}</span>
         <span className={styles.composerIndex}>01</span>
@@ -147,5 +286,36 @@ function HomeComposer() {
         </Button>
       </div>
     </form>
+  );
+}
+
+function CompactComposer({
+  isStreaming,
+  model,
+  onModelChange,
+  onSend,
+  onStop,
+  webSearch,
+  onWebSearchChange,
+}: ComposerProps) {
+  return (
+    <div className={styles.compactComposer}>
+      <MessagesSquare
+        aria-hidden="true"
+        className={styles.compactComposerIcon}
+        size={18}
+      />
+      <ChatInput
+        disabled={isStreaming}
+        isStreaming={isStreaming}
+        model={model}
+        onModelChange={onModelChange}
+        onSend={onSend}
+        onStop={onStop}
+        variant="inline"
+        webSearch={webSearch}
+        onWebSearchChange={onWebSearchChange}
+      />
+    </div>
   );
 }

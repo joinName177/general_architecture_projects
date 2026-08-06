@@ -1,4 +1,8 @@
-import type { ChatGateway, StreamEvent } from "../application/chat-gateway";
+import type {
+  ChatGateway,
+  ChatStreamOptions,
+  StreamEvent,
+} from "../application/chat-gateway";
 import type { ChatMessage } from "../application/chat-gateway";
 import type { ChatRequest } from "~/generated/dify-agent-api/types.gen";
 import { zChatRequest } from "~/generated/dify-agent-api/zod.gen";
@@ -10,9 +14,14 @@ export class HttpChatGateway implements ChatGateway {
   public async *chatStream(
     messages: readonly ChatMessage[],
     signal: AbortSignal,
+    options: ChatStreamOptions = {},
   ): AsyncIterable<StreamEvent> {
     const parsed = zChatRequest.parse({
+      ...(options.model === undefined ? {} : { model: options.model }),
       messages: [...messages],
+      ...(options.webSearch === undefined
+        ? {}
+        : { web_search: options.webSearch }),
     } satisfies ChatRequest);
 
     if (this.httpClient.getAccessToken() === undefined) {

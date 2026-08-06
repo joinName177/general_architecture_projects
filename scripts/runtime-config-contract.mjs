@@ -8,21 +8,46 @@ function assertObject(value, sourcePath) {
   }
 }
 
+function isLocalOrPrivateHost(host) {
+  if (host === "localhost" || host === "127.0.0.1" || host === "[::1]") {
+    return true;
+  }
+  if (
+    host.startsWith("192.168.") ||
+    host.startsWith("10.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host)
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function assertApiBaseUrl(apiBaseUrl, sourcePath) {
   if (typeof apiBaseUrl !== "string") {
     throw new Error(`${sourcePath} apiBaseUrl must be a string.`);
   }
 
-  const apiUrl = new URL(apiBaseUrl);
-  const isLocal = ["localhost", "127.0.0.1"].includes(apiUrl.hostname);
+  // Empty string means same-origin proxy — valid.
+  if (apiBaseUrl === "") return;
 
+  let apiUrl;
+  try {
+    apiUrl = new URL(apiBaseUrl);
+  } catch {
+    throw new Error(
+      `${sourcePath} apiBaseUrl must be a valid absolute URL or empty for proxy mode.`,
+    );
+  }
+
+  if (apiUrl.pathname !== "/" && apiUrl.pathname !== "") {
+    throw new Error(
+      `${sourcePath} apiBaseUrl must be a root URL without a path.`,
+    );
+  }
+
+  const isLocal = isLocalOrPrivateHost(apiUrl.hostname);
   if (apiUrl.protocol !== "https:" && !isLocal) {
     throw new Error(`${sourcePath} remote API endpoints must use HTTPS.`);
-  }
-  if (apiUrl.pathname !== "/api/v1" || apiBaseUrl.endsWith("/")) {
-    throw new Error(
-      `${sourcePath} apiBaseUrl must end with /api/v1 without a trailing slash.`,
-    );
   }
 }
 

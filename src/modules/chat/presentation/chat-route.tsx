@@ -3,14 +3,16 @@
 import { Card } from "@heroui/react/card";
 import { Spinner } from "@heroui/react/spinner";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAuthGateway } from "~/modules/auth/presentation/auth-gateway-context";
 import type {
   ChatMessage,
+  ChatStreamOptions,
   StreamEvent,
 } from "~/modules/chat/application/chat-gateway";
+import type { ChatModel } from "~/modules/chat/presentation/chat-input";
 import { useChatGateway } from "~/modules/chat/presentation/chat-gateway-context";
 import { ChatInput } from "~/modules/chat/presentation/chat-input";
 import { ChatMessages } from "~/modules/chat/presentation/chat-messages";
@@ -19,19 +21,29 @@ import * as styles from "./chat-route.module.css";
 
 type ChatStatus = "error" | "idle" | "streaming";
 
-export function ChatRoute() {
+interface UseChatStreamResult {
+  readonly messages: ChatMessage[];
+  readonly status: ChatStatus;
+  readonly handleSend: (content: string) => Promise<void>;
+  readonly handleStop: () => void;
+}
+
+function useChatStream(
+  model: ChatModel,
+  webSearch: boolean,
+): UseChatStreamResult {
   const gateway = useChatGateway();
-  const authGateway = useAuthGateway();
-
-  const session = useQuery({
-    queryFn: ({ signal }) => authGateway.restoreSession({ signal }),
-    queryKey: ["auth", "session"],
-    staleTime: Number.POSITIVE_INFINITY,
-  });
-
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>("idle");
   const abortRef = useRef<AbortController | undefined>(undefined);
+
+  const streamOptions = useMemo<ChatStreamOptions>(
+    () => ({
+      model: model === "pro" ? "deepseek-v4-pro" : "deepseek-v4-flash",
+      webSearch,
+    }),
+    [model, webSearch],
+  );
 
   const appendContent = useCallback((content: string) => {
     setMessages((prev) => {
@@ -59,8 +71,6 @@ export function ChatRoute() {
 
   const handleSend = useCallback(
     async (content: string) => {
-      if (session.data === null || session.data === undefined) return;
-
       const userMessage: ChatMessage = { role: "user", content };
       const updatedMessages = [...messages, userMessage];
       setMessages(updatedMessages);
@@ -75,6 +85,7 @@ export function ChatRoute() {
         for await (const event of gateway.chatStream(
           updatedMessages,
           controller.signal,
+          streamOptions,
         )) {
           handleEvent(event);
         }
@@ -84,29 +95,54 @@ export function ChatRoute() {
         abortRef.current = undefined;
       }
     },
-    [gateway, messages, session.data, handleEvent],
+    [gateway, messages, handleEvent, streamOptions],
   );
 
   const handleStop = useCallback(() => {
     abortRef.current?.abort();
   }, []);
 
-  if (session.isPending) {
-    return (
-      <main className={styles.shell}>
-        <div className={styles.statusRegion}>
-          <Spinner aria-label="Loading" size="sm" />
-        </div>
-      </main>
-    );
-  }
+  return { messages, status, handleSend, handleStop };
+}
+
+function ChatLoading() {
+  return (
+    <main className={styles.shell}>
+      <div className={styles.statusRegion}>
+        <Spinner aria-label="Loading" size="sm" />
+      </div>
+    </main>
+  );
+}
+
+export function ChatRoute() {
+  const authGateway = useAuthGateway();
+
+  const session = useQuery({
+    queryFn: ({ signal }) => authGateway.restoreSession({ signal }),
+    queryKey: ["auth", "session"],
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+
+  const [model, setModel] = useState<ChatModel>("pro");
+  const [webSearch, setWebSearch] = useState(false);
+  const { messages, status, handleSend, handleStop } = useChatStream(
+    model,
+    webSearch,
+  );
+
+  if (session.isPending) return <ChatLoading />;
 
   return (
     <ChatLayout
       isStreaming={status === "streaming"}
       messages={messages}
+      model={model}
+      onModelChange={setModel}
       onSend={(content) => void handleSend(content)}
       onStop={handleStop}
+      webSearch={webSearch}
+      onWebSearchChange={setWebSearch}
     />
   );
 }
@@ -114,15 +150,23 @@ export function ChatRoute() {
 interface ChatLayoutProps {
   readonly isStreaming: boolean;
   readonly messages: readonly ChatMessage[];
+  readonly model: ChatModel;
+  readonly onModelChange: (model: ChatModel) => void;
   readonly onSend: (content: string) => void;
   readonly onStop: () => void;
+  readonly webSearch: boolean;
+  readonly onWebSearchChange: (enabled: boolean) => void;
 }
 
 function ChatLayout({
   isStreaming,
   messages,
+  model,
+  onModelChange,
   onSend,
   onStop,
+  webSearch,
+  onWebSearchChange,
 }: ChatLayoutProps) {
   const { t } = useTranslation();
 
@@ -140,8 +184,12 @@ function ChatLayout({
             <ChatInput
               disabled={isStreaming}
               isStreaming={isStreaming}
+              model={model}
+              onModelChange={onModelChange}
               onSend={onSend}
               onStop={onStop}
+              webSearch={webSearch}
+              onWebSearchChange={onWebSearchChange}
             />
           </Card.Footer>
         </Card>

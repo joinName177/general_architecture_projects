@@ -7,15 +7,38 @@ import {
 
 const runtimeConfigSchema = z
   .object({
-    apiBaseUrl: z.url(),
+    apiBaseUrl: z.string(),
     apiContractId: z.literal(apiContractId),
     apiContractSha256: z.literal(apiContractSha256),
     releaseId: z.string().min(1),
   })
   .superRefine((config, context) => {
-    const apiUrl = new URL(config.apiBaseUrl);
-    const isLocal = ["localhost", "127.0.0.1"].includes(apiUrl.hostname);
+    // Empty string means same-origin proxy — skip URL validation.
+    if (config.apiBaseUrl === "") return;
 
+    let apiUrl: URL;
+    try {
+      apiUrl = new URL(config.apiBaseUrl);
+    } catch {
+      context.addIssue({
+        code: "custom",
+        message:
+          "apiBaseUrl must be a valid absolute URL or empty for proxy mode.",
+        path: ["apiBaseUrl"],
+      });
+      return;
+    }
+
+    if (apiUrl.pathname !== "/" && apiUrl.pathname !== "") {
+      context.addIssue({
+        code: "custom",
+        message: "apiBaseUrl must be a root URL without a path.",
+        path: ["apiBaseUrl"],
+      });
+      return;
+    }
+
+    const isLocal = isLocalOrPrivateHost(apiUrl.hostname);
     if (apiUrl.protocol !== "https:" && !isLocal) {
       context.addIssue({
         code: "custom",
@@ -23,14 +46,22 @@ const runtimeConfigSchema = z
         path: ["apiBaseUrl"],
       });
     }
-    if (apiUrl.pathname !== "/api/v1" || config.apiBaseUrl.endsWith("/")) {
-      context.addIssue({
-        code: "custom",
-        message: "API base URL must end with /api/v1 without a trailing slash.",
-        path: ["apiBaseUrl"],
-      });
-    }
   });
+
+function isLocalOrPrivateHost(host: string): boolean {
+  if (host === "localhost" || host === "127.0.0.1" || host === "[::1]") {
+    return true;
+  }
+  // Quick check for common private IPv4 prefixes.
+  if (
+    host.startsWith("192.168.") ||
+    host.startsWith("10.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host)
+  ) {
+    return true;
+  }
+  return false;
+}
 
 export type RuntimeConfig = z.infer<typeof runtimeConfigSchema>;
 

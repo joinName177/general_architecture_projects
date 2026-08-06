@@ -9,11 +9,18 @@ import type { ChatMessage } from "~/modules/chat/application/chat-gateway";
 import * as styles from "./chat-route.module.css";
 
 interface ChatMessagesProps {
-  readonly messages: readonly ChatMessage[];
   readonly isStreaming: boolean;
+  readonly messages: readonly ChatMessage[];
+  readonly variant?: ChatMessagesVariant | undefined;
 }
 
-export function ChatMessages({ messages, isStreaming }: ChatMessagesProps) {
+export type ChatMessagesVariant = "fullscreen" | "inline";
+
+export function ChatMessages({
+  messages,
+  isStreaming,
+  variant,
+}: ChatMessagesProps) {
   const { t } = useTranslation();
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +37,10 @@ export function ChatMessages({ messages, isStreaming }: ChatMessagesProps) {
   }
 
   return (
-    <ScrollShadow className={styles.messageList} hideScrollBar>
+    <ScrollShadow
+      className={`${styles.messageList} ${variant === "fullscreen" ? styles.messageListFullscreen : ""}`}
+      hideScrollBar
+    >
       {messages.map((message, index) => (
         <div
           className={`${styles.messageRow} ${message.role === "user" ? styles.messageRowUser : styles.messageRowAssistant}`}
@@ -45,7 +55,9 @@ export function ChatMessages({ messages, isStreaming }: ChatMessagesProps) {
           <div className={styles.messageBubble}>
             <p className={styles.messageText}>
               {message.content ||
-                (isStreaming && index === messages.length - 1 ? "…" : "")}
+                (isStreaming && index === messages.length - 1
+                  ? "…"
+                  : t("chat.emptyResponse"))}
             </p>
           </div>
         </div>
