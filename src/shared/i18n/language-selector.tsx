@@ -1,16 +1,10 @@
-import { buttonVariants } from "@heroui/styles";
+import { Button } from "@heroui/react/button";
 import { Languages } from "lucide-react";
-import { Button } from "react-aria-components/Button";
 import { useTranslation } from "react-i18next";
 
 import { useApplicationI18n } from "~/shared/i18n/application-i18n";
 
 import * as styles from "./language-selector.module.css";
-
-const languageButtonClassName = `${buttonVariants({
-  isIconOnly: true,
-  variant: "tertiary",
-})} ${styles.selector}`;
 
 interface LanguageSelectorProps {
   readonly placement?: "floating" | "inline";
@@ -31,9 +25,11 @@ export function LanguageSelector({
   return (
     <Button
       aria-label={accessibleLabel}
-      className={`${languageButtonClassName} ${placement === "inline" ? styles.inline : ""}`}
-      onClick={() => setLanguage(nextLanguage)}
+      className={`${styles.selector} ${placement === "inline" ? styles.inline : ""}`}
+      isIconOnly
+      onPress={() => setLanguage(nextLanguage)}
       type="button"
+      variant="tertiary"
     >
       <Languages aria-hidden="true" className={styles.icon} strokeWidth={2} />
     </Button>

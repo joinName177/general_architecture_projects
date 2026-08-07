@@ -1,12 +1,11 @@
 "use client";
 
+import { Button } from "@heroui/react/button";
+import { Switch } from "@heroui/react/switch";
 import { TextArea } from "@heroui/react/textarea";
-import { buttonVariants } from "@heroui/styles";
 import { ToggleButton } from "@heroui/react/toggle-button";
 import { ToggleButtonGroup } from "@heroui/react/toggle-button-group";
 import { useState } from "react";
-import { Button } from "react-aria-components/Button";
-import { Switch } from "react-aria-components/Switch";
 import { useTranslation } from "react-i18next";
 
 import type { ChatModel } from "~/modules/chat/application/chat-gateway";
@@ -58,8 +57,7 @@ function ChatControls({
         isSelected={webSearch}
         onChange={onWebSearchChange}
       >
-        <span aria-hidden="true" className={styles.webSearchToggle} />
-        <span className={styles.webSearchLabel}>{t("chat.webSearch")}</span>
+        {t("chat.webSearch")}
       </Switch>
     </div>
   );
@@ -116,19 +114,11 @@ export function ChatInput({
       />
       <div className={styles.composerActions}>
         {isStreaming ? (
-          <Button
-            className={buttonVariants({ variant: "secondary" })}
-            onPress={onStop}
-            type="button"
-          >
+          <Button onPress={onStop} type="button" variant="secondary">
             {t("chat.stop")}
           </Button>
         ) : (
-          <Button
-            className={buttonVariants({ variant: "primary" })}
-            isDisabled={!canSend}
-            type="submit"
-          >
+          <Button isDisabled={!canSend} type="submit" variant="primary">
             {t("chat.send")}
           </Button>
         )}

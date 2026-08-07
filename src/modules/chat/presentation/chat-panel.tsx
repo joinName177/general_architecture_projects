@@ -2,7 +2,7 @@
 
 import { Expand, Minimize2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "react-aria-components/Button";
+import { Button } from "@heroui/react/button";
 
 import type {
   ChatMessage,

@@ -87,38 +87,6 @@
   user-select: none;
 }
 
-.webSearchToggle {
-  display: flex;
-  align-items: center;
-  width: 2.25rem;
-  height: 1.25rem;
-  padding: 0.125rem;
-  border-radius: 9999px;
-  background: var(--color-glass-input);
-  box-shadow: var(--shadow-liquid-inset);
-  transition: background-color 180ms var(--ease-glass-out);
-  flex-shrink: 0;
-}
-
-.webSearchToggle::after {
-  content: "";
-  display: block;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background: var(--color-glass-text-primary);
-  transition: transform 180ms var(--ease-glass-out);
-  transform: translateX(0);
-}
-
-.webSearchSwitch[data-selected] .webSearchToggle {
-  background: var(--color-glass-accent);
-}
-
-.webSearchSwitch[data-selected] .webSearchToggle::after {
-  transform: translateX(1rem);
-}
-
 .webSearchLabel {
   color: var(--color-glass-text-secondary);
   font-size: var(--font-size-xs);

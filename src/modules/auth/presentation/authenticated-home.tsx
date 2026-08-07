@@ -1,6 +1,5 @@
-import { buttonVariants } from "@heroui/styles";
+import { Button } from "@heroui/react/button";
 import { useCallback, useMemo, useState } from "react";
-import { Button } from "react-aria-components/Button";
 import { useTranslation } from "react-i18next";
 
 import type { ChatModel } from "~/modules/chat/application/chat-gateway";
@@ -18,8 +17,6 @@ interface AuthenticatedHomeProps {
   readonly isLoggingOut: boolean;
   readonly onLogout: () => void;
 }
-
-const logoutButtonClassName = `${buttonVariants({ variant: "secondary" })} ${styles.logoutButton}`;
 
 export function AuthenticatedHome(props: AuthenticatedHomeProps) {
   const { t } = useTranslation();
@@ -44,10 +41,11 @@ export function AuthenticatedHome(props: AuthenticatedHomeProps) {
         <div className={styles.headerActions}>
           <LanguageSelector placement="inline" />
           <Button
-            className={logoutButtonClassName}
+            className={styles.logoutButton}
             isDisabled={props.isLoggingOut}
-            onClick={props.onLogout}
+            onPress={props.onLogout}
             type="button"
+            variant="secondary"
           >
             {t("auth.logout")}
           </Button>

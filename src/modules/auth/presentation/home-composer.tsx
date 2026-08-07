@@ -1,14 +1,10 @@
+import { Button } from "@heroui/react/button";
+import { Radio } from "@heroui/react/radio";
+import { RadioGroup } from "@heroui/react/radio-group";
+import { Switch } from "@heroui/react/switch";
 import { TextArea } from "@heroui/react/textarea";
-import {
-  buttonVariants,
-  radioGroupVariants,
-  radioVariants,
-} from "@heroui/styles";
 import { MessagesSquare } from "lucide-react";
 import { useState } from "react";
-import { Button } from "react-aria-components/Button";
-import { Radio, RadioGroup } from "react-aria-components/RadioGroup";
-import { Switch } from "react-aria-components/Switch";
 import { useTranslation } from "react-i18next";
 
 import type {
@@ -18,10 +14,6 @@ import type {
 import { ChatInput } from "~/modules/chat/presentation/chat-input";
 
 import * as styles from "./home-composer.module.css";
-
-const sendButtonClassName = `${buttonVariants({ variant: "primary" })} ${styles.sendButton}`;
-const modelGroupClassName = `${radioGroupVariants()} ${styles.modelGroup}`;
-const modelRadioClassName = `${radioVariants().base()} ${styles.modelOption}`;
 
 interface ComposerProps {
   readonly isStreaming: boolean;
@@ -69,18 +61,22 @@ export function IdleComposer({
       <div className={styles.composerFooter}>
         <RadioGroup
           aria-label={t("home.modelLabel")}
-          className={modelGroupClassName}
+          className={styles.modelGroup}
           onChange={(value) => onModelChange(value as ChatModel)}
           orientation="horizontal"
           value={model}
         >
-          <Radio className={modelRadioClassName} value="pro">
-            <span aria-hidden="true" className={styles.modelPulse} />
-            {t("chat.modelPro")}
+          <Radio value="pro">
+            <Radio.Content className={styles.modelOption}>
+              <span aria-hidden="true" className={styles.modelPulse} />
+              {t("chat.modelPro")}
+            </Radio.Content>
           </Radio>
-          <Radio className={modelRadioClassName} value="flash">
-            <span aria-hidden="true" className={styles.modelPulse} />
-            {t("chat.modelFlash")}
+          <Radio value="flash">
+            <Radio.Content className={styles.modelOption}>
+              <span aria-hidden="true" className={styles.modelPulse} />
+              {t("chat.modelFlash")}
+            </Radio.Content>
           </Radio>
         </RadioGroup>
         <Switch
@@ -88,13 +84,13 @@ export function IdleComposer({
           isSelected={webSearch}
           onChange={onWebSearchChange}
         >
-          <span aria-hidden="true" className={styles.webSearchToggle} />
-          <span className={styles.webSearchLabel}>{t("chat.webSearch")}</span>
+          {t("chat.webSearch")}
         </Switch>
         <Button
-          className={sendButtonClassName}
+          className={styles.sendButton}
           isDisabled={!canSend}
           type="submit"
+          variant="primary"
         >
           {t("home.send")}
           <span aria-hidden="true" className={styles.sendArrow}>

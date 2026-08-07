@@ -1,13 +1,12 @@
 import { Alert } from "@heroui/react/alert";
+import { Button } from "@heroui/react/button";
 import { Card } from "@heroui/react/card";
 import { FieldError } from "@heroui/react/field-error";
 import { Form } from "@heroui/react/form";
 import { Input } from "@heroui/react/input";
 import { Label } from "@heroui/react/label";
 import { TextField } from "@heroui/react/textfield";
-import { buttonVariants } from "@heroui/styles";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "react-aria-components/Button";
 import { useForm } from "react-hook-form";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -29,11 +28,6 @@ import * as formStyles from "./auth-form.module.css";
 import * as shellStyles from "./auth-shell.module.css";
 
 type AuthFormValues = RegisterCommand;
-const primaryButtonClassName = `${buttonVariants({
-  fullWidth: true,
-  variant: "primary",
-})} ${formStyles.primaryAction}`;
-const modeSwitchButtonClassName = `${buttonVariants({ variant: "tertiary" })} ${formStyles.modeSwitch}`;
 
 interface AuthFormProps {
   readonly gateway: AuthGateway;
@@ -149,11 +143,12 @@ function CredentialsCard(props: CredentialsCardProps) {
       </Card.Content>
       <Card.Footer className={formStyles.cardFooter}>
         <Button
-          className={modeSwitchButtonClassName}
-          onClick={() =>
+          className={formStyles.modeSwitch}
+          onPress={() =>
             props.onModeChange(props.mode === "login" ? "register" : "login")
           }
           type="button"
+          variant="tertiary"
         >
           {t(`auth.${props.mode}.switch`)}
         </Button>
@@ -215,9 +210,11 @@ function CredentialsForm(props: CredentialsFormProps) {
         </Alert>
       )}
       <Button
-        className={primaryButtonClassName}
+        className={formStyles.primaryAction}
+        fullWidth
         isDisabled={props.pending}
         type="submit"
+        variant="primary"
       >
         <span>{t(`auth.${props.mode}.submit`)}</span>
         <span aria-hidden="true" className={formStyles.actionArrow}>
