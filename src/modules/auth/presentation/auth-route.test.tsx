@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -72,9 +73,7 @@ describe("AuthScreen", () => {
 
     await waitFor(() =>
       expect(
-        screen.getByRole("heading", {
-          name: "管理员，今天想一起解决什么？",
-        }),
+        screen.getByRole("button", { name: "打开智能体对话" }),
       ).toBeTruthy(),
     );
     expect(login).toHaveBeenCalledOnce();
@@ -83,17 +82,29 @@ describe("AuthScreen", () => {
       password: "local-admin-password",
     });
     expect(login.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
-    const sendButton = screen.getByRole("button", { name: "发送消息" });
-    expect(sendButton.getAttribute("disabled")).not.toBeNull();
-    fireEvent.change(screen.getByLabelText("向智能体发送消息"), {
-      target: { value: "帮我规划今天的工作" },
+
+    // Open the agent drawer
+    fireEvent.click(screen.getByRole("button", { name: "打开智能体对话" }));
+    const drawer = await screen.findByRole("complementary", {
+      name: "智能体对话",
     });
-    const flashModel = screen.getByRole("radio", { name: "极速版" });
-    fireEvent.click(flashModel);
-    expect(flashModel.matches(":checked")).toBe(true);
+    expect(drawer).toBeTruthy();
+
+    // Interact with the chat input inside the drawer
+    await enterChatMessage("帮我规划今天的工作");
+
+    const sendButton = await screen.findByRole("button", { name: "发送" });
     expect(sendButton.getAttribute("disabled")).toBeNull();
     fireEvent.click(sendButton);
-    expect(await screen.findByRole("button", { name: "全屏" })).toBeTruthy();
+    expect(
+      await screen.findByRole("button", { name: "关闭智能体对话" }),
+    ).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "关闭智能体对话" }));
+    expect(screen.queryByRole("complementary", { hidden: true })).toBeTruthy();
+    await waitFor(() =>
+      expect(screen.queryByRole("complementary", { hidden: true })).toBeNull(),
+    );
   });
 
   it("shows invalid credentials as a handled form message", async () => {
@@ -130,9 +141,7 @@ describe("AuthScreen logout", () => {
     };
     renderAuthScreen(gateway);
 
-    await screen.findByRole("heading", {
-      name: "管理员，今天想一起解决什么？",
-    });
+    await screen.findByRole("button", { name: "打开智能体对话" });
     fireEvent.click(screen.getByRole("button", { name: "退出登录" }));
 
     await screen.findByRole("heading", { name: "登录账号" });
@@ -189,4 +198,11 @@ function renderAuthScreen(gateway: AuthGateway) {
       </QueryClientProvider>
     </ApplicationI18nProvider>,
   );
+}
+
+async function enterChatMessage(content: string): Promise<void> {
+  const user = userEvent.setup();
+  const editor = await screen.findByRole("textbox", { name: "输入你的消息" });
+  await user.click(editor);
+  await user.paste(content);
 }

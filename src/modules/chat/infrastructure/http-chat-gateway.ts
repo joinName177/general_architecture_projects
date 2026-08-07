@@ -64,6 +64,11 @@ export class HttpChatGateway implements ChatGateway {
           yield event;
         }
       }
+      // Flush the decoder's internal state and process any remaining buffered data.
+      buffer += decoder.decode();
+      for (const event of HttpChatGateway.drainFinal(buffer)) {
+        yield event;
+      }
     } finally {
       reader.releaseLock();
     }
@@ -81,6 +86,16 @@ export class HttpChatGateway implements ChatGateway {
       if (event !== undefined) events.push(event);
     }
     return { events, remaining };
+  }
+
+  private static drainFinal(buffer: string): StreamEvent[] {
+    if (buffer.trim() === "") return [];
+    const events: StreamEvent[] = [];
+    for (const line of buffer.split("\n")) {
+      const event = parseLine(line);
+      if (event !== undefined) events.push(event);
+    }
+    return events;
   }
 }
 

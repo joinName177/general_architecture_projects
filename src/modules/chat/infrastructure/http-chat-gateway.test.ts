@@ -132,7 +132,9 @@ describe("HttpChatGateway SSE edge cases", () => {
     expect(events[0]).toEqual({ type: "text_delta", content: "OK" });
     expect(events[1]).toEqual({ type: "done" });
   });
+});
 
+describe("HttpChatGateway SSE chunk boundaries", () => {
   it("handles SSE chunks split across read boundaries", async () => {
     const httpClient = new HttpClient("https://api.example.test");
     httpClient.setAccessToken("test-token");
@@ -163,6 +165,37 @@ describe("HttpChatGateway SSE edge cases", () => {
     expect(events[0]).toEqual({ type: "text_delta", content: "Split" });
   });
 
+  it("flushes the final buffer when the stream ends without a trailing newline", async () => {
+    const httpClient = new HttpClient("https://api.example.test");
+    httpClient.setAccessToken("test-token");
+
+    const encoder = new TextEncoder();
+    let closed = false;
+    const stream = new ReadableStream({
+      pull(controller) {
+        if (closed) return;
+        // SSE event without a trailing \n — the final drain must still parse it.
+        controller.enqueue(
+          encoder.encode('data: {"type":"text_delta","content":"LastWord"}'),
+        );
+        controller.close();
+        closed = true;
+      },
+    });
+    const response = new Response(stream, {
+      headers: { "Content-Type": "text/event-stream" },
+    });
+
+    vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockResolvedValue(response));
+
+    const events = await collectEvents(httpClient);
+
+    expect(events).toHaveLength(1);
+    expect(events[0]).toEqual({ type: "text_delta", content: "LastWord" });
+  });
+});
+
+describe("HttpChatGateway SSE ignorable lines", () => {
   it("ignores empty lines and non-data lines", async () => {
     const httpClient = new HttpClient("https://api.example.test");
     httpClient.setAccessToken("test-token");

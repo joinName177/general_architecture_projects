@@ -1,8 +1,6 @@
 export declare const actionArrow: string;
-export declare const cardEyebrow: string;
 export declare const cardFooter: string;
 export declare const cardHeader: string;
-export declare const cardSheen: string;
 export declare const description: string;
 export declare const field: string;
 export declare const fieldLabel: string;
@@ -16,4 +14,3 @@ export declare const intro: string;
 export declare const kicker: string;
 export declare const modeSwitch: string;
 export declare const primaryAction: string;
-export declare const privacyNote: string;

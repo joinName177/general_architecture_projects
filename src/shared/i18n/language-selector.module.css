@@ -10,17 +10,17 @@
   min-height: 2.875rem;
   place-items: center;
   padding: 0;
-  border: 1px solid var(--color-glass-border-strong);
+  border: 0;
   border-radius: 50%;
-  background: var(--color-glass-refraction), var(--color-glass-surface-strong);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
-  backdrop-filter: blur(1.75rem) saturate(165%);
-  color: var(--color-glass-accent);
+  background: var(--color-surface-muted);
+  box-shadow: none;
+  backdrop-filter: none;
+  color: var(--color-text-brand);
   cursor: pointer;
   transition:
     transform 180ms var(--ease-glass-out),
     color 180ms var(--ease-glass-out),
-    box-shadow 180ms var(--ease-glass-out);
+    background-color 180ms var(--ease-glass-out);
 }
 
 .inline {
@@ -28,9 +28,10 @@
 }
 
 .selector[data-hovered] {
-  color: var(--color-glass-action);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
-  transform: translateY(-0.125rem);
+  color: var(--color-text-brand);
+  background: var(--color-surface-control-hover);
+  box-shadow: none;
+  transform: none;
 }
 
 .selector[data-pressed] {
@@ -38,7 +39,7 @@
 }
 
 .selector[data-focus-visible] {
-  outline: 3px solid var(--color-glass-accent-soft);
+  outline: 3px solid var(--color-focus-ring);
   outline-offset: var(--space-2xs);
 }
 

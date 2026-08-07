@@ -1,15 +1,16 @@
 "use client";
 
 import { Button } from "@heroui/react/button";
-import { Switch } from "@heroui/react/switch";
-import { TextArea } from "@heroui/react/textarea";
-import { ToggleButton } from "@heroui/react/toggle-button";
-import { ToggleButtonGroup } from "@heroui/react/toggle-button-group";
+import { ListBox } from "@heroui/react/list-box";
+import { Select } from "@heroui/react/select";
+import { Tooltip } from "@heroui/react/tooltip";
+import { ArrowUp, Globe2, Square } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { ChatModel } from "~/modules/chat/application/chat-gateway";
 
+import { LexicalAgentEditor } from "./lexical-agent-editor";
 import * as styles from "./chat-input.module.css";
 
 interface ChatInputProps {
@@ -39,27 +40,42 @@ function ChatControls({
   const { t } = useTranslation();
 
   return (
-    <div className={styles.controlsRow}>
-      <ToggleButtonGroup
-        disallowEmptySelection
-        onSelectionChange={(keys) => {
-          const selected = [...keys][0] as ChatModel | undefined;
-          if (selected !== undefined) onModelChange(selected);
+    <>
+      <Tooltip>
+        <Button
+          aria-label={t("chat.webSearch")}
+          aria-pressed={webSearch}
+          className={styles.iconButton}
+          onPress={() => onWebSearchChange(!webSearch)}
+          type="button"
+          variant="secondary"
+        >
+          <Globe2 aria-hidden="true" size={17} />
+        </Button>
+        <Tooltip.Content>{t("chat.webSearch")}</Tooltip.Content>
+      </Tooltip>
+      <Select
+        aria-label={t("chat.modelLabel")}
+        className={styles.modelSelector}
+        onSelectionChange={(selected) => {
+          if (selected === "pro" || selected === "flash") {
+            onModelChange(selected);
+          }
         }}
-        selectedKeys={new Set([model])}
-        size="sm"
+        selectedKey={model}
       >
-        <ToggleButton id="pro">{t("chat.modelPro")}</ToggleButton>
-        <ToggleButton id="flash">{t("chat.modelFlash")}</ToggleButton>
-      </ToggleButtonGroup>
-      <Switch
-        className={styles.webSearchSwitch}
-        isSelected={webSearch}
-        onChange={onWebSearchChange}
-      >
-        {t("chat.webSearch")}
-      </Switch>
-    </div>
+        <Select.Trigger className={styles.modelTrigger}>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover placement="top start">
+          <ListBox>
+            <ListBox.Item id="flash">{t("chat.modelFlash")}</ListBox.Item>
+            <ListBox.Item id="pro">{t("chat.modelPro")}</ListBox.Item>
+          </ListBox>
+        </Select.Popover>
+      </Select>
+    </>
   );
 }
 
@@ -75,53 +91,67 @@ export function ChatInput({
 }: ChatInputProps) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState("");
+  const [clearVersion, setClearVersion] = useState(0);
   const canSend = draft.trim().length > 0;
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const sendDraft = () => {
     if (!canSend) return;
     onSend(draft.trim());
     setDraft("");
+    setClearVersion((version) => version + 1);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      if (canSend && !disabled) {
-        onSend(draft.trim());
-        setDraft("");
-      }
-    }
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    sendDraft();
   };
 
   return (
     <form className={styles.composer} onSubmit={handleSubmit}>
-      <ChatControls
-        model={model}
-        onModelChange={onModelChange}
-        webSearch={webSearch}
-        onWebSearchChange={onWebSearchChange}
-      />
-      <TextArea
-        aria-label={t("chat.composerLabel")}
-        className={styles.textArea}
-        fullWidth
+      <LexicalAgentEditor
+        ariaLabel={t("chat.composerLabel")}
+        clearVersion={clearVersion}
         disabled={disabled}
-        onChange={(event) => setDraft(event.currentTarget.value)}
-        onKeyDown={handleKeyDown}
+        onChange={setDraft}
+        onSubmit={sendDraft}
         placeholder={t("chat.composerPlaceholder")}
-        value={draft}
       />
-      <div className={styles.composerActions}>
-        {isStreaming ? (
-          <Button onPress={onStop} type="button" variant="secondary">
-            {t("chat.stop")}
-          </Button>
-        ) : (
-          <Button isDisabled={!canSend} type="submit" variant="primary">
-            {t("chat.send")}
-          </Button>
-        )}
+      <div className={styles.controlsRow}>
+        <ChatControls
+          model={model}
+          onModelChange={onModelChange}
+          webSearch={webSearch}
+          onWebSearchChange={onWebSearchChange}
+        />
+        <div className={styles.composerActions}>
+          {isStreaming ? (
+            <Tooltip>
+              <Button
+                aria-label={t("chat.stop")}
+                className={styles.submitButton}
+                onPress={onStop}
+                type="button"
+                variant="secondary"
+              >
+                <Square aria-hidden="true" size={16} fill="currentColor" />
+              </Button>
+              <Tooltip.Content>{t("chat.stop")}</Tooltip.Content>
+            </Tooltip>
+          ) : (
+            <Tooltip>
+              <Button
+                aria-label={t("chat.send")}
+                className={styles.submitButton}
+                isDisabled={!canSend}
+                type="submit"
+                variant="primary"
+              >
+                <ArrowUp aria-hidden="true" size={22} strokeWidth={2.25} />
+              </Button>
+              <Tooltip.Content>{t("chat.send")}</Tooltip.Content>
+            </Tooltip>
+          )}
+        </div>
       </div>
     </form>
   );

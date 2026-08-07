@@ -79,25 +79,23 @@ test("should complete login and logout through the browser", async ({
   await page.getByRole("button", { name: "Sign in" }).click();
 
   await expect(
-    page.getByRole("heading", {
-      name: "What can we work through, Admin User?",
-    }),
+    page.getByRole("button", { name: "Open agent chat" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Send message" }),
-  ).toBeDisabled();
-  await page.getByLabel("Message your agent").fill("Plan my next task");
-  await expect(
-    page.getByRole("button", { name: "Send message" }),
-  ).toBeEnabled();
-  await page
-    .getByRole("radiogroup", { name: "Model" })
-    .getByText("Flash", { exact: true })
-    .click();
-  await expect(page.getByRole("radio", { name: "Flash" })).toBeChecked();
-  await page.getByRole("button", { name: "Send message" }).click();
+  await page.getByRole("button", { name: "Open agent chat" }).click();
+  await expect(page.getByRole("button", { name: "Open agent chat" })).toHaveCSS(
+    "opacity",
+    "0",
+  );
+  await expect(page.getByRole("button", { name: "Send" })).toBeDisabled();
+  await page.getByLabel("Type your message").fill("Plan my next task");
+  await expect(page.getByRole("button", { name: "Send" })).toBeEnabled();
+  await page.getByRole("button", { name: "Model" }).click();
+  await page.getByRole("option", { name: "Pro" }).click();
+  await expect(page.getByRole("button", { name: "Model" })).toContainText(
+    "Pro",
+  );
+  await page.getByRole("button", { name: "Send" }).click();
   await expect(page.getByText("Hello from the agent")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Fullscreen" })).toBeVisible();
 
   const homeAccessibilityResults = await new AxeBuilder({ page }).analyze();
   expect(homeAccessibilityResults.violations).toEqual([]);
@@ -117,7 +115,7 @@ test("should expose no automatically detectable accessibility violations", async
   expect(accessibilityResults.violations).toEqual([]);
 });
 
-test("should render the sampled pastel canvas palette", async ({ page }) => {
+test("should render the calm precision canvas palette", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
 
@@ -126,10 +124,16 @@ test("should render the sampled pastel canvas palette", async ({ page }) => {
     .evaluate((main) =>
       getComputedStyle(main).getPropertyValue("background-image"),
     );
-  expect(canvasBackgroundImage).toContain("rgb(245, 206, 190)");
-  expect(canvasBackgroundImage).toContain("rgb(242, 181, 188)");
-  expect(canvasBackgroundImage).toContain("rgb(216, 201, 225)");
-  expect(canvasBackgroundImage).toContain("rgb(177, 236, 245)");
+  expect(canvasBackgroundImage).toContain("linear-gradient");
+  await expect(page.getByLabel("Email")).toHaveCSS(
+    "backdrop-filter",
+    "saturate(1.25) blur(14px)",
+  );
+  await page.getByLabel("Email").focus();
+  await expect(page.getByLabel("Email")).toHaveCSS(
+    "border-top-color",
+    "rgba(255, 255, 255, 0.72)",
+  );
 });
 
 test("should render the technology-blue primary action palette", async ({
@@ -137,13 +141,10 @@ test("should render the technology-blue primary action palette", async ({
 }) => {
   await page.goto("/");
   const primaryAction = page.getByRole("button", { name: "Sign in" });
-  await expect(primaryAction).toHaveCSS(
-    "background-color",
-    "rgb(62, 102, 136)",
-  );
+  await expect(primaryAction).toHaveCSS("background-color", "rgb(0, 113, 227)");
 
   await primaryAction.hover();
-  await expect(primaryAction).toHaveCSS("background-color", "rgb(49, 84, 115)");
+  await expect(primaryAction).toHaveCSS("background-color", "rgb(0, 104, 212)");
 });
 
 test("should show invalid credentials without a runtime error", async ({

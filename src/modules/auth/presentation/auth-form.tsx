@@ -80,21 +80,6 @@ export function AuthForm({
     <main className={shellStyles.shell}>
       <LiquidBackdrop />
       <ShellHeader />
-      <section className={formStyles.intro} aria-labelledby="auth-heading">
-        <p className={formStyles.kicker}>{t("auth.brandTagline")}</p>
-        <h1 className={formStyles.heading} id="auth-heading">
-          {t("auth.heroTitle")}
-        </h1>
-        <p className={formStyles.description}>{t("auth.heroDescription")}</p>
-        <ul className={formStyles.highlights}>
-          {(["private", "focused", "ready"] as const).map((highlight) => (
-            <li key={highlight}>
-              <span aria-hidden="true" className={formStyles.highlightMark} />
-              {t(`auth.highlights.${highlight}`)}
-            </li>
-          ))}
-        </ul>
-      </section>
       <div className={formStyles.formRegion}>
         <CredentialsCard
           error={mutation.isError ? mutation.error : undefined}
@@ -105,7 +90,6 @@ export function AuthForm({
           pending={mutation.isPending}
           register={register}
         />
-        <p className={formStyles.privacyNote}>{t("auth.privacyNote")}</p>
       </div>
     </main>
   );
@@ -125,10 +109,8 @@ function CredentialsCard(props: CredentialsCardProps) {
   const { t } = useTranslation();
   return (
     <Card className={shellStyles.card}>
-      <div aria-hidden="true" className={formStyles.cardSheen} />
       <Card.Header className={formStyles.cardHeader}>
-        <p className={formStyles.cardEyebrow}>{t("auth.accessLabel")}</p>
-        <h2>{t(`auth.${props.mode}.title`)}</h2>
+        <h1>{t(`auth.${props.mode}.title`)}</h1>
         <p>{t(`auth.${props.mode}.description`)}</p>
       </Card.Header>
       <Card.Content className={shellStyles.cardContent}>

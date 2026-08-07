@@ -1,0 +1,19 @@
+.editor {
+  min-height: 4rem;
+  outline: 0;
+  color: var(--ink);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.placeholder {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  color: var(--ink-tertiary);
+  font-size: var(--font-size-sm);
+  pointer-events: none;
+}

@@ -6,7 +6,7 @@ describe("applicationTranslationResources", () => {
   it("composes module-owned messages under stable message ids", () => {
     expect(applicationTranslationResources["zh-CN"].translation).toMatchObject({
       auth: { login: { title: "登录账号" } },
-      home: { modelLabel: "模型" },
+      home: { closeAgent: "关闭智能体对话" },
       language: {
         switchToChinese: "切换到简体中文",
         switchToEnglish: "切换到英文",
@@ -14,7 +14,7 @@ describe("applicationTranslationResources", () => {
     });
     expect(applicationTranslationResources["en-GB"].translation).toMatchObject({
       auth: { login: { title: "Sign in" } },
-      home: { modelLabel: "Model" },
+      home: { closeAgent: "Close agent chat" },
       language: {
         switchToChinese: "Switch to Simplified Chinese",
         switchToEnglish: "Switch to English",

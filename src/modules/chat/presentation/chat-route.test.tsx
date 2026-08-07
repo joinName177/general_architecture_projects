@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AuthenticatedUser } from "~/modules/auth/application/auth-gateway";
@@ -52,10 +53,8 @@ describe("ChatRoute", () => {
 
     await screen.findByRole("heading", { name: "智能体对话" });
 
-    fireEvent.change(screen.getByLabelText("输入你的消息"), {
-      target: { value: "Hello" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "发送" }));
+    const { user } = await enterChatMessage("Hello");
+    await user.keyboard("{Enter}");
 
     await waitFor(() => {
       expect(screen.getByText("未收到回复。")).toBeTruthy();
@@ -69,7 +68,11 @@ describe("ChatRoute", () => {
     renderChatRoute(chatGateway);
 
     await screen.findByRole("heading", { name: "智能体对话" });
-    expect(screen.getByText("随便问点什么…")).toBeTruthy();
+    expect(
+      screen
+        .getByRole("textbox", { name: "输入你的消息" })
+        .getAttribute("aria-placeholder"),
+    ).toBe("随便问点什么…");
   });
 
   it("sends a message and displays the assistant reply", async () => {
@@ -87,8 +90,8 @@ describe("ChatRoute", () => {
 
     await screen.findByRole("heading", { name: "智能体对话" });
 
-    const input = screen.getByLabelText("输入你的消息");
-    fireEvent.change(input, { target: { value: "Hello" } });
+    const { user } = await enterChatMessage("Hello");
+    await user.keyboard("{Shift>}{Enter}{/Shift}");
     fireEvent.click(screen.getByRole("button", { name: "发送" }));
 
     await waitFor(() => {
@@ -110,9 +113,7 @@ describe("ChatRoute", () => {
 
     await screen.findByRole("heading", { name: "智能体对话" });
 
-    fireEvent.change(screen.getByLabelText("输入你的消息"), {
-      target: { value: "Hello" },
-    });
+    await enterChatMessage("Hello");
     fireEvent.click(screen.getByRole("button", { name: "发送" }));
 
     await waitFor(() => {
@@ -146,4 +147,14 @@ function renderChatRoute(chatGateway: ChatGateway) {
       </QueryClientProvider>
     </ApplicationI18nProvider>,
   );
+}
+
+async function enterChatMessage(
+  content: string,
+): Promise<{ readonly user: ReturnType<typeof userEvent.setup> }> {
+  const user = userEvent.setup();
+  const editor = await screen.findByRole("textbox", { name: "输入你的消息" });
+  await user.click(editor);
+  await user.paste(content);
+  return { user };
 }

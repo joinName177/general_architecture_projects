@@ -1,3 +1,9 @@
+/*
+ * Global Reset & Base Styles
+ * Token 来源：./tokens.css
+ * 设计规范：docs/apple-design-spec.md
+ */
+
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "./tokens.css";
@@ -5,7 +11,7 @@
 :root {
   background: var(--color-surface-canvas);
   color: var(--color-text-primary);
-  font-family: var(--font-family-sans);
+  font-family: var(--font-family-body);
 }
 
 *,
@@ -19,4 +25,16 @@ body {
   min-height: 100dvh;
   margin: 0;
   background: var(--color-surface-canvas);
+  color: var(--ink);
+  font: 400 17px/1.47 var(--font-family-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Focus ring ── */
+
+:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+  border-radius: 4px;
 }

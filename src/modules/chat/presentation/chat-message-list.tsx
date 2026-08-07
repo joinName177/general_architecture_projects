@@ -1,6 +1,7 @@
 "use client";
 
 import { ScrollShadow } from "@heroui/react/scroll-shadow";
+import { Bot } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -52,7 +53,7 @@ export function ChatMessageList({
             aria-hidden="true"
             className={`${styles.avatar} ${message.role === "user" ? styles.avatarUser : styles.avatarAssistant}`}
           >
-            {message.role === "user" ? "U" : "A"}
+            {message.role === "user" ? "U" : <Bot size={20} />}
           </span>
           <div className={styles.messageBubble}>
             <p className={styles.messageText}>
@@ -70,9 +71,13 @@ export function ChatMessageList({
         </div>
       )}
       {isStreaming && (
-        <div className={styles.streamingIndicator}>
+        <div
+          className={styles.streamingIndicator}
+          aria-label={t("chat.streaming")}
+        >
           <span className={styles.streamingDot} />
-          {t("chat.streaming")}
+          <span className={styles.streamingDot} />
+          <span className={styles.streamingDot} />
         </div>
       )}
       <div ref={bottomRef} />

@@ -52,7 +52,7 @@ function ChatUnavailable({ text }: { readonly text: string }) {
 export function ChatRoute() {
   const session = useAuthSession();
   const { t } = useTranslation();
-  const [model, setModel] = useState<ChatModel>("pro");
+  const [model, setModel] = useState<ChatModel>("flash");
   const [webSearch, setWebSearch] = useState(false);
   const streamOptions = useMemo<ChatStreamOptions>(
     () => ({ model: resolveChatModelName(model), webSearch }),

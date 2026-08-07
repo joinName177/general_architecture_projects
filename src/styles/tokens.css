@@ -1,85 +1,60 @@
+/*
+ * Apple Design Token System
+ * 规范来源：docs/apple-design-spec.md
+ * 原始分析：docs/apple-design-ui-style-report.html
+ *
+ * 所有 UI 组件必须消费本文件中的语义 Token，不得硬编码色值或字号。
+ */
+
 :root {
   color-scheme: light;
 
-  /* Primitive palette: common hues are ordered from the lightest shade to the darkest. */
-  --palette-slate-50: #f8fafc;
-  --palette-slate-100: #f1f5f9;
-  --palette-slate-200: #e2e8f0;
-  --palette-slate-300: #cbd5e1;
-  --palette-slate-400: #94a3b8;
-  --palette-slate-500: #64748b;
-  --palette-slate-600: #475569;
-  --palette-slate-700: #334155;
-  --palette-slate-800: #1e293b;
-  --palette-slate-900: #0f172a;
-  --palette-slate-950: #020617;
-  --palette-blue-50: #eff6ff;
-  --palette-blue-100: #dbeafe;
-  --palette-blue-200: #bfdbfe;
-  --palette-blue-300: #93c5fd;
-  --palette-blue-400: #60a5fa;
-  --palette-blue-500: #3b82f6;
-  --palette-blue-600: #2563eb;
-  --palette-blue-700: #1d4ed8;
-  --palette-blue-800: #1e40af;
-  --palette-blue-900: #1e3a8a;
-  --palette-blue-950: #172554;
-  --palette-cyan-100: #b1ecf5;
-  --palette-orange-100: #f5cebe;
-  --palette-pink-100: #f2b5bc;
-  --palette-violet-100: #d8c9e1;
-  --palette-green-50: #f0fdf4;
-  --palette-green-100: #dcfce7;
-  --palette-green-200: #bbf7d0;
-  --palette-green-300: #86efac;
-  --palette-green-400: #4ade80;
-  --palette-green-500: #22c55e;
-  --palette-green-600: #16a34a;
-  --palette-green-700: #15803d;
-  --palette-green-800: #166534;
-  --palette-green-900: #14532d;
-  --palette-green-950: #052e16;
-  --palette-amber-50: #fffbeb;
-  --palette-amber-100: #fef3c7;
-  --palette-amber-200: #fde68a;
-  --palette-amber-300: #fcd34d;
-  --palette-amber-400: #fbbf24;
-  --palette-amber-500: #f59e0b;
-  --palette-amber-600: #d97706;
-  --palette-amber-700: #b45309;
-  --palette-amber-800: #92400e;
-  --palette-amber-900: #78350f;
-  --palette-amber-950: #451a03;
-  --palette-red-50: #fef2f2;
-  --palette-red-100: #fee2e2;
-  --palette-red-200: #fecaca;
-  --palette-red-300: #fca5a5;
-  --palette-red-400: #f87171;
-  --palette-red-500: #ef4444;
-  --palette-red-600: #dc2626;
-  --palette-red-700: #b91c1c;
-  --palette-red-800: #991b1b;
-  --palette-red-900: #7f1d1d;
-  --palette-red-950: #450a0a;
+  /* ── Calm Precision palette ── */
+  --ink: #15171c;
+  --ink-secondary: #454a53;
+  --ink-tertiary: #626b77;
+  --link: #005ea8;
+  --action: #0071e3;
+  --action-hover: #0068d4;
+  --action-pressed: #005fbd;
+  --paper: #f7f8fa;
+  --fill: #ffffff;
+  --fill-secondary: #eef1f4;
+  --fill-tertiary: #e5e9ee;
+  --glass: rgba(244 246 249 / 82%);
+  --hairline: rgba(0 0 0 / 8%);
+  --focus-ring: rgba(255 255 255 / 72%);
 
-  --font-family-sans:
-    "Avenir Next", "SF Pro Display", "Segoe UI Variable", ui-sans-serif,
-    system-ui, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-size-display: clamp(2.5rem, 6vw, 5rem);
-  --line-height-tight: 1;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.6;
+  /* ── Typography ── */
+  --font-family-display:
+    -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Display",
+    "PingFang SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-body:
+    -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Text",
+    "PingFang SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono:
+    "SF Mono", "SFMono-Regular", "Cascadia Code", "JetBrains Mono",
+    ui-monospace, monospace;
+
+  --font-size-xs: 0.75rem; /* 12px — captions */
+  --font-size-sm: 0.875rem; /* 14px — secondary */
+  --font-size-md: 1rem; /* 16px — body (close to 17px Apple) */
+  --font-size-lg: 1.0625rem; /* 17px — Apple body */
+  --font-size-xl: 1.3125rem; /* 21px — lead */
+  --font-size-2xl: 1.75rem; /* 28px — card heading */
+  --font-size-3xl: 2rem; /* 32px — section heading */
+  --font-size-display: clamp(2.75rem, 7vw, 4.75rem); /* 48–76px hero */
+
+  --line-height-tight: 1.02;
+  --line-height-normal: 1.47;
+  --line-height-relaxed: 1.55;
+
+  --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  /* ── Spacing ── */
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 0.75rem;
@@ -87,202 +62,165 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-2xl: 3rem;
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1.5rem;
-  --shadow-raised: 0 1.5rem 5rem rgb(31 50 91 / 14%);
-  --shadow-home-composer: 0 1.75rem 5rem rgb(45 42 36 / 10%);
-  --radius-home-composer: 2rem;
-  --layout-viewport-min-inline-size: 20rem;
-  --radius-glass-lg: 1.75rem;
-  --radius-glass-xl: 2.25rem;
-  --ease-glass-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --space-section: 4.25rem; /* ~68px */
 
-  /* Components consume semantic aliases only; themes remap this layer. */
-  --color-surface-canvas: var(--palette-slate-100);
-  --color-surface-raised: rgb(255 255 255 / 92%);
-  --color-surface-overlay: rgb(255 255 255 / 90%);
-  --color-text-primary: var(--palette-slate-800);
-  --color-text-secondary: var(--palette-slate-500);
-  --color-text-accent: var(--palette-blue-800);
-  --color-text-brand: var(--palette-blue-700);
-  --color-border-subtle: rgb(203 213 225 / 70%);
-  --color-border-default: var(--palette-slate-300);
-  --color-focus-ring: rgb(62 102 136 / 24%);
-  --color-accent-subtle: rgb(77 118 255 / 18%);
-  --color-action-primary-background: var(--palette-blue-700);
-  --color-action-primary-background-hover: var(--palette-blue-800);
-  --color-action-primary-text: var(--palette-slate-50);
-  --color-canvas-start: #f8faff;
-  --color-canvas-end: #e9eef7;
-  --color-home-accent: #b88b4a;
-  --color-home-accent-text: #81602f;
-  --color-home-action-hover: #31312e;
-  --color-home-ambient: rgb(231 218 193 / 55%);
-  --color-home-border: rgb(183 174 157 / 48%);
-  --color-home-border-focus: rgb(129 96 47 / 58%);
-  --color-home-canvas: #f6f3ed;
-  --color-home-ink: #1f201e;
-  --color-home-option-selected: rgb(184 139 74 / 12%);
-  --color-home-text-secondary: var(--palette-slate-600);
-  --color-glass-accent: #3e6688;
-  --color-glass-accent-soft: rgb(62 102 136 / 16%);
-  --color-glass-action: #3e6688;
-  --color-glass-action-border: rgb(255 255 255 / 72%);
-  --color-glass-action-hover: #315473;
-  --color-glass-action-pressed: #27435d;
-  --color-glass-action-text: #ffffff;
-  --color-glass-ambient-primary: radial-gradient(
-    circle,
-    rgb(245 206 190 / 48%),
-    rgb(242 181 188 / 12%) 54%,
-    transparent 72%
+  /* ── Layout ── */
+  --content-max-width: min(1080px, calc(100% - 48px));
+  --content-max-width-narrow: min(100% - 32px, 680px);
+
+  /* ── Radius ── */
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 1.125rem; /* 18px — card radius */
+  --radius-xl: 1.125rem; /* 18px */
+  --radius-pill: 61.25rem; /* 980px — button radius */
+
+  --ease-glass-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --layout-viewport-min-inline-size: 20rem;
+
+  --color-surface-canvas: var(--paper);
+  --color-surface-raised: var(--fill);
+  --color-surface-muted: var(--fill-secondary);
+  --color-surface-overlay: var(--fill);
+  --color-surface-control: var(--fill);
+  --color-surface-control-hover: var(--fill-tertiary);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-secondary);
+  --color-text-muted: var(--ink-tertiary);
+  --color-text-accent: var(--link);
+  --color-text-brand: var(--action);
+  --color-border-subtle: var(--hairline);
+  --color-border-default: var(--hairline);
+  --color-border-control: var(--hairline);
+  --color-border-control-hover: rgba(21 23 28 / 24%);
+  --color-border-focus: rgba(255 255 255 / 72%);
+  --color-focus-ring: var(--focus-ring);
+  --color-accent-subtle: rgba(0 113 227 / 12%);
+  --color-status-danger-surface: rgba(195 0 16 / 8%);
+  --color-status-danger-text: #b42318;
+  --color-action-primary-background: var(--action);
+  --color-action-primary-background-hover: var(--action-hover);
+  --color-action-primary-text: #ffffff;
+  --color-surface-auth-canvas: linear-gradient(
+    135deg,
+    #79adff 0%,
+    #63d2ef 31%,
+    #f7c0d7 68%,
+    #a6ead1 100%
   );
-  --color-glass-ambient-secondary: radial-gradient(
-    circle,
-    rgb(177 236 245 / 42%),
-    rgb(216 201 225 / 10%) 58%,
-    transparent 74%
-  );
-  --color-glass-border: rgb(255 255 255 / 58%);
-  --color-glass-border-strong: rgb(255 255 255 / 78%);
-  --color-glass-canvas:
-    radial-gradient(
-      ellipse at 50% -8%,
-      var(--palette-orange-100) 0%,
-      rgb(245 206 190 / 0%) 52%
-    ),
-    radial-gradient(
-      ellipse at 22% 28%,
-      var(--palette-pink-100) 0%,
-      var(--palette-violet-100) 32%,
-      rgb(216 201 225 / 0%) 60%
-    ),
-    radial-gradient(
-      ellipse at 73% 68%,
-      var(--palette-cyan-100) 0%,
-      rgb(177 236 245 / 0%) 62%
-    ),
-    #f5f5f5;
-  --color-glass-danger-border: rgb(185 28 28 / 32%);
-  --color-glass-danger-surface: rgb(254 226 226 / 72%);
-  --color-glass-danger-text: #7f1d1d;
-  --color-glass-highlight: rgb(255 255 255 / 72%);
-  --color-glass-input: rgb(255 255 255 / 58%);
-  --color-glass-input-hover: rgb(255 255 255 / 76%);
-  --color-glass-lens: rgb(255 255 255 / 22%);
-  --color-glass-refraction: linear-gradient(
-    145deg,
-    rgb(255 255 255 / 54%),
-    transparent 38%,
-    rgb(177 236 245 / 10%)
-  );
-  --color-glass-surface: rgb(255 255 255 / 40%);
-  --color-glass-surface-strong: rgb(255 255 255 / 60%);
-  --color-glass-text-muted: var(--palette-slate-500);
-  --color-glass-text-primary: var(--palette-slate-800);
-  --color-glass-text-secondary: var(--palette-slate-600);
-  --shadow-glass-accent-ring: 0 0 0 0.22rem var(--color-glass-accent-soft);
-  --shadow-glass-action: 0 0.8rem 2.25rem rgb(71 85 105 / 16%);
-  --shadow-glass-action-hover: 0 1rem 2.75rem rgb(71 85 105 / 22%);
-  --shadow-glass-control:
-    0 0.625rem 1.75rem rgb(71 85 105 / 12%), 0 0 0 1px rgb(71 85 105 / 8%);
-  --shadow-glass-control-hover:
-    0 0.875rem 2.25rem rgb(71 85 105 / 18%), 0 0 0 1px rgb(71 85 105 / 12%);
-  --shadow-glass-lens:
-    inset 0 1px 0 var(--color-glass-highlight), 0 2rem 6rem rgb(71 85 105 / 14%);
-  --shadow-liquid-inset:
-    inset 0 1px 0 var(--color-glass-highlight),
-    inset 0 -1px 0 rgb(71 85 105 / 12%);
-  --shadow-liquid-raised:
-    0 2rem 6rem rgb(71 85 105 / 16%), 0 0.375rem 1.25rem rgb(71 85 105 / 8%),
-    0 0 0 1px rgb(71 85 105 / 8%);
-  --texture-glass-noise: none;
+  --color-surface-auth-glass: rgba(250 250 252 / 72%);
+  --color-surface-auth-input: rgba(255 255 255 / 62%);
+  --color-surface-auth-input-hover: rgba(255 255 255 / 76%);
+  --color-border-auth-glass: rgba(255 255 255 / 74%);
+  --color-border-auth-glass-hover: rgba(255 255 255 / 92%);
+  --color-surface-auth-liquid-blue: rgba(91 201 239 / 46%);
+  --color-surface-auth-liquid-pink: rgba(243 112 174 / 38%);
+  --color-surface-auth-liquid-mint: rgba(135 231 191 / 42%);
+  --color-surface-workspace-canvas: var(--color-surface-auth-canvas);
+  --color-surface-workspace-glass: rgba(250 250 252 / 68%);
+  --color-surface-workspace-glass-muted: rgba(250 250 252 / 46%);
+  --color-border-workspace-glass: rgba(255 255 255 / 68%);
+
+  /* HeroUI public theme variables map to the same semantic system. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --surface: var(--fill);
+  --surface-secondary: var(--fill-secondary);
+  --surface-tertiary: var(--fill-tertiary);
+  --muted: var(--ink-tertiary);
+  --default: var(--fill-secondary);
+  --default-hover: var(--fill-tertiary);
+  --default-foreground: var(--ink);
+  --accent: var(--action);
+  --accent-hover: var(--action-hover);
+  --accent-foreground: var(--color-action-primary-text);
+  --accent-soft: var(--color-accent-subtle);
+  --accent-soft-hover: rgba(0 113 227 / 16%);
+  --accent-soft-foreground: var(--link);
+  --field-background: var(--color-surface-control);
+  --field-foreground: var(--ink);
+  --field-placeholder: var(--ink-tertiary);
+  --field-border: var(--color-border-control);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-surface-canvas: var(--palette-slate-950);
-  --color-surface-raised: rgb(15 23 42 / 92%);
-  --color-surface-overlay: rgb(30 41 59 / 92%);
-  --color-text-primary: var(--palette-slate-50);
-  --color-text-secondary: var(--palette-slate-300);
-  --color-text-accent: var(--palette-blue-200);
-  --color-text-brand: var(--palette-blue-300);
-  --color-border-subtle: rgb(71 85 105 / 70%);
-  --color-border-default: var(--palette-slate-600);
-  --color-focus-ring: rgb(147 197 253 / 35%);
-  --color-accent-subtle: rgb(59 130 246 / 18%);
-  --color-action-primary-background: var(--palette-blue-300);
-  --color-action-primary-background-hover: var(--palette-blue-200);
-  --color-action-primary-text: var(--palette-slate-950);
-  --color-canvas-start: var(--palette-slate-950);
-  --color-canvas-end: var(--palette-slate-900);
-  --color-home-accent: #d3aa6d;
-  --color-home-accent-text: #e6c794;
-  --color-home-action-hover: #2e3230;
-  --color-home-ambient: rgb(112 88 50 / 24%);
-  --color-home-border: rgb(148 163 184 / 38%);
-  --color-home-border-focus: rgb(230 199 148 / 58%);
-  --color-home-canvas: #171917;
-  --color-home-ink: #f3f1eb;
-  --color-home-option-selected: rgb(211 170 109 / 14%);
-  --color-home-text-secondary: var(--palette-slate-300);
-  --color-glass-accent: #83bea9;
-  --color-glass-accent-soft: rgb(131 190 169 / 18%);
-  --color-glass-action: #d8ede5;
-  --color-glass-action-border: rgb(241 255 249 / 72%);
-  --color-glass-action-hover: #e5f4ee;
-  --color-glass-action-pressed: #c7e5da;
-  --color-glass-action-text: #10201b;
-  --color-glass-ambient-primary: radial-gradient(
-    circle,
-    rgb(82 143 124 / 46%),
-    rgb(82 143 124 / 8%) 54%,
-    transparent 72%
+
+  --ink: #e6e8ed;
+  --ink-secondary: #9b9faa;
+  --ink-tertiary: #646974;
+  --link: #2997ff;
+  --action: #2997ff;
+  --action-hover: #40a9ff;
+  --action-pressed: #1a8cff;
+  --paper: #0c0e12;
+  --fill: #171a20;
+  --fill-secondary: #22262d;
+  --fill-tertiary: #2b3038;
+  --glass: rgba(20 23 29 / 84%);
+  --hairline: rgba(255 255 255 / 10%);
+  --focus-ring: rgba(255 255 255 / 62%);
+
+  --color-surface-canvas: var(--paper);
+  --color-surface-raised: var(--fill);
+  --color-surface-muted: var(--fill-secondary);
+  --color-surface-overlay: var(--fill);
+  --color-surface-control: var(--fill);
+  --color-surface-control-hover: var(--fill-tertiary);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-secondary);
+  --color-text-muted: var(--ink-tertiary);
+  --color-text-accent: var(--link);
+  --color-text-brand: var(--action);
+  --color-border-subtle: var(--hairline);
+  --color-border-default: var(--hairline);
+  --color-border-control: var(--hairline);
+  --color-border-control-hover: rgba(230 232 237 / 24%);
+  --color-border-focus: rgba(255 255 255 / 62%);
+  --color-focus-ring: var(--focus-ring);
+  --color-accent-subtle: rgba(41 151 255 / 16%);
+  --color-status-danger-surface: rgba(255 69 58 / 12%);
+  --color-status-danger-text: #ff6961;
+  --color-action-primary-background: var(--action);
+  --color-action-primary-background-hover: var(--action-hover);
+  --color-action-primary-text: #ffffff;
+  --color-surface-auth-canvas: linear-gradient(
+    135deg,
+    #152743 0%,
+    #174554 34%,
+    #382947 68%,
+    #1b4639 100%
   );
-  --color-glass-ambient-secondary: radial-gradient(
-    circle,
-    rgb(151 190 176 / 28%),
-    rgb(151 190 176 / 4%) 58%,
-    transparent 74%
-  );
-  --color-glass-border: rgb(225 244 237 / 18%);
-  --color-glass-border-strong: rgb(235 250 244 / 30%);
-  --color-glass-canvas: #0d1515;
-  --color-glass-danger-border: rgb(244 166 157 / 38%);
-  --color-glass-danger-surface: rgb(126 43 38 / 22%);
-  --color-glass-danger-text: #ffd7d2;
-  --color-glass-highlight: rgb(255 255 255 / 20%);
-  --color-glass-input: rgb(4 12 11 / 34%);
-  --color-glass-input-hover: rgb(8 19 17 / 46%);
-  --color-glass-lens: rgb(215 239 230 / 5%);
-  --color-glass-refraction: linear-gradient(
-    145deg,
-    rgb(255 255 255 / 9%),
-    transparent 38%,
-    rgb(131 190 169 / 5%)
-  );
-  --color-glass-surface: rgb(225 242 236 / 11%);
-  --color-glass-surface-strong: rgb(225 242 236 / 16%);
-  --color-glass-text-muted: #8d9c97;
-  --color-glass-text-primary: #f3f7f5;
-  --color-glass-text-secondary: #b6c4bf;
-  --shadow-glass-action: 0 0.8rem 2.25rem rgb(5 18 15 / 28%);
-  --shadow-glass-action-hover: 0 1rem 2.75rem rgb(5 18 15 / 38%);
-  --shadow-glass-control:
-    0 0.625rem 1.75rem rgb(3 12 10 / 18%), 0 0 0 1px rgb(225 244 237 / 8%);
-  --shadow-glass-control-hover:
-    0 0.875rem 2.25rem rgb(3 12 10 / 28%), 0 0 0 1px rgb(225 244 237 / 12%);
-  --shadow-glass-lens:
-    inset 0 1px 0 var(--color-glass-highlight), 0 2rem 6rem rgb(3 12 10 / 20%);
-  --shadow-liquid-inset:
-    inset 0 1px 0 var(--color-glass-highlight),
-    inset 0 -1px 0 rgb(3 12 10 / 16%);
-  --shadow-liquid-raised: 0 2rem 6rem rgb(2 10 9 / 42%);
-  --texture-glass-noise: radial-gradient(
-    circle at 30% 20%,
-    rgb(255 255 255 / 8%) 0 0.04rem,
-    transparent 0.06rem
-  );
+  --color-surface-auth-glass: rgba(23 26 32 / 76%);
+  --color-surface-auth-input: rgba(32 38 46 / 72%);
+  --color-surface-auth-input-hover: rgba(42 49 59 / 82%);
+  --color-border-auth-glass: rgba(230 232 237 / 20%);
+  --color-border-auth-glass-hover: rgba(230 232 237 / 34%);
+  --color-surface-auth-liquid-blue: rgba(41 151 255 / 30%);
+  --color-surface-auth-liquid-pink: rgba(214 109 181 / 26%);
+  --color-surface-auth-liquid-mint: rgba(89 214 162 / 26%);
+  --color-surface-workspace-canvas: var(--color-surface-auth-canvas);
+  --color-surface-workspace-glass: rgba(23 26 32 / 72%);
+  --color-surface-workspace-glass-muted: rgba(23 26 32 / 52%);
+  --color-border-workspace-glass: rgba(230 232 237 / 22%);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --surface: var(--fill);
+  --surface-secondary: var(--fill-secondary);
+  --surface-tertiary: var(--fill-tertiary);
+  --muted: var(--ink-tertiary);
+  --default: var(--fill-secondary);
+  --default-hover: var(--fill-tertiary);
+  --default-foreground: var(--ink);
+  --accent: var(--action);
+  --accent-hover: var(--action-hover);
+  --accent-foreground: var(--color-action-primary-text);
+  --accent-soft: var(--color-accent-subtle);
+  --accent-soft-hover: rgba(41 151 255 / 20%);
+  --accent-soft-foreground: var(--link);
+  --field-background: var(--color-surface-control);
+  --field-foreground: var(--ink);
+  --field-placeholder: var(--ink-tertiary);
+  --field-border: var(--color-border-control);
 }

@@ -48,7 +48,6 @@ export function IdleComposer({
     <form className={styles.composer} onSubmit={handleSubmit}>
       <div className={styles.composerTopline}>
         <span>{t("home.composerHeading")}</span>
-        <span className={styles.composerIndex}>01</span>
       </div>
       <TextArea
         aria-label={t("home.composerLabel")}

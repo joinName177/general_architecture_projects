@@ -80,6 +80,7 @@
 - Hook 必须满足完整依赖和释放语义；订阅、计时器、AbortController、Object URL、Channel 和原生监听器进入统一 LifecycleScope。
 - Query、MobX、RHF、URL 和 React state 严格执行架构规定的唯一所有权。
 - HeroUI v3 是唯一基础组件体系。全局 CSS 只允许 `src/styles/theme.css`（入口与基础重置）和 `src/styles/tokens.css`（设计 Token）；所有业务、模块和组件样式必须与源码就近放置，使用 `*.module.css`。业务组件只能消费语义 Token，不得直接引用调色板原始值。
+- UI 视觉规范以 `docs/apple-design-spec.md` 为唯一事实源。Token 定义见 `src/styles/tokens.css`。新增或修改 UI 必须先阅读设计规范，确保颜色、字号、圆角、间距均从 Token 系统取值。禁止硬编码色值、在卡片上使用投影、滥用毛玻璃、或使用彩色表达内容层级。
 - 每个 CSS Module 必须提交相邻的 `*.module.css.d.ts`，以 Rspack 的具名导出形式显式列出可用 class name；这使 CSS class 改名或误用在严格 TypeScript 检查中立即失败。
 - `tokens.css` 维护按浅到深排序的原始调色板，以及颜色、排版、间距、圆角和阴影的语义 Token。主题仅通过重映射语义 Token 实现，禁止在业务 CSS 中按主题或色相写分支。
 - 禁止 `!important`、高特异性覆盖、任意值逃逸设计 Token 以及依赖 HeroUI 私有 DOM 结构。

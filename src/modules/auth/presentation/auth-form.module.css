@@ -1,111 +1,44 @@
-.intro {
-  z-index: 1;
-  grid-column: 1 / span 7;
-  max-width: 45rem;
-  animation: reveal-intro 700ms var(--ease-glass-out) both;
-}
-
-.kicker,
-.cardEyebrow {
-  margin: 0;
-  color: var(--color-glass-accent);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.heading {
-  max-width: 12ch;
-  margin-block: var(--space-md) var(--space-lg);
-  color: var(--color-glass-text-primary);
-  font-size: clamp(3.25rem, 6.5vw, 6.5rem);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.065em;
-  line-height: 0.94;
-  text-wrap: balance;
-}
-
-.description {
-  max-width: 34rem;
-  margin: 0;
-  color: var(--color-glass-text-secondary);
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-relaxed);
-}
-
-.highlights {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm) var(--space-lg);
-  margin: var(--space-xl) 0 0;
-  padding: 0;
-  color: var(--color-glass-text-muted);
-  font-size: var(--font-size-sm);
-  list-style: none;
-}
-
-.highlights li {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.highlightMark {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: var(--color-glass-accent);
-  box-shadow: var(--shadow-glass-accent-ring);
-}
+/* ── Form card centered layout ── */
 
 .formRegion {
+  position: relative;
   z-index: 1;
   display: grid;
-  grid-column: 9 / -1;
+  width: min(100%, 28rem);
+  margin: auto;
   gap: var(--space-md);
-  animation: reveal-card 800ms 80ms var(--ease-glass-out) both;
-}
-
-.cardSheen {
-  position: absolute;
-  top: -5rem;
-  left: 10%;
-  width: 80%;
-  height: 7rem;
-  border-radius: 50%;
-  background: var(--color-glass-highlight);
-  filter: blur(2rem);
-  opacity: 0.52;
-  pointer-events: none;
-  transform: rotate(-8deg);
 }
 
 .cardHeader,
 .cardFooter {
-  position: relative;
   padding-inline: clamp(var(--space-lg), 3vw, 2rem);
 }
 
 .cardHeader {
-  padding-block: clamp(var(--space-xl), 4vw, 2.75rem) var(--space-lg);
+  padding-block: clamp(var(--space-xl), 4vw, 2.5rem) var(--space-md);
 }
 
-.cardHeader h2 {
-  margin: var(--space-sm) 0 0;
-  color: var(--color-glass-text-primary);
-  font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl));
-  letter-spacing: -0.035em;
+.cardHeader h1 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
 }
 
 .cardHeader p:last-child {
-  margin: var(--space-sm) 0 0;
-  color: var(--color-glass-text-secondary);
+  margin: var(--space-xs) 0 0;
+  color: var(--ink-secondary);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-normal);
 }
 
 .cardFooter {
   padding-block: 0 var(--space-xl);
 }
+
+/* ── Form fields ── */
 
 .form,
 .field {
@@ -118,182 +51,133 @@
 }
 
 .field {
-  color: var(--color-glass-text-primary);
+  color: var(--ink);
 }
 
 .fieldLabel {
-  color: var(--color-glass-text-secondary);
+  color: var(--ink-secondary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
 }
 
+/* ── Input ── */
+
 .input {
-  min-height: 3.5rem;
-  border: 1px solid var(--color-glass-border);
-  border-radius: 1rem;
-  background: var(--color-glass-input);
-  color: var(--color-glass-text-primary);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
+  min-height: 3.25rem;
+  border: 1px solid var(--color-border-auth-glass);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-auth-input);
+  backdrop-filter: saturate(1.25) blur(14px);
+  -webkit-backdrop-filter: saturate(1.25) blur(14px);
+  color: var(--ink);
+  box-shadow: none;
   transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    transform 180ms ease,
-    box-shadow 180ms ease;
+    border-color 200ms ease,
+    box-shadow 200ms ease;
 }
 
 .input[data-hovered] {
-  border-color: var(--color-glass-border-strong);
-  background: var(--color-glass-input-hover);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
+  border-color: var(--color-border-auth-glass-hover);
+  background: var(--color-surface-auth-input-hover);
 }
 
 .input[data-focus-visible] {
-  border-color: var(--color-glass-accent);
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: var(--space-2xs);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
-  transform: translateY(-0.0625rem);
+  border-color: var(--color-border-focus);
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
+/* ── Mode switch ── */
+
 .modeSwitch {
-  min-height: 2.75rem;
+  min-height: 2.5rem;
   justify-self: start;
-  border: 1px solid var(--color-glass-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-glass-refraction), var(--color-glass-surface);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
-  color: var(--color-glass-text-secondary);
-  transition:
-    transform 180ms var(--ease-glass-out),
-    color 180ms var(--ease-glass-out),
-    box-shadow 180ms var(--ease-glass-out);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--link);
+  box-shadow: none;
+  font-size: var(--font-size-sm);
+  transition: color 200ms ease;
 }
 
 .modeSwitch[data-hovered] {
-  color: var(--color-glass-text-primary);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control-hover);
-  transform: translateX(0.18rem);
+  color: var(--action);
+  box-shadow: none;
+  transform: none;
 }
 
 .modeSwitch[data-pressed] {
-  transform: scale(0.98);
+  opacity: 0.7;
+  transform: none;
 }
+
+/* ── Primary action ── */
 
 .primaryAction {
   display: flex;
-  min-height: 3.25rem;
+  min-height: 2.75rem;
   align-items: center;
-  justify-content: space-between;
-  padding-inline: var(--space-lg);
-  border: 1px solid var(--color-glass-action-border);
-  border-radius: 1rem;
-  background: var(--color-glass-action);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action);
-  color: var(--color-glass-action-text);
+  justify-content: center;
+  gap: var(--space-xs);
+  padding-inline: var(--space-xl);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  box-shadow: none;
+  color: var(--color-action-primary-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   transition:
-    background-color 180ms ease,
-    transform 180ms ease,
-    box-shadow 180ms ease;
+    background-color 200ms ease,
+    transform 150ms ease,
+    box-shadow 200ms ease;
 }
 
 .primaryAction[data-hovered] {
-  background: var(--color-glass-action-hover);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-action-hover);
-  transform: translateY(-0.12rem);
+  background: var(--action-hover);
+  box-shadow: none;
+  transform: none;
 }
 
 .primaryAction[data-pressed] {
-  background: var(--color-glass-action-pressed);
-  transform: scale(0.98);
+  background: var(--action-pressed);
+  box-shadow: none;
+  transform: scale(0.985);
+  transition-duration: 80ms;
 }
 
 .primaryAction[data-focus-visible],
 .modeSwitch[data-focus-visible] {
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: var(--space-2xs);
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
 }
 
+/* ── Arrow ── */
+
 .actionArrow {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   line-height: 1;
-  transition: transform 180ms ease;
+  transition: transform 200ms ease;
 }
 
 .primaryAction[data-hovered] .actionArrow {
-  transform: translateX(0.18rem);
-}
-
-.privacyNote {
-  max-width: 32rem;
-  margin: 0 auto;
-  color: var(--color-glass-text-muted);
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-normal);
-  text-align: center;
-}
-
-@keyframes reveal-intro {
-  from {
-    transform: translateY(1rem);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes reveal-card {
-  from {
-    transform: translateY(1.5rem) scale(0.985);
-  }
-  to {
-    transform: translateY(0) scale(1);
-  }
-}
-
-@media (max-width: 960px) {
-  .intro {
-    grid-column: 1 / span 6;
-  }
-
-  .formRegion {
-    grid-column: 7 / -1;
-  }
-
-  .heading {
-    font-size: clamp(3rem, 8vw, 5rem);
-  }
+  transform: translateX(0.15rem);
 }
 
 @media (max-width: 760px) {
-  .intro,
   .formRegion {
     width: 100%;
   }
 
-  .intro {
-    padding-top: var(--space-lg);
-  }
-
-  .heading {
-    max-width: 11ch;
-    font-size: clamp(3rem, 14vw, 4.5rem);
-  }
-
-  .description {
-    font-size: var(--font-size-md);
-  }
-
-  .highlights {
-    display: grid;
+  .cardHeader,
+  .cardFooter {
+    padding-inline: var(--space-md);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro,
-  .formRegion {
-    animation: none;
-  }
-
   .actionArrow,
   .input,
   .modeSwitch,

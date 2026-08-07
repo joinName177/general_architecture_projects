@@ -15,3 +15,26 @@ if (typeof ResizeObserver === "undefined") {
 if (!HTMLElement.prototype.scrollIntoView) {
   HTMLElement.prototype.scrollIntoView = vi.fn();
 }
+
+// Lexical checks paste events with `instanceof ClipboardEvent`.
+if (typeof ClipboardEvent === "undefined") {
+  class MockClipboardEvent extends Event {
+    public readonly clipboardData: DataTransfer | null;
+
+    public constructor(type: string, init: ClipboardEventInit = {}) {
+      super(type, init);
+      this.clipboardData = init.clipboardData ?? null;
+    }
+  }
+
+  Object.defineProperty(globalThis, "ClipboardEvent", {
+    configurable: true,
+    value: MockClipboardEvent,
+  });
+}
+
+// Lexical measures the DOM range that represents the current selection.
+if (!Range.prototype.getBoundingClientRect) {
+  Range.prototype.getBoundingClientRect = () =>
+    document.body.getBoundingClientRect();
+}

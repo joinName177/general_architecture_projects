@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apple Developer 设计页 · UI 样式提取报告</title>
+  <style>
+    :root {
+      --ink: #1d1d1f;
+      --ink-2: #424245;
+      --ink-3: #86868b;
+      --link: #0066cc;
+      --action: #0071e3;
+      --paper: #ffffff;
+      --fill: #f5f5f7;
+      --fill-2: #e8e8ed;
+      --glass: rgba(250, 250, 252, .8);
+      --radius-card: 18px;
+      --radius-control: 980px;
+      --hairline: rgba(0, 0, 0, .12);
+      --font-text: "SF Pro SC", "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      --font-display: "SF Pro SC", "SF Pro Display", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 17px/1.47 var(--font-text);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    :focus-visible { outline: 3px solid rgba(0, 113, 227, .35); outline-offset: 3px; }
+
+    .glassbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      height: 52px;
+      background: var(--glass);
+      -webkit-backdrop-filter: saturate(1.8) blur(20px);
+      backdrop-filter: saturate(1.8) blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+    }
+    .glassbar__inner {
+      width: min(1080px, calc(100% - 48px));
+      height: 100%;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .glassbar strong { font: 600 21px/24px var(--font-display); letter-spacing: .011em; }
+    .glassbar span { color: var(--ink-3); font-size: 12px; }
+
+    main { width: min(1080px, calc(100% - 48px)); margin: 0 auto; }
+    .hero { padding: 84px 0 70px; border-bottom: 1px solid var(--hairline); }
+    .eyebrow { margin: 0 0 18px; color: var(--ink-3); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { max-width: 880px; margin: 0; font: 600 clamp(44px, 7vw, 76px)/1.02 var(--font-display); letter-spacing: -.035em; }
+    .hero__meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+    .pill { padding: 6px 12px; border-radius: var(--radius-control); background: var(--fill); color: var(--ink-2); font-size: 12px; }
+
+    section { padding: 68px 0; border-bottom: 1px solid var(--hairline); }
+    .section-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 420px); gap: 40px; align-items: end; margin-bottom: 32px; }
+    h2 { margin: 0; font: 600 32px/39px var(--font-display); letter-spacing: .004em; }
+    .section-head p { margin: 0; color: var(--ink-2); }
+    .note { color: var(--ink-3); font-size: 14px; }
+
+    .tokens { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .swatch { min-height: 150px; padding: 18px; border: 1px solid rgba(0,0,0,.06); border-radius: var(--radius-card); display: flex; flex-direction: column; justify-content: space-between; }
+    .swatch--dark { color: white; }
+    .swatch b { font-size: 15px; }
+    .swatch code { font-size: 12px; opacity: .78; }
+
+    .data-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
+    .panel { border-radius: var(--radius-card); background: var(--fill); padding: 26px; }
+    .panel h3 { margin: 0 0 18px; font: 600 21px/29px var(--font-display); }
+    .spec-list { margin: 0; padding: 0; list-style: none; }
+    .spec-list li { display: grid; grid-template-columns: 124px 1fr; gap: 18px; padding: 12px 0; border-top: 1px solid rgba(0,0,0,.08); }
+    .spec-list li:first-child { border-top: 0; padding-top: 0; }
+    .spec-list span { color: var(--ink-3); font-size: 14px; }
+    .spec-list code { overflow-wrap: anywhere; font-size: 13px; }
+
+    .type-table { width: 100%; border-collapse: collapse; }
+    .type-table th, .type-table td { padding: 14px 10px; border-bottom: 1px solid var(--hairline); text-align: left; vertical-align: baseline; }
+    .type-table th { color: var(--ink-3); font-size: 12px; font-weight: 600; }
+    .type-table td:nth-child(n+2) { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; }
+    .sample-48 { font: 600 48px/70.5882px var(--font-display); }
+    .sample-32 { font: 600 32px/39px var(--font-display); }
+    .sample-28 { font: 600 28px/35px var(--font-display); }
+    .sample-21 { font: 400 21px/29.001px var(--font-display); }
+    .sample-17 { font: 400 17px/25px var(--font-text); }
+    .sample-12 { font: 400 12px/16px var(--font-text); }
+
+    .demo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .apple-card { min-height: 300px; padding: 36px; border-radius: var(--radius-card); background: var(--fill); display: flex; flex-direction: column; overflow: hidden; }
+    .apple-card h3 { max-width: 420px; margin: 0; font: 600 28px/35px var(--font-display); }
+    .apple-card p { max-width: 430px; margin: 14px 0 0; color: var(--ink-2); }
+    .apple-card a { margin-top: auto; color: var(--link); text-decoration: none; }
+    .apple-card a::after { content: "  ›"; }
+    .apple-card--dark { color: #f5f5f7; background: #1d1d1f; }
+    .apple-card--dark p, .apple-card--dark a { color: #f5f5f7; }
+
+    .glass-demo {
+      min-height: 330px;
+      padding: 30px;
+      border-radius: var(--radius-card);
+      background:
+        radial-gradient(circle at 18% 30%, #6bd8ff 0 13%, transparent 34%),
+        radial-gradient(circle at 78% 65%, #ff7ab8 0 12%, transparent 34%),
+        linear-gradient(135deg, #8d7cff, #f5f5f7 55%, #8cffc1);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .glass-demo__pane { width: min(520px, 90%); padding: 28px; border: 1px solid rgba(255,255,255,.48); border-radius: 18px; background: rgba(250,250,252,.8); -webkit-backdrop-filter: saturate(1.8) blur(20px); backdrop-filter: saturate(1.8) blur(20px); }
+    .glass-demo__pane b { display: block; margin-bottom: 8px; font: 600 21px/29px var(--font-display); }
+
+    .code-block { margin: 0; padding: 24px; color: #f5f5f7; background: #1d1d1f; border-radius: var(--radius-card); overflow: auto; font-size: 13px; line-height: 1.7; }
+    .code-block .c { color: #a1a1a6; }
+    .code-block .v { color: #8ee7ff; }
+
+    .layout-map { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .layout-map div { min-height: 112px; padding: 16px; border-radius: 12px; background: var(--fill); font-size: 13px; }
+    .layout-map b { display: block; margin-bottom: 8px; font-size: 12px; color: var(--ink-3); }
+
+    footer { padding: 38px 0 60px; color: var(--ink-3); font-size: 12px; }
+    footer p { margin: 5px 0; }
+
+    @media (max-width: 820px) {
+      main, .glassbar__inner { width: min(100% - 32px, 680px); }
+      .section-head, .data-grid { grid-template-columns: 1fr; gap: 18px; }
+      .tokens { grid-template-columns: repeat(2, 1fr); }
+      .demo-grid { grid-template-columns: 1fr; }
+      .layout-map { grid-template-columns: 1fr; }
+      .type-table td:nth-child(3), .type-table th:nth-child(3) { display: none; }
+    }
+    @media (max-width: 480px) {
+      .glassbar span { display: none; }
+      .hero { padding-top: 58px; }
+      section { padding: 52px 0; }
+      .tokens { grid-template-columns: 1fr; }
+      .panel, .apple-card { padding: 22px; }
+      .spec-list li { grid-template-columns: 1fr; gap: 3px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <header class="glassbar">
+    <div class="glassbar__inner">
+      <strong>UI 样式提取</strong>
+      <span>Apple Developer · 设计页</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="eyebrow">Design audit / 2026-08-07</p>
+      <h1>克制的层级，柔和的表面，精确的间距。</h1>
+      <div class="hero__meta">
+        <span class="pill">实测视口 912 × 715</span>
+        <span class="pill">DPR 2</span>
+        <span class="pill">浅色模式</span>
+        <span class="pill">计算样式提取</span>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <h2>结论速览</h2>
+        <p>页面以大面积白色与浅灰分区为底，依靠字号、留白和图片而非描边或阴影建立层级。</p>
+      </div>
+      <div class="layout-map">
+        <div><b>01 / 导航</b>44px 全局导航 + 52px 本地导航；本地导航使用 20px 毛玻璃。</div>
+        <div><b>02 / 首屏</b>735px 高的沉浸式图片 Hero；标题在当前视口为 28/35。</div>
+        <div><b>03 / 功能区</b>两列卡片，单卡约 334px 宽，间距约 24px，圆角 18px。</div>
+        <div><b>04 / 内容区</b>章节上下内边距 68px；章节标题普遍为 32/39、600。</div>
+        <div><b>05 / 页脚</b>#F5F5F7 浅灰底，12/16 小字号，高密度信息分栏。</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>颜色令牌</h2>
+        <p>以下色值来自页面计算样式与根级 CSS 变量；不是图片取色。</p>
+      </div>
+      <div class="tokens">
+        <div class="swatch swatch--dark" style="background:#1d1d1f"><b>主文本 / 深色表面</b><code>#1D1D1F</code></div>
+        <div class="swatch swatch--dark" style="background:#424245"><b>次级文本</b><code>#424245</code></div>
+        <div class="swatch swatch--dark" style="background:#86868b"><b>三级文本</b><code>#86868B</code></div>
+        <div class="swatch swatch--dark" style="background:#0066cc"><b>正文链接</b><code>#0066CC</code></div>
+        <div class="swatch swatch--dark" style="background:#0071e3"><b>按钮 / 焦点</b><code>#0071E3</code></div>
+        <div class="swatch" style="background:#f5f5f7"><b>浅灰表面</b><code>#F5F5F7</code></div>
+        <div class="swatch" style="background:#e8e8ed"><b>四级填充</b><code>#E8E8ED</code></div>
+        <div class="swatch" style="background:#fff"><b>页面底色</b><code>#FFFFFF</code></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>字体与排版</h2>
+        <p>中文优先使用 SF Pro SC，回退到苹方；展示文本切换至 SF Pro Display，正文使用 SF Pro Text。</p>
+      </div>
+      <div class="data-grid">
+        <div class="panel">
+          <h3>字体栈</h3>
+          <ul class="spec-list">
+            <li><span>正文</span><code>"SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif</code></li>
+            <li><span>标题</span><code>"SF Pro SC", "SF Pro Display", "SF Pro Icons", "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif</code></li>
+            <li><span>主要字重</span><code>400 / 600</code></li>
+            <li><span>正文基线</span><code>17px / 25px</code></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>排版性格</h3>
+          <ul class="spec-list">
+            <li><span>标题</span><code>紧凑、半粗、低对比</code></li>
+            <li><span>正文</span><code>舒展行高，约 1.47</code></li>
+            <li><span>字距</span><code>多为 normal；标题仅有轻微正字距</code></li>
+            <li><span>强调方式</span><code>字号 + 留白，而非多色或阴影</code></li>
+          </ul>
+        </div>
+      </div>
+      <div style="overflow:auto;margin-top:24px">
+        <table class="type-table">
+          <thead><tr><th>页面角色</th><th>字号 / 行高</th><th>字重 / 字距</th><th>示例</th></tr></thead>
+          <tbody>
+            <tr><td>大标题</td><td>48 / 70.5882</td><td>600</td><td class="sample-48">Design</td></tr>
+            <tr><td>章节标题</td><td>32 / 39</td><td>600 / .128px</td><td class="sample-32">开发者故事</td></tr>
+            <tr><td>Hero / 卡片标题</td><td>28 / 35</td><td>600 / 0–.196px</td><td class="sample-28">设计资源</td></tr>
+            <tr><td>引导正文</td><td>21 / 29.001</td><td>400 / .231px</td><td class="sample-21">优质体验</td></tr>
+            <tr><td>正文</td><td>17 / 25</td><td>400</td><td class="sample-17">清晰、自然、易读</td></tr>
+            <tr><td>导航 / 页脚</td><td>12 / 12–16</td><td>400–600</td><td class="sample-12">资源与支持</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>圆角、边框与阴影</h2>
+        <p>视觉语言以“无边框、无阴影、统一圆角”为主；形体依靠背景色差区分。</p>
+      </div>
+      <div class="demo-grid">
+        <article class="apple-card">
+          <h3>标准内容卡片</h3>
+          <p>实测背景 #F5F5F7，圆角 18px，无边框、无盒阴影。当前视口中两列卡片约为 334px 宽。</p>
+          <a href="#css">查看 CSS</a>
+        </article>
+        <article class="apple-card apple-card--dark">
+          <h3>深色媒体卡片</h3>
+          <p>以图片或深色面作为焦点；文本统一转白。图片缩略图同样使用 18px 圆角，并叠加黑色渐变保障对比度。</p>
+          <a href="#css">查看 CSS</a>
+        </article>
+      </div>
+      <div class="panel" style="margin-top:24px">
+        <ul class="spec-list">
+          <li><span>内容卡片</span><code>border-radius: 18px</code></li>
+          <li><span>小型容器</span><code>border-radius: 10px / 12px</code></li>
+          <li><span>胶囊按钮</span><code>border-radius: 980px</code></li>
+          <li><span>常规边框</span><code>基本为 none；按钮保留 1px transparent / #0071E3</code></li>
+          <li><span>阴影</span><code>box-shadow: none</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>毛玻璃</h2>
+        <p>毛玻璃只集中使用在本地导航背景，克制且功能明确：内容滚动时保持导航可读。</p>
+      </div>
+      <div class="glass-demo">
+        <div class="glass-demo__pane">
+          <b>实测 Glass 参数</b>
+          <span>rgba(250, 250, 252, .8) · saturate(1.8) · blur(20px)</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="css">
+      <div class="section-head">
+        <h2>可复制 CSS</h2>
+        <p>这段代码提炼了页面最具代表性的设计令牌、卡片和毛玻璃导航。</p>
+      </div>
+      <pre class="code-block"><code><span class="c">/* Apple Developer 设计页：核心 UI 令牌 */</span>
+:root {
+  --text-primary: <span class="v">#1d1d1f</span>;
+  --text-secondary: <span class="v">#424245</span>;
+  --text-tertiary: <span class="v">#86868b</span>;
+  --link: <span class="v">#0066cc</span>;
+  --action: <span class="v">#0071e3</span>;
+  --surface: <span class="v">#ffffff</span>;
+  --surface-muted: <span class="v">#f5f5f7</span>;
+  --surface-muted-2: <span class="v">#e8e8ed</span>;
+  --card-radius: <span class="v">18px</span>;
+}
+
+body {
+  color: var(--text-primary);
+  background: var(--surface);
+  font: 17px/25px "SF Pro SC", "SF Pro Text",
+        "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.section { padding-block: <span class="v">68px</span>; }
+
+.card {
+  background: var(--surface-muted);
+  border: 0;
+  border-radius: var(--card-radius);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.local-nav-glass {
+  background: <span class="v">rgba(250, 250, 252, .8)</span>;
+  -webkit-backdrop-filter: saturate(1.8) blur(20px);
+  backdrop-filter: saturate(1.8) blur(20px);
+}
+
+.button {
+  color: #fff;
+  background: var(--action);
+  border: 1px solid transparent;
+  border-radius: <span class="v">980px</span>;
+}</code></pre>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>复刻建议</h2>
+        <p>保持 Apple 感的关键不是堆叠特效，而是控制设计系统的“噪声”。</p>
+      </div>
+      <div class="data-grid">
+        <div class="panel">
+          <h3>建议保留</h3>
+          <ul class="spec-list">
+            <li><span>层级</span><code>2 个字重 + 明确字号阶梯</code></li>
+            <li><span>留白</span><code>章节 68px；卡片间距约 24px</code></li>
+            <li><span>表面</span><code>白 / #F5F5F7 交替分区</code></li>
+            <li><span>交互</span><code>蓝色链接，清晰焦点态</code></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>避免过度</h3>
+          <ul class="spec-list">
+            <li><span>阴影</span><code>不要给每张卡片加投影</code></li>
+            <li><span>描边</span><code>仅在按钮和焦点态使用</code></li>
+            <li><span>玻璃</span><code>只用于需要悬浮可读性的导航</code></li>
+            <li><span>颜色</span><code>内容层级优先使用中性色</code></li>
+          </ul>
+        </div>
+      </div>
+      <p class="note" style="margin-top:22px">说明：结果来自 2026-08-07 当前页面、浅色模式、912×715 视口的计算样式。Apple 页面会随视口、语言、主题与版本调整响应式数值；图片内颜色不计入本报告的 UI 色板。</p>
+    </section>
+
+    <footer>
+      <p>来源页面：developer.apple.com/cn/design/</p>
+      <p>提取范围：字体、字号、颜色、背景、边框、圆角、阴影、毛玻璃与主要布局节奏。</p>
+    </footer>
+  </main>
+</body>
+</html>

@@ -57,6 +57,10 @@ export const chatMessages = defineMessages({
     "en-GB": "Flash",
     "zh-CN": "极速版",
   },
+  modelLabel: {
+    "en-GB": "Model",
+    "zh-CN": "模型",
+  },
   webSearch: {
     "en-GB": "Web Search",
     "zh-CN": "联网搜索",

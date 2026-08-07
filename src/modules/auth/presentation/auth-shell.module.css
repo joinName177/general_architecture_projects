@@ -1,71 +1,59 @@
 .shell {
   position: relative;
-  display: grid;
-  min-height: 100dvh;
-  overflow: hidden;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: auto 1fr;
-  align-items: center;
-  gap: clamp(var(--space-xl), 5vw, 5rem);
-  padding: clamp(var(--space-lg), 4vw, 3.5rem)
-    clamp(var(--space-lg), 6vw, 6.5rem);
-  background: var(--color-glass-canvas);
   isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: clamp(var(--space-lg), 4vw, 3rem);
+  overflow: hidden;
+  background: var(--color-surface-auth-canvas);
 }
 
 .shellCentered {
-  align-content: space-between;
+  justify-content: center;
 }
 
+/* ── Top bar ── */
+
 .topbar {
-  z-index: 2;
+  position: relative;
+  z-index: 1;
   display: flex;
-  grid-column: 1 / -1;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-lg);
+  padding-bottom: var(--space-xl);
 }
+
+/* ── Brand ── */
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  color: var(--color-glass-text-primary);
+  color: var(--ink);
 }
 
 .brandMark {
-  position: relative;
   display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
   flex: none;
   place-items: center;
-  overflow: hidden;
-  border: 1px solid var(--color-glass-border-strong);
-  border-radius: 0.9rem;
-  background: var(--color-glass-refraction), var(--color-glass-surface-strong);
-  box-shadow: var(--shadow-liquid-inset), var(--shadow-glass-control);
-  backdrop-filter: blur(1.5rem) saturate(160%);
+  border-radius: var(--radius-sm);
+  background: var(--action);
 }
 
 .brandMark::before {
-  position: absolute;
-  width: 2rem;
-  height: 0.8rem;
-  border-radius: 50%;
-  background: var(--color-glass-highlight);
-  content: "";
-  filter: blur(0.4rem);
-  inset: 0 auto auto 0.35rem;
-  transform: rotate(-18deg);
+  display: none;
 }
 
 .brandCore {
-  width: 0.78rem;
-  height: 0.78rem;
-  border: 0.2rem solid var(--color-glass-accent);
+  width: 0.65rem;
+  height: 0.65rem;
+  border: 0.15rem solid var(--color-action-primary-text);
   border-radius: 50%;
-  box-shadow: var(--shadow-glass-accent-ring);
+  box-shadow: none;
 }
 
 .brandCopy {
@@ -74,30 +62,25 @@
 }
 
 .brandCopy strong {
+  font-family: var(--font-family-display);
   font-size: var(--font-size-sm);
-  letter-spacing: -0.015em;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
 }
 
 .brandCopy small {
-  color: var(--color-glass-text-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
 }
 
+/* ── Authentication liquid backdrop ── */
+
 .liquidBackdrop {
   position: absolute;
-  z-index: -2;
+  z-index: -1;
+  inset: 0;
   overflow: hidden;
-  border-radius: inherit;
-  inset: 0;
   pointer-events: none;
-}
-
-.liquidBackdrop::after {
-  position: absolute;
-  background-image: var(--texture-glass-noise);
-  content: "";
-  inset: 0;
-  opacity: 0.24;
 }
 
 .liquidOrbPrimary,
@@ -106,77 +89,68 @@
   position: absolute;
   display: block;
   border-radius: 50%;
-  filter: blur(0.25rem);
-  transform: translateZ(0);
+  filter: blur(4rem);
 }
 
 .liquidOrbPrimary {
   top: -18rem;
   left: -12rem;
-  width: clamp(30rem, 58vw, 62rem);
-  height: clamp(30rem, 58vw, 62rem);
-  background: var(--color-glass-ambient-primary);
+  width: min(58vw, 52rem);
+  aspect-ratio: 1;
+  background: var(--color-surface-auth-liquid-blue);
 }
 
 .liquidOrbSecondary {
-  right: -10rem;
+  right: -14rem;
   bottom: -18rem;
-  width: clamp(25rem, 46vw, 48rem);
-  height: clamp(25rem, 46vw, 48rem);
-  background: var(--color-glass-ambient-secondary);
+  width: min(60vw, 56rem);
+  aspect-ratio: 1;
+  background: var(--color-surface-auth-liquid-pink);
 }
 
 .liquidLens {
   top: 20%;
-  left: 42%;
-  width: clamp(12rem, 20vw, 22rem);
-  height: clamp(12rem, 20vw, 22rem);
-  border: 1px solid var(--color-glass-highlight);
-  background: var(--color-glass-lens);
-  box-shadow: var(--shadow-glass-lens);
-  opacity: 0.8;
+  right: 12%;
+  width: min(32vw, 28rem);
+  aspect-ratio: 1;
+  background: var(--color-surface-auth-liquid-mint);
 }
+
+/* ── Card ── */
 
 .card {
   position: relative;
   width: 100%;
+  border: 1px solid var(--color-border-auth-glass);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-auth-glass);
+  backdrop-filter: saturate(1.35) blur(20px);
+  -webkit-backdrop-filter: saturate(1.35) blur(20px);
+  box-shadow: none;
   overflow: hidden;
-  border: 1px solid var(--color-glass-border-strong);
-  border-radius: var(--radius-glass-xl);
-  background: var(--color-glass-refraction), var(--color-glass-surface-strong);
-  box-shadow: var(--shadow-liquid-raised), var(--shadow-liquid-inset);
-  backdrop-filter: blur(2.75rem) saturate(165%);
-}
-
-.card::after {
-  position: absolute;
-  z-index: -1;
-  border-radius: inherit;
-  background: var(--color-glass-refraction);
-  content: "";
-  inset: 0;
-  pointer-events: none;
 }
 
 .cardContent {
-  position: relative;
   padding-inline: clamp(var(--space-lg), 3vw, 2rem);
   padding-block: 0 var(--space-lg);
 }
 
+/* ── Alert ── */
+
 .alert {
-  border: 1px solid var(--color-glass-danger-border);
-  border-radius: var(--radius-md);
-  background: var(--color-glass-danger-surface);
-  color: var(--color-glass-danger-text);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-status-danger-surface);
+  color: var(--color-status-danger-text);
 }
 
+/* ── Status ── */
+
 .statusRegion {
-  display: grid;
-  width: min(100%, 32rem);
-  grid-column: 1 / -1;
-  justify-self: center;
-  align-self: center;
+  position: relative;
+  z-index: 1;
+  width: min(100%, 28rem);
+  margin: 0 auto;
 }
 
 .statusContent {
@@ -185,29 +159,12 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  color: var(--color-glass-text-primary);
-}
-
-@media (max-width: 960px) {
-  .shell {
-    align-content: start;
-    gap: var(--space-2xl);
-    padding-inline: clamp(var(--space-lg), 7vw, 4rem);
-  }
+  color: var(--ink-secondary);
 }
 
 @media (max-width: 760px) {
   .shell {
-    display: flex;
-    min-height: 100dvh;
-    align-items: stretch;
-    flex-direction: column;
-    gap: var(--space-2xl);
     padding: var(--space-lg);
-  }
-
-  .topbar {
-    flex: none;
   }
 
   .brandCopy small {
@@ -215,10 +172,23 @@
   }
 
   .card {
-    border-radius: var(--radius-glass-lg);
+    border-radius: var(--radius-md);
   }
 
   .statusRegion {
     margin-block: auto;
+  }
+
+  .liquidLens {
+    right: -20%;
+    width: 18rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquidOrbPrimary,
+  .liquidOrbSecondary,
+  .liquidLens {
+    filter: none;
   }
 }
